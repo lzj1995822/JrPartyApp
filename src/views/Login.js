@@ -73,7 +73,9 @@ export default class Login extends React.Component {
                 password: this.state.password,
                 isMobile: 1,
             })
-        }).then((response) => response.json()).then((resJson) => {
+        }).then((response) => {
+            return response.json()
+        }).then((resJson) => {
             if (resJson.code == 200) {
                 this.redux.dispatch({
                     type: 'SET_TOKEN',

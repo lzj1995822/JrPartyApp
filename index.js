@@ -7,11 +7,13 @@ import {AppRegistry} from 'react-native';
 import {name as appName} from './app.json';
 import AppView from './src/views/AppView';
 
+import CameraScreen from './src/components/CameraScreen'
+
 console.ignoredYellowBox = ['Warning: BackAndroid is deprecated. Please use BackHandler instead.','source.uri should not be an empty string','Invalid props.style key'];
 
 console.disableYellowBox = true;
 
 AppRegistry.registerComponent(appName, () => AppView);
 
-GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest
+// GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest
 

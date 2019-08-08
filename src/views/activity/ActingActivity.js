@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, Button} from "react-native";
+import {Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter} from "react-native";
 import Card from "@ant-design/react-native/es/card/index";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -12,7 +12,40 @@ import * as ProgressUI from 'react-native-progress';
 import {Card as Shadow} from 'react-native-shadow-cards';
 import Accordion from "@ant-design/react-native/es/accordion/index";
 import ImagePicker from "@ant-design/react-native/es/image-picker/index";
+import { RNCamera } from 'react-native-camera';
+import * as Alert from "react-native";
+import CameraScreen from "../../components/CameraScreen";
+import image from "../../redux/image/Image";
 const THEME_COLOR = color.THEME_COLOR;
+const { width, height} = Dimensions.get('window');
+const camStyle = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    preview: {
+        flex: 1,
+        width: width,
+        height: height,
+        alignItems: 'flex-end',
+        flexDirection: 'row',
+    },
+    toolBar: {
+        width: 200,
+        margin: 40,
+        backgroundColor: '#000000',
+        justifyContent: 'space-between',
+
+    },
+    button: {
+        flex: 0,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        color: '#000',
+        padding: 10,
+        margin: 40,
+    }
+});
 const styles = StyleSheet.create({
     activityItem: {
     },
@@ -67,6 +100,8 @@ export default class ActingActivity extends React.Component {
             detailProgress: [],
             phonePic: [],
             activeSections: [0],
+            cameraType: RNCamera.Constants.Type.back,
+            camVis: false,
             files: []
         };
         this.fetchActivityData.bind(this);
@@ -81,11 +116,16 @@ export default class ActingActivity extends React.Component {
             this.setState({ activeSections });
         };
         this.handlePhonePath.bind(this);
-        this.handleFileChange.bind(this);
     }
     componentDidMount() {
+        this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
+            let temp = this.state.files;
+            temp.push({url: a.uri});
+            this.setState({files: temp,camVis: false})
+        });
         this.fetchActivityData();
     }
+    componentWillUnmount() {this.deEmitter.remove();}
     fetchActivityData() {
         console.log("拉取活动数据");
         let isCountrySide = this.state.user.roleCode === 'COUNTRY_SIDE_ACTOR';
@@ -320,9 +360,14 @@ export default class ActingActivity extends React.Component {
                     </Accordion>
                 </View>,
                 <ImagePicker
-                    onChange={this.handleFileChange}
+                    onAddImageClick={() => {this.setState({camVis: true})}}
                     files={this.state.files}
-                />
+                />,
+                <Modal animationType={"slide"}
+                       transparent={false}
+                       visible={this.state.camVis}>
+                    <CameraScreen/>
+                </Modal>
                 ]
 
         }
@@ -331,7 +376,27 @@ export default class ActingActivity extends React.Component {
 
     }
     handleFileChange() {
+        console.log(12321)
+        Alert.alert("点击添加可", "",[])
+    }
+    //切换前后摄像头
+    switchRNCamera() {
+        var state = this.state;
+        if(state.cameraType === RNCamera.Constants.Type.back) {
+            state.cameraType = RNCamera.Constants.Type.front;
+        }else{
+            state.cameraType = RNCamera.Constants.Type.back;
+        }
+        this.setState(state);
+    }
 
+    //拍摄照片
+    takePicture() {
+        this.camera.capture()
+            .then(function(data){
+                alert("拍照成功！图片保存地址：\n"+data.path)
+            })
+            .catch(err => console.error(err));
     }
     handlePhonePath(imgUrl) {
         if (imgUrl.indexOf("http" )== -1) {

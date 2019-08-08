@@ -19,6 +19,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import NavigationUtils from './navigation/NavigationUtils';
 import colors from '../styles/color';
 import NavigationBar from "./navigation/NavigationBar";
+import CameraScreen from "../components/CameraScreen";
 
 const THEME_COLOR = colors.THEME_COLOR;
 
@@ -44,6 +45,12 @@ const stack = createStackNavigator({
             headerTitle: '活动管理',
         })
     },
+    Camera: {
+        screen: CameraScreen,
+        navigationOptions: {
+            header: null
+        }
+    },
     ScoreRank: {
         screen: ScoreRank,
         navigationOptions: ({ navigation }) => ({
@@ -59,6 +66,7 @@ const stack = createStackNavigator({
 },{
     //默认导航配置
     defaultNavigationOptions: ({ navigation }) => {
+        NavigationUtils.navigation = navigation;
         let statusBar = {
             backgroundColor: colors.THEME_COLOR,
             barStyle: 'light-content'
