@@ -247,7 +247,7 @@ export default class HomePage extends React.Component {
                                 <Text style={styleScope.btnLabel}>进度汇总</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate("Activity")}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate("Information")}>
                             <View style={{textAlign: 'center'}}>
                                 <Image source={require('../../static/drawable-xxxhdpi/通知公告.png')}
                                        style={styleScope.listImage}/>
