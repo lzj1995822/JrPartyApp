@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import {InputItem, Icon, List, Toast,Button} from '@ant-design/react-native';
 import {IconFill, IconOutline} from "@ant-design/icons-react-native";
-import blueVersion from "../styles/color";
 import {store} from '../redux/store';
 
 const styleScope = StyleSheet.create({
@@ -29,7 +28,7 @@ const styleScope = StyleSheet.create({
     },
     overMes: {
         height: 50,
-        backgroundColor: blueVersion.grey,
+        backgroundColor:'grey',
         opacity: 0.8,
         textAlign: 'center',
         display: 'flex'
@@ -49,7 +48,8 @@ export default class Login extends React.Component {
             password: '',
             modalVisible: false,
             showMessage: '登陆成功',
-            token: ''
+            token: '',
+            loginLoading:false
         }
 
         this.submit = this.submit.bind(this);
@@ -61,7 +61,23 @@ export default class Login extends React.Component {
     }
 
     submit() {
+        this.setState({loginLoading:true})
         let url = "http://122.97.218.162:21018/api/identity/sysUser/login";
+        let status = 0; // 0 等待 1 完成 2 超时
+        //设置连接超时时间
+        let timer = setTimeout(() => {
+            if (status === 0) {
+                status = 2;
+                timer = null;
+                this.setState({loginLoading:false})
+                this.setState({showMessage: '连接超时'})
+                this.setModalVisible(true)
+                setTimeout(() => {
+                    this.setModalVisible(false)
+                }, 1500)
+            }
+        }, 5000);
+
         fetch(url, {
             method: 'POST',
             headers: {
@@ -74,37 +90,56 @@ export default class Login extends React.Component {
                 isMobile: 1,
             })
         }).then((response) => response.json()).then((resJson) => {
-            if (resJson.code == 200) {
-                this.redux.dispatch({
-                    type: 'SET_TOKEN',
-                    value: resJson.content.token
-                })
-                this.redux.dispatch({
-                    type: 'SET_USER',
-                    value: resJson.content.user
-                })
-                this.setState({showMessage: '登陆成功'})
-                this.setModalVisible(true)
-                this.timer = setTimeout(() => {
-                    const {navigation} = this.props;
-                    navigation.navigate("Main");
-                    clearTimeout(this.timer);
-                }, 1000)
-            } else {
-                this.setState({showMessage: '用户名或密码错误'})
-                this.setModalVisible(true)
-                setTimeout(() => {
-                    this.setModalVisible(false)
-                }, 1500)
+            //链接没超时
+            if (status !== 2) {
+                clearTimeout(timer);
+                timer = null;
+                status = 1;
+                setTimeout(()=>{
+                    this.setState({loginLoading:false})
+                    if (resJson.code == 200) {
+                        this.redux.dispatch({
+                            type: 'SET_TOKEN',
+                            value: resJson.content.token
+                        })
+                        this.redux.dispatch({
+                            type: 'SET_USER',
+                            value: resJson.content.user
+                        })
+                        this.setState({showMessage: '登陆成功'})
+                        this.setModalVisible(true)
+                        this.timer = setTimeout(() => {
+                            const {navigation} = this.props;
+                            navigation.navigate("Main");
+                            clearTimeout(this.timer);
+                        }, 1000)
+                    } else {
+                        this.setState({showMessage: '用户名或密码错误'})
+                        this.setModalVisible(true)
+                        setTimeout(() => {
+                            this.setModalVisible(false)
+                        }, 1500)
+                    }
+                },1000)
+
             }
             return resJson.data;
         }).catch((error) => {
-            this.setState({showMessage: '网络错误'})
-            this.setModalVisible(true)
-            setTimeout(() => {
-                this.setModalVisible(false)
-            }, 1500)
-            console.error(error)
+            //链接没超时
+            if (status !== 2) {
+                clearTimeout(timer);
+                timer = null;
+                status = 1;
+                setTimeout(()=> {
+                    this.setState({loginLoading: false})
+                    this.setState({showMessage: '网络错误'})
+                    this.setModalVisible(true)
+                    setTimeout(() => {
+                        this.setModalVisible(false)
+                    }, 1500)
+                    console.error(error)
+                },1000)
+            }
         })
     }
 
@@ -122,61 +157,61 @@ export default class Login extends React.Component {
         let btnWidth = btnHeight*7
         let inputTop = height / 24
         return (
-            <View>
+            <View style={{marginTop:inputTop}}>
                 <ScrollView
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                 >
-                <View style={{
-                    height: tHeight,
-                    textAlign: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textAlignVertical: 'center',
-                }}>
-                    <Image source={require('../static/drawable-xxxhdpi/组10.png')}
-                           style={{height: topHeight, width: topWidth}}/>
-                    <Text style={{fontWeight: "500", fontSize: 30, marginTop: 20}}>句容市智慧党建</Text>
-                </View>
-                <View style={{width:"80%",height:mHeight,marginLeft:"10%"}}>
-                    <View style={{}}>
-                    <InputItem
-                    clear
-                    value={this.state.name}
-                    onChange={(value: any) => {
-                        this.setState({
-                            name: value,
-                        });
-                    }}
-                    placeholder="输入用户名"
-                >
-                    <Text style={{fontSize:20,fontWeight:'300'}}>用户名</Text>
-                </InputItem>
+                    <View style={{
+                        height: tHeight,
+                        textAlign: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlignVertical: 'center',
+                    }}>
+                        <Image source={require('../static/drawable-xxxhdpi/组10.png')}
+                               style={{height: topHeight, width: topWidth}}/>
+                        <Text style={{fontWeight: "500", fontSize: 30, marginTop: 20}}>句容市智慧党建</Text>
                     </View>
-                    <View style={{marginTop:20}}>
-                    <InputItem
-                        clear
-                        type="password"
-                        value={this.state.password}
-                        onChange={(value: any) => {
-                            this.setState({
-                                password: value,
-                            });
-                        }}
-                        placeholder="输入密码"
-                    >
-                        <Text style={{fontSize:20,fontWeight:'300'}}>密码</Text>
-                    </InputItem>
+                    <View style={{width:"80%",height:mHeight,marginLeft:"10%"}}>
+                        <View style={{}}>
+                            <InputItem
+                                clear
+                                value={this.state.name}
+                                onChange={(value: any) => {
+                                    this.setState({
+                                        name: value,
+                                    });
+                                }}
+                                placeholder="输入用户名"
+                            >
+                                <Image source={require('../static/drawable-xxxhdpi/头像.png')} style={{height:34,width:33}}/>
+                            </InputItem>
+                        </View>
+                        <View style={{marginTop:20}}>
+                            <InputItem
+                                clear
+                                type="password"
+                                value={this.state.password}
+                                onChange={(value: any) => {
+                                    this.setState({
+                                        password: value,
+                                    });
+                                }}
+                                placeholder="输入密码"
+                            >
+                                <Image source={require('../static/drawable-xxxhdpi/密码.png')} style={{height:34,width:25.5}}/>
+                            </InputItem>
+                        </View>
                     </View>
-                </View>
-                <View style={{ textAlign: 'center', alignItems: 'center', }}>
-                <Button
-                    style={{marginTop: btnTop,height:btnHeight,width:btnWidth,}}
-                    onPress={this.submit}
-                    type="primary"
-                ><Text style={{fontSize:25}}>立即登录</Text></Button>
-                </View>
+                    <View style={{ textAlign: 'center', alignItems: 'center', }}>
+                        <Button
+                            style={{marginTop: btnTop,height:btnHeight,width:btnWidth,}}
+                            onPress={this.submit}
+                            type="primary"
+                        ><Text style={{fontSize:25}}>立即登录</Text></Button>
+                    </View>
                 </ScrollView>
                 <Modal
                     animationType="fade"
@@ -190,6 +225,22 @@ export default class Login extends React.Component {
                             marginTop: 10,
                             color: 'white'
                         }}>{this.state.showMessage}</Text>
+                    </View>
+                </Modal>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={this.state.loginLoading}
+                >
+                    <View style={{ flex: 1,
+                        textAlign:'center',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        textAlignVertical:'center',
+                        backgroundColor: 'white',
+                        opacity: 0.8,
+                    }}>
+                        <ActivityIndicator size="large" color="#0000ff" />
                     </View>
                 </Modal>
             </View>

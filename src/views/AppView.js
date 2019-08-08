@@ -69,6 +69,9 @@ const stack = createStackNavigator({
             case 'Activity':
                 title = '活动管理';
                 break;
+            case 'ScoreRank':
+                title = '积分排名';
+                break;
             default:
                 title = '未匹配到路由'
         }

@@ -44,41 +44,41 @@ export default class ScoreRank extends React.Component {
 
     }
     handleRefresh () {
-            this.state.pageNow = 0
-            this.state.refreshing = true
-            this.state.pageSize = Math.ceil(height/50)-2
-            this.state.flatData = []
-            let pa = this.state.pageNow
-            let size = this.state.pageSize
-            let url = 'http://122.97.218.162:21018/api/identity/exaScore/scoreCunPercentAll?page='+pa+'&size='+size+'&sort=desc&year='+2019+''
-            let tokenNew =  store.getState().token.value
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': tokenNew
-                },
-                body: JSON.stringify({})
-            }).then((response) => response.json()).then((resJson) => {
-                if(resJson.content){
-                    this.state.totalPage = Math.ceil(resJson.content[0].total/size)
-                }else {
-                    this.state.totalPage =  this.state.pageNow+1
-                }
-                this.setState({
-                    refreshing: false,
-                });
-               let scoreDate = resJson.content.map((item,index)=>{
-                    return {cun:item.cun,exam:item.exam,index:index}
-                })
-                this.setState({
-                    flatData: scoreDate,
-                });
-            }).catch((error) => {
-                console.error(error)
+        this.state.pageNow = 0
+        this.state.refreshing = true
+        this.state.pageSize = Math.ceil(height/50)-2
+        this.state.flatData = []
+        let pa = this.state.pageNow
+        let size = this.state.pageSize
+        let url = 'http://122.97.218.162:21018/api/identity/exaScore/scoreCunPercentAll?page='+pa+'&size='+size+'&sort=desc&year='+2019+''
+        let tokenNew =  store.getState().token.value
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'authorization': tokenNew
+            },
+            body: JSON.stringify({})
+        }).then((response) => response.json()).then((resJson) => {
+            if(resJson.content){
+                this.state.totalPage = Math.ceil(resJson.content[0].total/size)
+            }else {
+                this.state.totalPage =  this.state.pageNow+1
+            }
+            this.setState({
+                refreshing: false,
             });
-        }
+            let scoreDate = resJson.content.map((item,index)=>{
+                return {cun:item.cun,exam:item.exam,index:index}
+            })
+            this.setState({
+                flatData: scoreDate,
+            });
+        }).catch((error) => {
+            console.error(error)
+        });
+    }
 
     handleLoadMore(){
         console.log(this.state.flatData)
@@ -135,17 +135,17 @@ export default class ScoreRank extends React.Component {
     renderItem(item){
         return (
             <View style={styleScope.borderList}>
-                <View style={{width: width*0.2, height: 50}} >
+                <View style={{width: "20%", height: 50}} >
                     <Text style={{ fontSize: 20,
                         textAlign:'center',
                         alignItems:'center',
                         justifyContent:'center',
                         textAlignVertical:'center',
                         lineHeight:50
-                      }}
+                    }}
                           key={item}>{item.index+1}</Text>
                 </View>
-                <View style={{width: width*0.5, height: 50}} >
+                <View style={{width: "50%", height: 50}} >
                     <Text style={{textAlign:'center',
                         alignItems:'center',
                         justifyContent:'center',
@@ -153,7 +153,7 @@ export default class ScoreRank extends React.Component {
                         lineHeight:50,
                         fontSize: 20}} key={item}>{item.cun}</Text>
                 </View>
-                <View style={{width:  width*0.3, height: 50}} >
+                <View style={{width:"30%", height: 50}} >
                     <Text style={{textAlign:'center',
                         alignItems:'center',
                         justifyContent:'center',
@@ -248,7 +248,7 @@ export default class ScoreRank extends React.Component {
 
         return (
             <View>
-                <Image source={require('../../static/img/blue.jpg')} style={{height:60}}/>
+                <Image source={require('../../static/img/blue.jpg')} style={{height:60,width:'100%'}}/>
                 <FlatList
                     data={this.state.flatData}
                     horizontal={false}
