@@ -11,6 +11,7 @@ import {
 import Mine from "./user/Mine";
 import Activity from './activity/Activity';
 import ScoreRank from './score/ScoreRank';
+import Information from './information/Information';
 import Login from './Login';
 import Cal from './cal/Cal';
 import {TouchableOpacity, View} from "react-native";
@@ -51,6 +52,12 @@ const stack = createStackNavigator({
             header: null
         }
     },
+    Information: {
+        screen: Information,
+        navigationOptions: ({ navigation }) => ({
+            headerTitle: '通知公告',
+        })
+    },
     ScoreRank: {
         screen: ScoreRank,
         navigationOptions: ({ navigation }) => ({
@@ -76,6 +83,12 @@ const stack = createStackNavigator({
         switch (routeName) {
             case 'Activity':
                 title = '活动管理';
+                break;
+            case 'Information':
+                title = '通知公告';
+                break;
+            case 'ScoreRank':
+                title = '积分排名';
                 break;
             default:
                 title = '未匹配到路由'
