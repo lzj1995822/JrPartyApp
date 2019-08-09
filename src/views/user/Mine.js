@@ -9,7 +9,7 @@ import {
     Alert,
     Modal,
     TextInput,
-    ScrollView
+    ScrollView, FlatList, RefreshControl, ActivityIndicator
 } from "react-native";
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
@@ -19,8 +19,13 @@ import { List, Flex, InputItem, Button, WingBlank} from "@ant-design/react-nativ
 import {Tag} from "beeshell";
 import { store } from '../../redux/store';
 import {api} from "../../api";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
+//屏幕信息
+const dimensions = require('Dimensions');
+//获取屏幕的宽度和高度
+const {width, height} = dimensions.get('window');
 
 const styles = StyleSheet.create({
     avator: {
@@ -53,8 +58,19 @@ export default class Mine extends React.Component {
             pswModalVisible: false,
             questionModal:false,
             aboutModal:false,
+            noticeModal:false,
+            messageList:[],
             user:store.getState().user.value,
+            currentPage:0,
+            // 下拉刷新
+            isRefresh: false,
+            // 加载更多
+            isLoadMore: false,
+            // 控制foot  1：正在加载   2 ：无更多数据
+            showFoot: 1,
+            doteVisible:false,
         };
+        this.showMessageList();
     }
 
     setPswModalVisible(visible) {
@@ -67,6 +83,14 @@ export default class Mine extends React.Component {
 
     setAboutModalVisible(visible) {
         this.setState({ aboutModal: visible });
+    }
+
+    setNoticeModalVisible(visible) {
+        this.setState({ noticeModal: visible });
+    }
+
+    setDote(visible){
+        this.setState({doteVisible: visible});
     }
 
     showAlert() {
@@ -156,6 +180,85 @@ export default class Mine extends React.Component {
         this.props.navigation.navigate("Login");
     }
 
+    setDoteVis(){
+        let url=api + '/api/identity/messageCenter/list';
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'authorization': store.getState().token.value
+            },
+            body: JSON.stringify({districtId:this.state.user.districtId,isRead:0})
+        }).then((response) => response.json()).then((resJson) => {
+
+            if(resJson.content.length>0){
+                this.setDote(true);
+            }else{
+                this.setDote(false);
+            }
+        }).catch((error) => {
+            console.error(error)
+        })
+    }
+    showMessageList(){
+        this.state.isLoadMore = true;
+        let url=api + '/api/identity/messageCenter/page?page='+this.state.currentPage+'&sort=createdAt,desc';
+        this.setDoteVis(url);
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'authorization': store.getState().token.value
+            },
+            body: JSON.stringify({districtId:this.state.user.districtId})
+        }).then((response) => response.json()).then((resJson) => {
+            if (this.state.currentPage === 0) {
+                this.setState({
+                    isLoadMore: false,
+                    messageList: resJson.content.content
+                })
+            } else {
+                this.setState({
+                    isLoadMore: false,
+                    // 数据源刷新 add
+                    messageList: this.state.messageList.concat(resJson.content.content)
+                });
+                if (this.state.currentPage <= resJson.content.totalPages-1) {
+                    this.setState({
+                        showFoot: 1
+                    })
+                } else if (this.state.currentPage > resJson.content.totalPages-1) {
+                    this.setState({
+                        showFoot: 2
+                    })
+                }
+            }
+        }).catch((error) => {
+            console.error(error)
+        })
+    }
+
+    editMessage(item){
+        item.isRead = '1';
+        let url = api + '/api/identity/messageCenter/'+item.id+'id';
+        return fetch(url, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'authorization': store.getState().token.value
+            },
+            body: JSON.stringify(item)
+        }).then((response) => response.json()).then((resJson) => {
+           this.showMessageList();
+           this.setDoteVis();
+        }).catch((error) => {
+            console.error(error)
+        })
+    }
+
     render() {
         let statusBar = {
             backgroundColor: THEME_COLOR,
@@ -164,13 +267,29 @@ export default class Mine extends React.Component {
         let rightButton =
             <TouchableOpacity style = {{flexDirection: 'row'}}>
                 <View style={{padding: 10}}>
-                    <Badge dot={true}>
+                    <Badge dot={this.state.doteVisible}>
                         <AntDesign
                             size={26}
                             name={'bells'}
                             style={{color: '#fff'}}
+                            onPress={() => {
+                                this.setNoticeModalVisible(true);
+                            }}
                         />
                     </Badge>
+                </View>
+            </TouchableOpacity>;
+        let noticeButton =
+            <TouchableOpacity style = {{flexDirection: 'row'}}>
+                <View style={{padding: 10}}>
+                    <AntDesign
+                        size={26}
+                        name={'left'}
+                        style={{color: '#fff'}}
+                        onPress={() => {
+                            this.setNoticeModalVisible(false);
+                        }}
+                    />
                 </View>
             </TouchableOpacity>;
         let leftButton =
@@ -216,10 +335,10 @@ export default class Mine extends React.Component {
         let pswNavigationBar = <NavigationBar leftButton={leftButton} linerGradient={true} title='修改密码' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         let questionNavigationBar = <NavigationBar leftButton={leftQuestionBtn} linerGradient={true} title='问题反馈' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         let aboutNavigationBar = <NavigationBar leftButton={leftAboutBtn} linerGradient={true} title='关于句容党建' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
+        let noticeNavigationBar = <NavigationBar leftButton={noticeButton} linerGradient={true} title='消息中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         return (
             <View>
                 {navigationBar}
-
                 <ScrollView
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
@@ -336,9 +455,138 @@ export default class Mine extends React.Component {
                     <Text style={{fontSize:16,color:'#b36d28',marginLeft:30,marginRight:30,lineHeight:30}}>    通过合理有效的大数据分析统计，做到信息及时送达，基层党员声音通过大数据分析 平台分析统计汇总，解决以前层级汇报，效率低下，
                         与基层党建工作者基层党员缺乏良好互动的弊端。
                     </Text>
-
+                </Modal>
+                <Modal  animationType="slide" transparent={false} visible={this.state.noticeModal} onRequestClose={() => {alert("Modal has been closed.");}}>
+                    {noticeNavigationBar}
+                    <View style={{flex: 1, backgroundColor: 'rgb(245, 245, 249)'}}>
+                        <FlatList
+                            style={{flex: 1, backgroundColor: 'rgb(245, 245, 249)'}}
+                            data={this.state.messageList}
+                            //item显示的布局
+                            renderItem={({item}) => this._createListItem(item)}
+                            // 空布局
+                            ListEmptyComponent={this._createEmptyView}
+                            //添加头尾布局
+                            ListHeaderComponent={this._createListHeader}
+                            // ListFooterComponent={this._createListFooter}
+                            ListFooterComponent={this._createListFooter.bind(this)}
+                            //下拉刷新相关
+                            //onRefresh={() => this._onRefresh()}
+                            refreshControl={
+                                <RefreshControl
+                                    title={'Loading'}
+                                    colors={['#444']}
+                                    refreshing={this.state.isRefresh}
+                                    onRefresh={() => {
+                                        this._onRefresh();
+                                    }}
+                                />
+                            }
+                            refreshing={this.state.isRefresh}
+                            //加载更多
+                            onEndReached={() => this._onLoadMore()}
+                            onEndReachedThreshold={0.1}
+                            ItemSeparatorComponent={this._separator}
+                            keyExtractor={this._extraUniqueKey}
+                        />
+                    </View>
                 </Modal>
             </View>
         )
     }
+
+    _extraUniqueKey(item, index) {
+        return "index" + index + item;
+    }
+
+    /*分割线*/
+    _separator() {
+        return <View/>;
+    }
+
+    /*创建头部布局*/
+    _createListHeader() {
+        return(
+            <View style={{marginTop:5}}></View>
+        )
+    }
+
+    /*创建尾部布局*/
+    _createListFooter = () => {
+        return (
+            <View style={styles.footerView}>
+                {this.state.showFoot === 1 && <ActivityIndicator/>}
+                <Text style={{color: '#444',textAlign: 'center'}}>
+                    {this.state.showFoot === 1 ? '正在加载更多数据...' : '没有更多数据了'}
+                </Text>
+            </View>
+        )
+    }
+
+
+    /*创建布局*/
+    _createListItem(item) {
+        return (
+            <WingBlank>
+                <TouchableOpacity activeOpacity={0.5}>
+                    <View style={{marginTop: 5, backgroundColor: '#fff', padding: 5,marginBottom:5,borderRadius:5}}>
+                        <Flex>
+                            <Badge dot={item.isRead=='0'}>
+                            <FontAwesome
+                                size={30}
+                                name={item.type=='information'?'bullhorn':(item.type=='party'?'file-text-o':'circle-o')}
+                                style={{color: '#f66',width:40,padding:5}}
+                            />
+                            </Badge>
+                            <View>
+                                <Flex>
+                                    <Text style={{fontSize: 14,marginBottom: 5, marginTop: 5,marginLeft:10,flex:1 }}>{item.content.split("]")[0].split("[")[1]}</Text>
+                                    <Text style={{fontSize: 12,color:'#444',marginTop:4,marginRight:8,flex:1,textAlign: 'right'}}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+                                </Flex>
+                                <Text style={{fontSize: 12, marginLeft:10,marginRight:8,lineHeight: 25,color:'#444',width:width-100 }}>{item.content.split("]")[1]}</Text>
+                            </View>
+                        </Flex>
+
+                            <Text style={{fontSize: 12,color:'#444',marginTop:4,marginRight:8,textAlign: 'right'}} onPress={()=>{this.editMessage(item)}}>
+                                {item.isRead=='0'?'标为已读':''}</Text>
+                    </View>
+                </TouchableOpacity>
+            </WingBlank>
+        );
+    }
+
+    /*空布局*/
+    _createEmptyView() {
+        return (
+            <View style={{height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={{fontSize: 16}}>
+                    暂无列表数据，下拉刷新
+                </Text>
+            </View>
+        );
+    }
+
+    /*下拉刷新*/
+    _onRefresh = () => {
+        // 不处于 下拉刷新
+        if (!this.state.isRefresh) {
+            // this.state.currentPage=0;
+            this.showMessageList();
+        }
+    };
+
+    /* 加载更多*/
+    _onLoadMore() {
+        // 不处于正在加载更多 && 有下拉刷新过，因为没数据的时候 会触发加载
+        if (!this.state.isLoadMore && this.state.messageList.length > 0 && this.state.showFoot !== 2) {
+            this.state.currentPage ++;
+            this.showMessageList();
+        }
+    }
+
+    /*/!*item点击事件*!/
+    _onItemClick(item) {
+        this.setModalVis(true,item);
+    }*/
+
 }
