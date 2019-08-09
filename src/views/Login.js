@@ -149,6 +149,9 @@ export default class Login extends React.Component {
         const designHeight = 98
         let bl = designWidth / designHeight
         const height = Dimensions.get('window').height;
+        const width = Dimensions.get('window').width;
+
+        let jrWidth = parseInt(width*0.7)
         let tHeight = height / 4 + 20
         let mHeight = height / 4
         let topHeight = height / 8
@@ -157,6 +160,7 @@ export default class Login extends React.Component {
         let btnHeight = height / 16
         let btnWidth = btnHeight*7
         let inputTop = height / 24
+        let jrFontSize = parseInt(jrWidth/10)
         return (
             <View style={{marginTop:inputTop}}>
                 <ScrollView
@@ -173,7 +177,13 @@ export default class Login extends React.Component {
                     }}>
                         <Image source={require('../static/drawable-xxxhdpi/组10.png')}
                                style={{height: topHeight, width: topWidth}}/>
-                        <Text style={{fontWeight: "500", fontSize: 30, marginTop: 20}}>句容市智慧党建</Text>
+                        <View style={{width:jrWidth,
+                            textAlign: 'center',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            textAlignVertical: 'center',}}>
+                            <Text style={{fontWeight: "500",fontSize:jrFontSize,  marginTop: 20}}>句容市智慧党建</Text>
+                        </View>
                     </View>
                     <View style={{width:"80%",height:mHeight,marginLeft:"10%"}}>
                         <View style={{}}>
