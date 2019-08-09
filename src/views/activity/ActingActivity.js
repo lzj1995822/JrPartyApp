@@ -409,7 +409,7 @@ export default class ActingActivity extends React.Component {
                             alignItems:'center',
                             justifyContent:'center',
                             textAlignVertical:'center',
-                            backgroundColor: 'white',
+                            backgroundColor: 'black',
                             opacity: 0.8,
                         }}>
                             <ActivityIndicator size="large" color="#0000ff" />
@@ -431,6 +431,7 @@ export default class ActingActivity extends React.Component {
         }
     }
     execute() {
+        this.setState({executeLoading: true});
         let images = this.state.files;
         if (images.length <= 0) {
             Alert.alert(
@@ -442,12 +443,11 @@ export default class ActingActivity extends React.Component {
             )
             return;
         }
-        this.setState({executeLoading: true});
         let formData = new FormData();
         let successInt = 0;
         images.forEach(item => {
             let ratio = item.value.width/500;
-            ImageResizer.createResizedImage(item.url, 500, item.value.width/ratio, 'JPEG', 100).then(res => {
+            ImageResizer.createResizedImage(item.url, 1000, item.value.width/ratio, 'PNG', 100).then(res => {
                 successInt++;
                 formData.append('files', {uri: res.uri, type: 'multipart/form-data', name: res.name})
             }).catch(e => {
@@ -476,7 +476,7 @@ export default class ActingActivity extends React.Component {
                         body: JSON.stringify(params)
                     }).then(res => res.json()).then(resp => {
                         clearTimeout(timer);
-                        this.setState({executeLoading: false});
+                        this.setState({executeLoading: false, files: []});
                         Alert.alert(
                             '提示',
                             '提交成功!',
