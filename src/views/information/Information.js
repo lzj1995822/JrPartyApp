@@ -29,7 +29,6 @@ export default class  Information extends React.Component  {
 
   constructor(props) {
     super(props);
-    //状态
     this.state = {
       currentPage:0,
       pageSize:10,
