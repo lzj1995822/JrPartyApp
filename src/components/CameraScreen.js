@@ -129,14 +129,9 @@ export default class CameraScreen extends React.Component {
 
     takePicture = async function() {
         if (this.camera) {
-            let data = await this.camera.takePictureAsync();
-            DeviceEventEmitter.emit('taked',data);
-            // let images = store.getState().image.value;
-            // images.push({url: data.uri});
-            // store.dispatch({
-            //     type: 'SET_IMAGES',
-            //     value: images
-            // });
+            this.camera.takePictureAsync().then(data => {
+                DeviceEventEmitter.emit('taked',data);
+            })
         }
     };
 

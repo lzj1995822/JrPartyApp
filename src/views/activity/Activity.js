@@ -2,10 +2,8 @@ import React from 'react';
 import ActingActivity from './ActingActivity';
 import PlanningActivity from './PlanningActivity';
 import { createMaterialTopTabNavigator } from 'react-navigation';
-import CameraScreen from '../../components/CameraScreen';
-import NavigationUtils from "../navigation/NavigationUtils";
 
-const activityTopBar = createMaterialTopTabNavigator({
+let activityTopBar = createMaterialTopTabNavigator({
     ActingActivity: {
         screen: ActingActivity,
         navigationOptions: {
