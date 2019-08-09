@@ -183,11 +183,7 @@ export default class ActingActivity extends React.Component {
         this.fetchActivityData()
     }
     renderFooter() {
-        if (Math.round(this.state.activityList.length/this.size) === this.state.totalPage - 1) {
-            return <Text style={{textAlign: 'center'}}>暂无更多</Text>
-        } else {
-            return <Text style={{textAlign: 'center'}}>上划加载更多</Text>
-        }
+        return <Text style={{textAlign: 'center'}}>暂无更多</Text>
     }
     // 获取镇所属村的活动完成情况
     fetchDetailProgress(item) {
