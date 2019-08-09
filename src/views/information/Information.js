@@ -10,9 +10,10 @@ import {
   View
 } from 'react-native';
 import { store } from '../../redux/store';
-import {List, WingBlank} from "@ant-design/react-native";
+import {List, NoticeBar, WingBlank, Flex} from "@ant-design/react-native";
 import NavigationBar from "../navigation/NavigationBar";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import color from "../styles/color";
 import {api} from "../../api";
 
@@ -154,7 +155,6 @@ export default class  Information extends React.Component  {
     let informationNavigationBar = <NavigationBar leftButton={leftAboutBtn} linerGradient={true} title='公告详情' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
     return (
         <View style={styles.container}>
-
             <FlatList
                 style={styles.container}
                 data={this.state.informationList}
@@ -196,12 +196,12 @@ export default class  Information extends React.Component  {
             >
               <View style={{width:'96%',marginLeft:'2%'}}>
                 <Text style={{
-                  fontSize: 25, fontWeight: '500', color: '#444', marginBottom: 5, marginTop: 5,textAlign:"center"}}>
+                  fontSize: 18, fontWeight: '300', color: '#444', marginBottom: 5, marginTop: 5,textAlign:"center"}}>
                   {this.state.currentInformation.title}</Text>
               </View>
-              <View style={{width:'96%',marginLeft:'2%'}}><Text style={{color: '#898989',textAlign:"center"}}> 发布时间:{new Date(this.state.currentInformation.createdAt).toLocaleDateString()}</Text></View>
-              <Text style={{width:'96%',marginLeft:'2%',fontSize: 18, marginTop: 5,lineHeight:25,letterSpacing:2,textAlign:"center"}} selectable={true}>
-                {this.state.currentInformation.description==null?"":this.state.currentInformation.description.replace(/<[^>]+>/g,"")}</Text>
+              <View style={{width:'96%',marginRight:'5%'}}><Text style={{color: '#898989',textAlign:"right"}}> 发布时间:{new Date(this.state.currentInformation.createdAt).toLocaleDateString()}</Text></View>
+              <Text style={{width:'96%',marginLeft:'2%',fontSize: 14, marginTop: 5,lineHeight:25,letterSpacing:2,textAlign:"left"}} selectable={true}>
+                &nbsp;&nbsp;{this.state.currentInformation.description==null?"":this.state.currentInformation.description.replace(/<[^>]+>/g,"")}</Text>
             </ScrollView>
           </Modal>
         </View>
@@ -224,7 +224,7 @@ export default class  Information extends React.Component  {
    */
   _createListHeader() {
     return (
-        <View>
+        <View style={{marginTop:5}}>
 
         </View>
     )
@@ -251,15 +251,20 @@ export default class  Information extends React.Component  {
   _createListItem(item) {
     return (
         <WingBlank>
+          <TouchableOpacity activeOpacity={0.5}>
+            <View style={{marginTop: 5, backgroundColor: '#fff', padding: 5,marginBottom:5,borderRadius:5}}>
+              <Flex>
+                <FontAwesome
+                    size={20}
+                    name={'bullhorn'}
+                    style={{color: '#f66',width:35,padding:5}}
+                />
+                <Text style={{fontSize: 14,marginBottom: 5, marginTop: 5,marginLeft:8,lineHeight: 25,flex:1, }}  numberOfLines={1}>{item.title}</Text>
+              </Flex>
 
-          <TouchableOpacity activeOpacity={0.5} onPress={() => this._onItemClick(item)}>
-            <View style={{
-              marginTop: 5,
-              backgroundColor: '#fff',
-              padding: 10
-            }}>
-              <Text style={{fontSize: 14,marginBottom: 5, marginTop: 5,}}>{item.title}</Text>
-              <Text style={{fontSize: 12,color:'#444',marginTop:4}}>{new Date(item.createdAt).toLocaleDateString() }</Text>
+                <Text style={{fontSize: 12,color:'#444',marginTop:4,marginLeft:8}}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+                <View style={{height:1,marginLeft:10,marginRight:10,marginTop:7,backgroundColor:'#ebeef5'}}></View>
+                <Text style={{fontSize: 12,color:'#444',marginTop:7,textAlign:'right',marginBottom:5,marginRight:8}}  onPress={() => this._onItemClick(item)}>查看详情 > ></Text>
             </View>
           </TouchableOpacity>
         </WingBlank>
@@ -298,9 +303,7 @@ export default class  Information extends React.Component  {
   _onLoadMore() {
     // 不处于正在加载更多 && 有下拉刷新过，因为没数据的时候 会触发加载
     if (!this.state.isLoadMore && this.state.informationList.length > 0 && this.state.showFoot !== 2) {
-      console.log(this.state.currentPage,"加载。。。1");
       this.state.currentPage ++;
-      console.log(this.state.currentPage,"加载。。。2");
       this.showInformationList();
     }
   }
@@ -316,7 +319,7 @@ export default class  Information extends React.Component  {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'rgb(245, 245, 249)',
   },
   headView: {
     width: width,
