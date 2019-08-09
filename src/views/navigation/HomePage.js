@@ -9,8 +9,9 @@ import {
     ScrollView,
     ImageBackground,
     Alert,
-    Modal
+    Modal, Dimensions
 } from "react-native";
+import { WebView } from 'react-native-webview';
 import {Flex, Carousel, List, NoticeBar, SearchBar} from '@ant-design/react-native';
 import NavigationBar from '../navigation/NavigationBar';
 import NavigationUtils from '../navigation/NavigationUtils';
@@ -175,12 +176,13 @@ export default class HomePage extends React.Component {
     }
 
     showModal(is, val) {
-        console.log(val)
+        console.log(val.nr)
         this.setState({modalVisible: is, selectNews: val})
         this.state.modalVisible = is
         if (this.state.modalVisible == true) {
-            let reg = /<\/?.+?\/?>/g;
-            this.state.partyNewsDetail = val.nr.replace(reg, '')
+            // let reg = /<\/?.+?\/?>/g;
+            // this.state.partyNewsDetail = val.nr.replace(reg, '')
+            this.state.partyNewsDetail = val.nr
         } else {
             this.state.partyNewsDetail = null
         }
@@ -188,6 +190,8 @@ export default class HomePage extends React.Component {
     }
 
     render() {
+        const winHeight = Dimensions.get('window').height;
+
         let statusBar = {
             backgroundColor: THEME_COLOR,
             barStyle: 'light-content'
@@ -201,7 +205,7 @@ export default class HomePage extends React.Component {
                 <SearchBar style={{backgroundColor: 'white'}} defaultValue="" placeholder="搜索"/>
 
                 <ScrollView
-                    style={{flex: 1, padding: 15}}
+                    style={{flex: 1, padding: 5}}
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
@@ -328,11 +332,16 @@ export default class HomePage extends React.Component {
                     >
                   <View style={{width:'96%',marginLeft:'2%'}}>
                     <Text style={{
-                    fontSize: 25, fontWeight: '500', color: '#444', marginBottom: 5, marginTop: 5,textAlign:"center"}}>
+                    fontSize: 25, fontWeight: '500', color: '#444', marginBottom: 10, marginTop: 5,textAlign:"center"}}>
                     {this.state.selectNews.bt}</Text>
                   </View>
                     <View style={{width:'96%',marginLeft:'2%'}}><Text style={{color: '#898989',textAlign:"center"}}>类型:{this.state.selectNews.fl}  阅读量:{this.state.selectNews.ydl}  时间:{this.state.selectNews.createtime}</Text></View>
-                    <Text style={{width:'96%',marginLeft:'2%',fontSize: 18, marginTop: 5,lineHeight:25,letterSpacing:2,textAlign:"center"}} selectable={true}>        {this.state.partyNewsDetail}</Text>
+                        <WebView
+                            style={{height:winHeight-200}}
+                            scrollEnabled={false}
+                            source={{html:this.state.partyNewsDetail}}
+                        ></WebView>
+
                     </ScrollView></Modal>
             </View>
 
