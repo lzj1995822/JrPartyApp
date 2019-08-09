@@ -7,6 +7,7 @@ import Badge from "@ant-design/react-native/es/badge/index";
 import { List, Flex, InputItem, Button, WingBlank} from "@ant-design/react-native";
 import {Tag} from "beeshell";
 import { store } from '../../redux/store';
+import {api} from "../../api";
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
 
@@ -66,7 +67,7 @@ export default class Mine extends React.Component {
         )
     }
     resetPsw(){
-        let userUrl='http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+        let userUrl= api + '/api/identity/sysUser/'+this.state.user.id+'id';
         return fetch(userUrl, {
             method: 'GET',
             headers: {
@@ -77,7 +78,7 @@ export default class Mine extends React.Component {
         }).then((response) => response.json()).then((resJson) => {
             let user = resJson.content;
             user.password = null;
-            let url = 'http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+            let url = api + '/api/identity/sysUser/'+this.state.user.id+'id';
             return fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -97,7 +98,7 @@ export default class Mine extends React.Component {
         })
     }
     editPsw(psw){
-        let userUrl='http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+        let userUrl=api + '/api/identity/sysUser/'+this.state.user.id+'id';
         return fetch(userUrl, {
             method: 'GET',
             headers: {
@@ -108,7 +109,7 @@ export default class Mine extends React.Component {
         }).then((response) => response.json()).then((resJson) => {
             let user = resJson.content;
             user.password = psw;
-            let url = 'http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+            let url = api + '/api/identity/sysUser/'+this.state.user.id+'id';
             return fetch(url, {
                 method: 'PUT',
                 headers: {

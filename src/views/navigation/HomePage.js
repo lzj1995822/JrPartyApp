@@ -21,6 +21,8 @@ const Brief = Item.Brief;
 
 import color from '../styles/color';
 import {store} from "../../redux/store";
+import {api} from "../../api";
+
 
 const THEME_COLOR = color.THEME_COLOR;
 
@@ -120,7 +122,7 @@ export default class HomePage extends React.Component {
     }
 
     fetchNotice() {
-        let url = 'http://122.97.218.162:21018/api/identity/information/page?page=0&size=1&sort=createdAt,desc';
+        let url = api + '/api/identity/information/page?page=0&size=1&sort=createdAt,desc';
         let tokenNew = store.getState().token.value
         return fetch(url, {
             method: 'POST',

@@ -14,6 +14,8 @@ import {List, WingBlank} from "@ant-design/react-native";
 import NavigationBar from "../navigation/NavigationBar";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import color from "../styles/color";
+import {api} from "../../api";
+
 //屏幕信息
 const dimensions = require('Dimensions');
 //获取屏幕的宽度和高度
@@ -53,7 +55,7 @@ export default class  Information extends React.Component  {
   showInformationList() {
     this.state.isLoadMore = true;
     if(this.state.user.districtId==='01'){
-      let url='http://122.97.218.162:21018/api/identity/information/page?page='+this.state.currentPage+'&size='+this.state.pageSize+'&sort=createdAt,desc';
+      let url=api + '/api/identity/information/page?page='+this.state.currentPage+'&size='+this.state.pageSize+'&sort=createdAt,desc';
       return fetch(url, {
         method: 'POST',
         headers: {
@@ -90,7 +92,7 @@ export default class  Information extends React.Component  {
         console.error(error)
       })
     }else{
-      let url='http://122.97.218.162:21018/api/identity/acceptInformation/page?page='+this.state.currentPage+'&size='+this.state.pageSize+'&sort=createdAt,desc';
+      let url=api + '/api/identity/acceptInformation/page?page='+this.state.currentPage+'&size='+this.state.pageSize+'&sort=createdAt,desc';
       return fetch(url, {
         method: 'POST',
         headers: {

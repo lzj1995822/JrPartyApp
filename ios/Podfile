@@ -30,6 +30,10 @@ target 'AwesomeProject' do
 
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
+
   target 'AwesomeProjectTests' do
     inherit! :search_paths
     # Pods for testing
