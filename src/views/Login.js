@@ -13,6 +13,7 @@ import {
 import {InputItem, Icon, List, Toast,Button} from '@ant-design/react-native';
 import {IconFill, IconOutline} from "@ant-design/icons-react-native";
 import {store} from '../redux/store';
+import {api} from "../api";
 
 const styleScope = StyleSheet.create({
     inputName: {
@@ -61,8 +62,8 @@ export default class Login extends React.Component {
     }
 
     submit() {
-        this.setState({loginLoading:true})
-        let url = "http://122.97.218.162:21018/api/identity/sysUser/login";
+        this.setState({loginLoading:true});
+        let url = api + "api/identity/sysUser/login";
         let status = 0; // 0 等待 1 完成 2 超时
         //设置连接超时时间
         let timer = setTimeout(() => {

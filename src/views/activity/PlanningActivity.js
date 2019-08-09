@@ -1,5 +1,6 @@
 import React from 'react';
 import {ScrollView, Text, View} from "react-native";
+import {api} from "../../api";
 
 export default class PlanningActivity extends React.Component {
 
@@ -14,7 +15,7 @@ export default class PlanningActivity extends React.Component {
         this.fetchActivityData();
     }
     fetchActivityData() {
-        let url = 'http://122.97.218.162:21018/api/identity/parActivity/page?page=0&size=7';
+        let url = api + '/api/identity/parActivity/page?page=0&size=7';
         let params = {
             currentStatus: "PLANNING"
         };

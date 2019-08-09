@@ -1,6 +1,9 @@
 import React from 'react';
-import {Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter} from "react-native";
-import Card from "@ant-design/react-native/es/card/index";
+import {
+    Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
+    ActivityIndicator
+} from "react-native";
+import {Card, Button, WhiteSpace} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Flex from "@ant-design/react-native/es/flex/Flex";
@@ -13,9 +16,9 @@ import {Card as Shadow} from 'react-native-shadow-cards';
 import Accordion from "@ant-design/react-native/es/accordion/index";
 import ImagePicker from "@ant-design/react-native/es/image-picker/index";
 import { RNCamera } from 'react-native-camera';
-import * as Alert from "react-native";
 import CameraScreen from "../../components/CameraScreen";
-import image from "../../redux/image/Image";
+import ImageResizer from "react-native-image-resizer";
+import {api} from "../../api";
 const THEME_COLOR = color.THEME_COLOR;
 const { width, height} = Dimensions.get('window');
 const camStyle = StyleSheet.create({
@@ -59,8 +62,8 @@ const styles = StyleSheet.create({
     itemLabel: {
         fontWeight: '400',
         fontSize: 16,
-        color: '#444',
-        width: 200,
+        color: '#3a3a3a',
+        width: 100,
         textAlignVertical: 'top'
     },
     itemValue: {
@@ -102,7 +105,8 @@ export default class ActingActivity extends React.Component {
             activeSections: [0],
             cameraType: RNCamera.Constants.Type.back,
             camVis: false,
-            files: []
+            files: [],
+            executeLoading: false
         };
         this.fetchActivityData.bind(this);
         this.onLoadMore.bind(this);
@@ -116,11 +120,13 @@ export default class ActingActivity extends React.Component {
             this.setState({ activeSections });
         };
         this.handlePhonePath.bind(this);
+        this.handleFileChange.bind(this);
+        this.uploadFiles.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
             let temp = this.state.files;
-            temp.push({url: a.uri});
+            temp.push({url: a.uri, value: a});
             this.setState({files: temp,camVis: false})
         });
         this.fetchActivityData();
@@ -129,7 +135,7 @@ export default class ActingActivity extends React.Component {
     fetchActivityData() {
         console.log("拉取活动数据");
         let isCountrySide = this.state.user.roleCode === 'COUNTRY_SIDE_ACTOR';
-        let url = `http://122.97.218.162:21018/api/identity/${isCountrySide ? 'parActivityObject' : 'parActivity'}/page?page=${this.page - 1}&size=${this.size}`;
+        let url = `${api}/api/identity/${isCountrySide ? 'parActivityObject' : 'parActivity'}/page?page=${this.page - 1}&size=${this.size}`;
         let params = {
             currentStatus: "ACTIVE",
         };
@@ -203,7 +209,7 @@ export default class ActingActivity extends React.Component {
     }
     // 获取镇所属村的活动完成情况
     fetchDetailProgress(item) {
-        let url = 'http://122.97.218.162:21018/api/identity/parActivityObject/list';
+        let url = api + '/api/identity/parActivityObject/list';
         let params = {
             activityId: item.id,
             attachTo: this.state.user.sysDistrict.districtId
@@ -353,27 +359,145 @@ export default class ActingActivity extends React.Component {
                     </Accordion.Panel>
                 )
             });
-            return  [
+            let enable = new Date(this.state.currentRow.month).getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
+            let executeComponent = [
+                    <View style={{width: '100%'}}>
+                        <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
+                            {records}
+                        </Accordion>
+                    </View>,
+                     <Flex direction='column' justify='between' align='start' style={styles.formItem}>
+                         <Text style={[styles.itemLabel, {marginBottom: 20, color: '#b3ad27'}]}>执行照片</Text>
+                         <ImagePicker
+                             onChange={(files, type, index) => {this.setState({files: files});}}
+                             onAddImageClick={() => {this.setState({camVis: true})}}
+                             files={this.state.files}
+                         />
+                         <Text style={{fontSize: 12,color: "#cdcdcd"}}>友情提示: 请确保已拍取照片再进行提交操作!</Text>
+                     </Flex>,
+                     <WhiteSpace size="lg"/>,
+                     <Button
+                         style={{flex: 1,width: '100%'}}
+                         onPress={this.execute.bind(this)}
+                         type="primary"
+                     ><Text>提交</Text></Button>,
+                     <WhiteSpace size="lg"/>,
+                     <Modal animationType={"slide"}
+                            transparent={false}
+                            visible={this.state.camVis}>
+                         <CameraScreen/>
+                     </Modal>,
+                     <Modal
+                            animationType="fade"
+                            transparent={true}
+                            visible={this.state.executeLoading}
+                    >
+                        <View style={{ flex: 1,
+                            textAlign:'center',
+                            alignItems:'center',
+                            justifyContent:'center',
+                            textAlignVertical:'center',
+                            backgroundColor: 'white',
+                            opacity: 0.8,
+                        }}>
+                            <ActivityIndicator size="large" color="#0000ff" />
+                            <Text>提交中</Text>
+                        </View>
+                    </Modal>
+                 ];
+            if (enable) {
+                return executeComponent;
+            }
+            return  (
                 <View style={{width: '100%'}}>
                     <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
                         {records}
                     </Accordion>
-                </View>,
-                <ImagePicker
-                    onAddImageClick={() => {this.setState({camVis: true})}}
-                    files={this.state.files}
-                />,
-                <Modal animationType={"slide"}
-                       transparent={false}
-                       visible={this.state.camVis}>
-                    <CameraScreen/>
-                </Modal>
-                ]
+                </View>
+            )
 
         }
     }
-    renderExcute() {
-
+    execute() {
+        console.log("执行")
+        let images = this.state.files;
+        if (images.length <= 0) {
+            Alert.alert(
+                '提示',
+                '请拍取执行照片后再进行提交操作!',
+                [
+                    {text: '确认', onPress: () => {}},
+                ],
+            )
+            return;
+        }
+        this.setState({executeLoading: true});
+        let formData = new FormData();
+        let successInt = 0;
+        images.forEach(item => {
+            let ratio = item.value.width/500;
+            ImageResizer.createResizedImage(item.url, 500, item.value.width/ratio, 'JPEG', 100).then(res => {
+                successInt++;
+                formData.append('files', {uri: res.uri, type: 'multipart/form-data', name: res.name})
+            }).catch(e => {
+                console.log('压缩失败')
+            })
+        });
+        let timer = setTimeout(() => {
+            if (successInt === images.length) {
+                let parActivityObj = this.state.currentRow;
+                this.uploadFiles(formData).then(files => {
+                    let url = api + '/api/identity/parActivityObject/execute';
+                    let params = {
+                        activityId: parActivityObj.activityId,
+                        organizationId: this.state.user.sysDistrict.districtId,
+                        phoneOrTv: 'phone',
+                        userId: this.state.user.id,
+                        phoneImgList: files.map(item => item.path)
+                    };
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'authorization': this.state.token
+                        },
+                        body: JSON.stringify(params)
+                    }).then(res => res.json()).then(resp => {
+                        clearTimeout(timer);
+                        this.setState({executeLoading: false});
+                        Alert.alert(
+                            '提示',
+                            '提交成功!',
+                            [
+                                {text: '确认', onPress: () => {
+                                    this.setState({
+                                        modalVis: false
+                                    })
+                                }},
+                            ],
+                        )
+                    })
+                })
+            }
+        }, 1000);
+    }
+    uploadFiles(formData) {
+        let url = api + '/api/identity/accessory/singleBatch';
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'authorization': this.state.token
+            },
+            body: formData
+        }).then(res => res.json()).then(resp => resp.content)
+            .catch(e => {
+                console.log(e,"上传失败")
+            })
+    }
+    onFileChange(files, type, index) {
+        console.log(files, type, index)
     }
     handleFileChange() {
         console.log(12321)
@@ -410,7 +534,7 @@ export default class ActingActivity extends React.Component {
         }
     }
     fetchPhonePic(item) {
-        let url = 'http://122.97.218.162:21018/api/identity/parActivityFeedback/phonePage?page=0&size=500&sort=time,desc';
+        let url = api + '/api/identity/parActivityFeedback/phonePage?page=0&size=500&sort=time,desc';
         let params = {
             snId: item.activityId,
             userId: this.state.user.sysDistrict.id
@@ -475,7 +599,7 @@ export default class ActingActivity extends React.Component {
                         <Text style={styles.itemLabel}>任务分值</Text>
                         <Text>{this.state.currentRow.score}分</Text>
                     </Flex>
-                    <Flex justify='between' style={styles.formItem}>
+                    <Flex justify='between' align='start' style={styles.formItem}>
                         <Text style={styles.itemLabel}>工作要求</Text>
                         <Text style={{lineHeight: 20, width: 150, textAlign: 'right'}} numberOfLines={3}>{this.state.currentRow.context}</Text>
                     </Flex>

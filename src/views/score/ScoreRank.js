@@ -1,7 +1,9 @@
 import React from 'react';
 import {Button, StyleSheet, Text, View,TextInput,Alert,Modal,ActivityIndicator,Image,FlatList,Separator} from "react-native";
 import {store} from '../../redux/store';
-import {Dimensions} from 'react-native'
+import {Dimensions} from 'react-native';
+import {api} from "../../api";
+
 
 var {height,width} =  Dimensions.get('window');
 const styleScope = StyleSheet.create({
@@ -50,7 +52,7 @@ export default class ScoreRank extends React.Component {
         this.state.flatData = []
         let pa = this.state.pageNow
         let size = this.state.pageSize
-        let url = 'http://122.97.218.162:21018/api/identity/exaScore/scoreCunPercentAll?page='+pa+'&size='+size+'&sort=desc&year='+2019+''
+        let url = api + '/api/identity/exaScore/scoreCunPercentAll?page='+pa+'&size='+size+'&sort=desc&year='+2019+''
         let tokenNew =  store.getState().token.value
         fetch(url, {
             method: 'POST',
@@ -96,7 +98,7 @@ export default class ScoreRank extends React.Component {
             let pa = this.state.pageNow
             let size = this.state.pageSize
             console.log(pa,size)
-            let url = 'http://122.97.218.162:21018/api/identity/exaScore/scoreCunPercentAll?page=' + pa + '&size=' + size + '&sort=desc&year=' + 2019 + ''
+            let url = api + '/api/identity/exaScore/scoreCunPercentAll?page=' + pa + '&size=' + size + '&sort=desc&year=' + 2019 + ''
             let tokenNew = store.getState().token.value
             fetch(url, {
                 method: 'POST',

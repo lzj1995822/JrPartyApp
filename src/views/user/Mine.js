@@ -1,5 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ImageBackground, Image, StyleSheet,  Alert, Modal, TextInput} from "react-native";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    ImageBackground,
+    Image,
+    StyleSheet,
+    Alert,
+    Modal,
+    TextInput,
+    ScrollView
+} from "react-native";
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -7,6 +18,7 @@ import Badge from "@ant-design/react-native/es/badge/index";
 import { List, Flex, InputItem, Button, WingBlank} from "@ant-design/react-native";
 import {Tag} from "beeshell";
 import { store } from '../../redux/store';
+import {api} from "../../api";
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
 
@@ -20,13 +32,15 @@ const styles = StyleSheet.create({
     },
     userName: {
         fontSize: 28,
-        color: '#555',
+        color: '#FFFFFF',
         fontWeight: 'bold',
-        paddingTop: 20
+        paddingTop: 20,
+
     },
     latestLoginTime: {
         fontSize: 12,
-        paddingLeft: 5
+        paddingLeft: 5,
+        color:'white'
     }
 });
 
@@ -66,7 +80,7 @@ export default class Mine extends React.Component {
         )
     }
     resetPsw(){
-        let userUrl='http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+        let userUrl= api + '/api/identity/sysUser/'+this.state.user.id+'id';
         return fetch(userUrl, {
             method: 'GET',
             headers: {
@@ -77,7 +91,7 @@ export default class Mine extends React.Component {
         }).then((response) => response.json()).then((resJson) => {
             let user = resJson.content;
             user.password = null;
-            let url = 'http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+            let url = api + '/api/identity/sysUser/'+this.state.user.id+'id';
             return fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -97,7 +111,7 @@ export default class Mine extends React.Component {
         })
     }
     editPsw(psw){
-        let userUrl='http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+        let userUrl=api + '/api/identity/sysUser/'+this.state.user.id+'id';
         return fetch(userUrl, {
             method: 'GET',
             headers: {
@@ -108,7 +122,7 @@ export default class Mine extends React.Component {
         }).then((response) => response.json()).then((resJson) => {
             let user = resJson.content;
             user.password = psw;
-            let url = 'http://122.97.218.162:21018/api/identity/sysUser/'+this.state.user.id+'id';
+            let url = api + '/api/identity/sysUser/'+this.state.user.id+'id';
             return fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -205,8 +219,16 @@ export default class Mine extends React.Component {
         return (
             <View>
                 {navigationBar}
-                <ImageBackground
-                    source={require('../../static/img/blue.jpg')}
+
+                <ScrollView
+                    automaticallyAdjustContentInsets={false}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View>
+
+                    <ImageBackground
+                    source={require('../../static/drawable-xxxhdpi/banner.png')}
                     style={{height: 250, width: '100%',alignItems: 'center',justifyContent: 'center'}}
                     resizeMode="cover"
                 >
@@ -226,37 +248,39 @@ export default class Mine extends React.Component {
                                     size={18}
                                     name={'mobile1'}
                                 />
-                                <Text style={{ paddingLeft: 5}}> {this.state.user.phone}</Text>
+                                <Text style={{ paddingLeft: 5,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
                             </Flex>
                             <Flex style={{height: 40}} align='end'>
                                 <AntDesign
                                     size={18}
                                     name={'clockcircleo'}
                                 />
-                                <Text style={styles.latestLoginTime}> 最近登录{new Date(this.state.user.lastTime).toLocaleString()}</Text>
+                                <Text style={styles.latestLoginTime}> 最近登录{this.state.user.lastTime.toString().split('.')[0].replace('T',' ')}</Text>
                             </Flex>
                         </View>
                     </Flex>
                 </ImageBackground>
                 <List renderHeader=' '>
-                    <Item thumb={<AntDesign size={18} name={'reload1'} style={{marginRight: 10,marginLeft: 0}}/>}
+                    <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/密码重置.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
                            arrow="horizontal" onPress={this.showAlert.bind(this)}>
-                        <Text>密码重置</Text>
+                        <Text style={{fontSize:16}}>密码重置</Text>
                     </Item>
-                    <Item thumb={<AntDesign size={18} name={'edit'} style={{marginRight: 10,marginLeft: 0}}/>}
+                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/钥匙.png')} style={{marginRight:9,marginLeft: 0,height:18,width:11}}/>}
                           arrow="horizontal" onPress={() => {this.setPswModalVisible(true);}}>
-                        <Text>密码修改</Text>
+                        <Text style={{fontSize:16}}>密码修改</Text>
                     </Item>
-                    <Item thumb={<AntDesign size={18} name={'back'} style={{marginRight: 10,marginLeft: 0}}/>}
+                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/意见.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
                           arrow="horizontal" onPress={() => {this.setQuestionModal(true);}}>
-                        <Text>问题反馈</Text>
+                        <Text style={{fontSize:16}}>问题反馈</Text>
                     </Item>
-                    <Item thumb={<AntDesign size={18} name={'file1'} style={{marginRight: 10,marginLeft: 0}}/>}
+                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/关于.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
                           arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize: 12}}>版本号 1.1.0</Text>}>
-                        <Text>关于句容党建</Text>
+                        <Text style={{fontSize:16}}>关于句容党建</Text>
                     </Item>
                 </List>
                 <Button style={{marginRight: 10,marginLeft:10 ,marginTop:30}} onPress={() => { this.logout();}}>退出</Button>
+                    </View>
+                </ScrollView>
                 <Modal animationType="slide" transparent={false} visible={this.state.pswModalVisible} onRequestClose={() => {alert("Modal has been closed.");}}>
                     {pswNavigationBar}
                     <InputItem clear type="password" value={this.state.password} placeholder="请输入密码"
