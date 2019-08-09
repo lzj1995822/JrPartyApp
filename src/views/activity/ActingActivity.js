@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-    ActivityIndicator
+    ActivityIndicator, BackHandler, Platform
 } from "react-native";
 import {Card, Button, WhiteSpace} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
@@ -51,9 +51,10 @@ const camStyle = StyleSheet.create({
 });
 const styles = StyleSheet.create({
     activityItem: {
+        flex: 1,
     },
     formItem: {
-        borderBottomWidth: 1,
+        borderBottomWidth: 0.3,
         borderColor: '#d0d0d0',
         width: '100%',
         padding: 15,
@@ -120,8 +121,8 @@ export default class ActingActivity extends React.Component {
             this.setState({ activeSections });
         };
         this.handlePhonePath.bind(this);
-        this.handleFileChange.bind(this);
         this.uploadFiles.bind(this);
+        this.backForAndroid.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
@@ -130,8 +131,20 @@ export default class ActingActivity extends React.Component {
             this.setState({files: temp,camVis: false})
         });
         this.fetchActivityData();
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation)});
+        }
     }
-    componentWillUnmount() {this.deEmitter.remove();}
+    backForAndroid(navigator) {
+        navigator.navigate('Main');
+        return true;
+    }
+    componentWillUnmount() {
+        this.deEmitter.remove();
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation)});
+        }
+    }
     fetchActivityData() {
         console.log("拉取活动数据");
         let isCountrySide = this.state.user.roleCode === 'COUNTRY_SIDE_ACTOR';
@@ -175,8 +188,8 @@ export default class ActingActivity extends React.Component {
         let logo = item.taskType === 'Party' ? require('../../static/img/party-logo.png') : require('../../static/img/learning-logo.png');
         return (
                 <View style={styles.activityItem} key={item.id}>
-                    <TouchableOpacity onPress={() => {this.showModal(item)}}>
-                        <Shadow cornerRadius={7} opacity={0.3} elevation={5} style={{flex: 1,margin: 20, fontSize: 14}} >
+                        <Shadow cornerRadius={7} opacity={0.3} elevation={5} style={{margin: 10, width: width-20, fontSize: 14}} >
+                            <TouchableOpacity onPress={() => {this.showModal(item)}}>
                             <Card>
                                 <Card.Header
                                   title={<Text style={{fontSize: 14}}>{item.title}</Text>}
@@ -187,12 +200,12 @@ export default class ActingActivity extends React.Component {
                                     </Flex>}
                                 />
                                 <Card.Body>
-                                    <Text style={{paddingLeft: 15, paddingRight: 15, lineHeight: 26}}>{item.context || "暂无内容"}</Text>
+                                    <Text style={{paddingLeft: 14, paddingRight: 14, lineHeight: 22}}>{item.context || "暂无内容"}</Text>
                                 </Card.Body>
                                 <Card.Footer content={this.renderItemFooter(item)} extra=""/>
                             </Card>
+                            </TouchableOpacity>
                         </Shadow>
-                    </TouchableOpacity>
                 </View>
         )
     };
@@ -201,10 +214,10 @@ export default class ActingActivity extends React.Component {
         this.fetchActivityData()
     }
     renderFooter() {
-        if (this.state.activityList.length/this.size === this.state.totalPage - 1) {
-            return <Text>暂无更多</Text>
+        if (Math.round(this.state.activityList.length/this.size) === this.state.totalPage - 1) {
+            return <Text style={{textAlign: 'center'}}>暂无更多</Text>
         } else {
-            return <Text>上划加载更多</Text>
+            return <Text style={{textAlign: 'center'}}>上划加载更多</Text>
         }
     }
     // 获取镇所属村的活动完成情况
@@ -345,12 +358,10 @@ export default class ActingActivity extends React.Component {
         } else {
              let records = this.state.phonePic.map((item) => {
                  let images = item.imageUrl.map(subItem => {
-                     console.log(this.handlePhonePath(subItem.imageUrl, item), 'de')
                      return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
-                 })
-                 console.log(item, 'images');
+                 });
                  return (
-                    <Accordion.Panel header={`执行记录(${item.time.replace(/T/g, ' ')})`}>
+                     <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
                         <ScrollView horizontal={true}>
                             <Flex style={{overflowX: 'scroll'}}>
                                 {images}
@@ -384,7 +395,8 @@ export default class ActingActivity extends React.Component {
                      <WhiteSpace size="lg"/>,
                      <Modal animationType={"slide"}
                             transparent={false}
-                            visible={this.state.camVis}>
+                            visible={this.state.camVis}
+                            onRequestClose={() => {this.setState({camVis: false})}}>
                          <CameraScreen/>
                      </Modal>,
                      <Modal
@@ -419,7 +431,6 @@ export default class ActingActivity extends React.Component {
         }
     }
     execute() {
-        console.log("执行")
         let images = this.state.files;
         if (images.length <= 0) {
             Alert.alert(
@@ -496,32 +507,6 @@ export default class ActingActivity extends React.Component {
                 console.log(e,"上传失败")
             })
     }
-    onFileChange(files, type, index) {
-        console.log(files, type, index)
-    }
-    handleFileChange() {
-        console.log(12321)
-        Alert.alert("点击添加可", "",[])
-    }
-    //切换前后摄像头
-    switchRNCamera() {
-        var state = this.state;
-        if(state.cameraType === RNCamera.Constants.Type.back) {
-            state.cameraType = RNCamera.Constants.Type.front;
-        }else{
-            state.cameraType = RNCamera.Constants.Type.back;
-        }
-        this.setState(state);
-    }
-
-    //拍摄照片
-    takePicture() {
-        this.camera.capture()
-            .then(function(data){
-                alert("拍照成功！图片保存地址：\n"+data.path)
-            })
-            .catch(err => console.error(err));
-    }
     handlePhonePath(imgUrl) {
         if (imgUrl.indexOf("http" )== -1) {
             if (imgUrl[0] === '..') {
@@ -560,7 +545,7 @@ export default class ActingActivity extends React.Component {
             barStyle: 'light-content'
         };
         let navigationBar = <NavigationBar leftButton={
-            <TouchableOpacity onPress={() => {this.setState({modalVis: false})}}>
+            <TouchableOpacity onPress={() => {this.setState({modalVis: false,files: []})}}>
                 <AntDesign name='left' size={26} style={{color: 'white'}} />
             </TouchableOpacity>}
            linerGradient={true} title='活动详情' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
@@ -569,7 +554,7 @@ export default class ActingActivity extends React.Component {
                 animationType={"slide"}
                 transparent={false}
                 visible={this.state.modalVis}
-                onRequestClose={() => {alert("Modal has been closed.")}}
+                onRequestClose={() => {this.setState({modalVis: false, files: []})}}
             >
                 {navigationBar}
                 <ScrollView
@@ -647,7 +632,7 @@ export default class ActingActivity extends React.Component {
         } else {
             return (
                 <Flex>
-                    <View style={{ marginRight: 10, height: 4, flex: 1 }}>
+                    <View style={{ marginRight: 10, height: 3, flex: 1 }}>
                         <Progress percent={Math.round(Number(item[percentKey]) * 1000)/10} />
                     </View>
                     <Text style={{width: 45}}>{Math.round(Number(item[percentKey]) * 1000)/10}%</Text>
@@ -658,9 +643,9 @@ export default class ActingActivity extends React.Component {
     render() {
         return (
             <View>
-                <ScrollView style={{backgroundColor: 'rgb(245, 245, 249)'}}>
+                <ScrollView style={{backgroundColor: '#f4f4ea'}}>
                     <FlatList
-                        style={{flex: 1, backgroundColor: 'rgb(245, 245, 249)'}}
+                        style={{flex: 1}}
                         data={this.state.activityList}
                         onEndReachedThreshold={100}
                         onEndReached={() => {this.onLoadMore()}}
