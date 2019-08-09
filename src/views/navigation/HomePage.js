@@ -26,12 +26,11 @@ const THEME_COLOR = color.THEME_COLOR;
 
 const styleScope = StyleSheet.create({
     listImage: {
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
         borderRadius: 25,
     },
     btnList: {
-        marginTop: 20,
         paddingTop: 10,
         paddingLeft: 6,
         paddingRight: 6,
@@ -84,7 +83,8 @@ export default class HomePage extends React.Component {
             notice: {},
             modalVisible: false,
             partyNewsDetail: '',
-            selectNews: {}
+            selectNews: {},
+            partyNewsImg:[]
         };
         this.fetchPartyBuild = this.fetchPartyBuild.bind(this);
         this.fetchNotice = this.fetchNotice.bind(this);
@@ -113,6 +113,13 @@ export default class HomePage extends React.Component {
             },
             body: JSON.stringify(params)
         }).then((response) => response.json()).then((resJson) => {
+            let fms = []
+            resJson.data.forEach(item=>{
+                if(item.fm){
+                    fms.push(item.fm)
+                }
+            })
+            this.setState({partyNewsImg:fms})
             return resJson.data;
         }).catch((error) => {
             console.error(error)
@@ -138,15 +145,33 @@ export default class HomePage extends React.Component {
     }
 
     renderPartyBuildNews() {
-        let newsItems = this.state.partyBuildNews.map((item) => {
-            return <Item key={item.id} data-seed="logId" arrow="horizontal" onPress={() => {
-                this.showModal(true, item)
-            }}>
-                <Text style={styleScope.newsItem}>{item.bt}</Text>
-                <Brief style={styleScope.brief}>组织部 {item.ydl}阅读 {item.createtime}</Brief>
-            </Item>
+        let newsItems = this.state.partyBuildNews.map((item,index) => {
+            if(index == 0){
+                let src = 'http://www.jrxf.gov.cn/file/'+this.state.partyNewsImg[0]
+                return <Item key={item.id} data-seed="logId" arrow="horizontal" onPress={() => {
+                    this.showModal(true, item)
+                }}>
+                    <View style={{ flex: 1,
+                        flexDirection: 'row'}}>
+                        <View><Image source={{uri: src}} style={{width:80,height:80}}/>
+                        </View>
+                        <View style={{textAlignVertical: 'center',marginLeft:5}}>
+                    <Text style={styleScope.newsItem}>{item.bt}</Text>
+                    <Brief style={styleScope.brief}>组织部 {item.ydl}阅读 {item.createtime}</Brief>
+                        </View>
+                    </View>
+                </Item>
+            }else {
+                return <Item key={item.id} data-seed="logId" arrow="horizontal" onPress={() => {
+                    this.showModal(true, item)
+                }}>
+                    <Text style={styleScope.newsItem}>{item.bt}</Text>
+                    <Brief style={styleScope.brief}>组织部 {item.ydl}阅读 {item.createtime}</Brief>
+                </Item>
+            }
+
         });
-        return <List renderHeader={'党建新闻'}>{newsItems}</List>
+        return  <List renderHeader={'党建新闻'}>{newsItems}</List>
     }
 
     showModal(is, val) {
@@ -182,7 +207,7 @@ export default class HomePage extends React.Component {
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                 >
-                    <View style={{marginBottom: 15}}>
+                    <View style={{marginBottom: 10}}>
                         <NoticeBar mode="link" marqueenProps={{loop: true, style: {}}}>
                             {this.state.notice.title}
                         </NoticeBar>
@@ -222,6 +247,8 @@ export default class HomePage extends React.Component {
                         </View>
                     </Carousel>
                     {/*按钮集合展示区*/}
+                    <List style={{marginTop:10}}>
+                        <Item key={'btnss'}>
                     <Flex justify="between" align="center" style={styleScope.btnList}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("Activity")}>
                             <View style={{textAlign: 'center'}}>
@@ -262,9 +289,19 @@ export default class HomePage extends React.Component {
                             </View>
                         </TouchableOpacity>
                     </Flex>
-                    <View style={{marginTop: 15}}>
+                        </Item>
+                    </List>
+                    <View style={{marginTop: 5}}>
+                        <ScrollView
+                            style={{flex: 1}}
+                            automaticallyAdjustContentInsets={false}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
+                        >
                         {this.renderPartyBuildNews()}
+                        </ScrollView>
                     </View>
+
                 </ScrollView>
                 <Modal
                     animationType={"slide"}

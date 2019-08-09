@@ -13,5 +13,5 @@ console.disableYellowBox = true;
 
 AppRegistry.registerComponent(appName, () => AppView);
 
-GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest
+// GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest
 
