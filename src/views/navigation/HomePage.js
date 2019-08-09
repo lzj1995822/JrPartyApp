@@ -194,7 +194,6 @@ export default class HomePage extends React.Component {
         };
         let navigationBar = <NavigationBar linerGradient={true} title='首页' statusBar={statusBar}
                                            style={{backgroundColor: THEME_COLOR}}/>;
-        NavigationUtils.navigation = this.props.navigation;
         return (
 
             <View style={{flex: 1, backgroundColor: 'rgb(245, 245, 249)'}}>
@@ -274,7 +273,7 @@ export default class HomePage extends React.Component {
                                 <Text style={styleScope.btnLabel}>进度汇总</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate("Activity")}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate("Information")}>
                             <View style={{textAlign: 'center'}}>
                                 <Image source={require('../../static/drawable-xxxhdpi/通知公告.png')}
                                        style={styleScope.listImage}/>

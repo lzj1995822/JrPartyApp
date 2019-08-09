@@ -11,6 +11,7 @@ import {
 import Mine from "./user/Mine";
 import Activity from './activity/Activity';
 import ScoreRank from './score/ScoreRank';
+import Information from './information/Information';
 import Login from './Login';
 import Cal from './cal/Cal';
 import {TouchableOpacity, View} from "react-native";
@@ -19,6 +20,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import NavigationUtils from './navigation/NavigationUtils';
 import colors from '../styles/color';
 import NavigationBar from "./navigation/NavigationBar";
+import CameraScreen from "../components/CameraScreen";
 
 const THEME_COLOR = colors.THEME_COLOR;
 
@@ -44,6 +46,18 @@ const stack = createStackNavigator({
             headerTitle: '活动管理',
         })
     },
+    Camera: {
+        screen: CameraScreen,
+        navigationOptions: {
+            header: null
+        }
+    },
+    Information: {
+        screen: Information,
+        navigationOptions: ({ navigation }) => ({
+            headerTitle: '通知公告',
+        })
+    },
     ScoreRank: {
         screen: ScoreRank,
         navigationOptions: ({ navigation }) => ({
@@ -59,6 +73,7 @@ const stack = createStackNavigator({
 },{
     //默认导航配置
     defaultNavigationOptions: ({ navigation }) => {
+        NavigationUtils.navigation = navigation;
         let statusBar = {
             backgroundColor: colors.THEME_COLOR,
             barStyle: 'light-content'
@@ -68,6 +83,9 @@ const stack = createStackNavigator({
         switch (routeName) {
             case 'Activity':
                 title = '活动管理';
+                break;
+            case 'Information':
+                title = '通知公告';
                 break;
             case 'ScoreRank':
                 title = '积分排名';

@@ -1,7 +1,9 @@
 import React from 'react';
 import ActingActivity from './ActingActivity';
 import PlanningActivity from './PlanningActivity';
-import { createMaterialTopTabNavigator, createAppContainer } from 'react-navigation';
+import { createMaterialTopTabNavigator } from 'react-navigation';
+import CameraScreen from '../../components/CameraScreen';
+import NavigationUtils from "../navigation/NavigationUtils";
 
 const activityTopBar = createMaterialTopTabNavigator({
     ActingActivity: {
@@ -16,5 +18,6 @@ const activityTopBar = createMaterialTopTabNavigator({
             title: '计划中'
         }
     }
-},{});
+},{
+});
 export default activityTopBar;
