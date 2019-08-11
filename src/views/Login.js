@@ -8,10 +8,9 @@ import {
     Modal,
     ActivityIndicator,
     Dimensions,
-    Image, ScrollView
+    Image, StatusBar
 } from "react-native";
-import {InputItem, Icon, List, Toast,Button} from '@ant-design/react-native';
-import {IconFill, IconOutline} from "@ant-design/icons-react-native";
+import {InputItem, Button} from '@ant-design/react-native';
 import {store} from '../redux/store';
 import {api} from "../api";
 
@@ -97,7 +96,6 @@ export default class Login extends React.Component {
                 timer = null;
                 status = 1;
                 setTimeout(()=>{
-                    this.setState({loginLoading:false})
                     if (resJson.code == 200) {
                         this.redux.dispatch({
                             type: 'SET_TOKEN',
@@ -121,6 +119,7 @@ export default class Login extends React.Component {
                             this.setModalVisible(false)
                         }, 1500)
                     }
+                    this.setState({loginLoading:false})
                 },1000)
 
             }
@@ -132,12 +131,12 @@ export default class Login extends React.Component {
                 timer = null;
                 status = 1;
                 setTimeout(()=> {
-                    this.setState({loginLoading: false})
                     this.setState({showMessage: '网络错误'})
                     this.setModalVisible(true)
                     setTimeout(() => {
                         this.setModalVisible(false)
                     }, 1500)
+                    this.setState({loginLoading: false})
                     console.error(error)
                 },1000)
             }
@@ -161,101 +160,95 @@ export default class Login extends React.Component {
         let btnWidth = btnHeight*7
         let inputTop = height / 24
         let jrFontSize = parseInt(jrWidth/10)
-        return (
-            <View style={{marginTop:inputTop}}>
-                <ScrollView
-                    automaticallyAdjustContentInsets={false}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <View style={{
-                        height: tHeight,
+        return [
+            <StatusBar/>,
+            <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent:'center'}}>
+                <View style={{
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlignVertical: 'center',
+                }}>
+                    <Image resizeMode='stretch' source={require('../static/drawable-xxxhdpi/组10.png')}
+                           style={{height: topHeight, width: topWidth}}/>
+                    <View style={{width:jrWidth,
                         textAlign: 'center',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        textAlignVertical: 'center',
-                    }}>
-                        <Image source={require('../static/drawable-xxxhdpi/组10.png')}
-                               style={{height: topHeight, width: topWidth}}/>
-                        <View style={{width:jrWidth,
-                            textAlign: 'center',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            textAlignVertical: 'center',}}>
-                            <Text style={{fontWeight: "500",fontSize:jrFontSize,  marginTop: 20}}>句容市智慧党建</Text>
-                        </View>
+                        textAlignVertical: 'center',}}>
+                        <Text style={{color: '#434343', fontWeight: "500",fontSize:20, marginTop: 25}}>句容市智慧党建</Text>
                     </View>
-                    <View style={{width:"80%",height:mHeight,marginLeft:"10%"}}>
-                        <View style={{}}>
-                            <InputItem
-                                clear
-                                value={this.state.name}
-                                onChange={(value: any) => {
-                                    this.setState({
-                                        name: value,
-                                    });
-                                }}
-                                placeholder="输入用户名"
-                            >
-                                <Image source={require('../static/drawable-xxxhdpi/头像.png')} style={{height:34,width:33}}/>
-                            </InputItem>
-                        </View>
-                        <View style={{marginTop:20}}>
-                            <InputItem
-                                clear
-                                type="password"
-                                value={this.state.password}
-                                onChange={(value: any) => {
-                                    this.setState({
-                                        password: value,
-                                    });
-                                }}
-                                placeholder="输入密码"
-                            >
-                                <Image source={require('../static/drawable-xxxhdpi/密码.png')} style={{height:34,width:25.5}}/>
-                            </InputItem>
-                        </View>
+                </View>
+                <View style={{width:"100%",marginTop: 20,padding: 30}}>
+                    <View style={{}}>
+                        <InputItem
+                            clear
+                            value={this.state.name}
+                            labelNumber={2}
+                            onChange={(value: any) => {
+                                this.setState({
+                                    name: value,
+                                });
+                            }}
+                            placeholder="输入用户名"
+                        >
+                            <Image resizeMode='stretch' source={require('../static/drawable-xhdpi/头像.png')} style={{width: 20,height: 20}}/>
+                        </InputItem>
                     </View>
-                    <View style={{ textAlign: 'center', alignItems: 'center', }}>
-                        <Button
-                            style={{marginTop: btnTop,height:btnHeight,width:btnWidth,}}
-                            onPress={this.submit}
-                            type="primary"
-                        ><Text style={{fontSize:25}}>立即登录</Text></Button>
+                    <View style={{marginTop:30}}>
+                        <InputItem
+                            clear
+                            type="password"
+                            value={this.state.password}
+                            labelNumber={2}
+                            onChange={(value: any) => {
+                                this.setState({
+                                    password: value,
+                                });
+                            }}
+                            placeholder="输入密码"
+                        >
+                            <Image source={require('../static/drawable-xhdpi/密码.png')} style={{width: 19,height: 24,marginRight: 0}}/>
+                        </InputItem>
                     </View>
-                </ScrollView>
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={this.state.modalVisible}
+                    <Button
+                        style={{width: '100%', marginTop: 100}}
+                        onPress={this.submit}
+                        type="primary"
+                    ><Text style={{fontSize: 16}}>立即登录</Text></Button>
+                </View>
+            </View>,
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={this.state.modalVisible}
+            >
+                <View style={styleScope.overMes}>
+                    <Text style={{
+                        textAlign: 'center',
+                        fontSize: 20,
+                        marginTop: 10,
+                        color: 'white'
+                    }}>{this.state.showMessage}</Text>
+                </View>
+            </Modal>,
+            <Modal
+            animationType="fade"
+            transparent={true}
+            visible={this.state.loginLoading}
                 >
-                    <View style={styleScope.overMes}>
-                        <Text style={{
-                            textAlign: 'center',
-                            fontSize: 20,
-                            marginTop: 10,
-                            color: 'white'
-                        }}>{this.state.showMessage}</Text>
-                    </View>
-                </Modal>
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={this.state.loginLoading}
-                >
-                    <View style={{ flex: 1,
-                        textAlign:'center',
-                        alignItems:'center',
-                        justifyContent:'center',
-                        textAlignVertical:'center',
-                        backgroundColor: 'white',
-                        opacity: 0.8,
-                    }}>
-                        <ActivityIndicator size="large" color="#0000ff" />
-                    </View>
-                </Modal>
-            </View>
-        )
+                <View style={{ flex: 1,
+                textAlign:'center',
+                alignItems:'center',
+                justifyContent:'center',
+                textAlignVertical:'center',
+                backgroundColor: 'white',
+                opacity: 0.8,
+            }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                        </View>
+            </Modal>
+        ]
     }
 }
 

@@ -5,7 +5,7 @@ import LinearGradient from "react-native-linear-gradient";
 import color from '../styles/color';
 const NAV_BAR_ANDROID_HEIGHT = 50;
 const NAV_BAR_IOS_HEIGHT = 44;
-const STATUS_BAR_HEIGHT = DeviceInfo.isIPhoneX_deprecated ? 30 : 0;
+const STATUS_BAR_HEIGHT = DeviceInfo.isIPhoneX_deprecated ? 30 : 20;
 const StatusBarShape = {
     barStyle: PropTypes.oneOf(['light-content', 'default']),
     hidden: PropTypes.bool,
