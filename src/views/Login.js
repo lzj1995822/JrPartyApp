@@ -49,7 +49,7 @@ export default class Login extends React.Component {
             modalVisible: false,
             showMessage: '登陆成功',
             token: '',
-            loginLoading:false
+            loginLoading: false
         }
 
         this.submit = this.submit.bind(this);
@@ -66,15 +66,12 @@ export default class Login extends React.Component {
         let status = 0; // 0 等待 1 完成 2 超时
         //设置连接超时时间
         let timer = setTimeout(() => {
+            console.log("chuli")
             if (status === 0) {
                 status = 2;
-                timer = null;
-                this.setState({loginLoading:false})
-                this.setState({showMessage: '连接超时'})
-                this.setModalVisible(true)
-                setTimeout(() => {
-                    this.setModalVisible(false)
-                }, 1500)
+                Alert.alert("提示","连接超时！",  [{text: '确定', onPress: () => {
+                        this.setState({loginLoading:false})
+                    } }]);
             }
         }, 5000);
 
@@ -93,57 +90,40 @@ export default class Login extends React.Component {
             //链接没超时
             if (status !== 2) {
                 clearTimeout(timer);
-                timer = null;
                 status = 1;
-                setTimeout(()=>{
-                    if (resJson.code == 200) {
-                        this.redux.dispatch({
-                            type: 'SET_TOKEN',
-                            value: resJson.content.token
-                        })
-                        this.redux.dispatch({
-                            type: 'SET_USER',
-                            value: resJson.content.user
-                        })
-                        this.setState({showMessage: '登陆成功'})
-                        this.setModalVisible(true)
-                        this.timer = setTimeout(() => {
-                            const {navigation} = this.props;
-                            navigation.navigate("Main");
-                            clearTimeout(this.timer);
-                        }, 1000)
-                    } else {
-                        this.setState({showMessage: '用户名或密码错误'})
-                        this.setModalVisible(true)
-                        setTimeout(() => {
-                            this.setModalVisible(false)
-                        }, 1500)
-                    }
-                    this.setState({loginLoading:false})
-                },1000)
-
+                if (resJson.code == 200) {
+                    this.redux.dispatch({
+                        type: 'SET_TOKEN',
+                        value: resJson.content.token
+                    })
+                    this.redux.dispatch({
+                        type: 'SET_USER',
+                        value: resJson.content.user
+                    })
+                    const {navigation} = this.props;
+                    this.setState({loginLoading:false});
+                    navigation.navigate("Main");
+                } else {
+                    console.log('提示，，')
+                    this.setState({loginLoading:false});
+                    Alert.alert("提示","用户名或密码错误！",  [{text: '确定', onPress: null}]);
+                }
             }
             return resJson.data;
         }).catch((error) => {
             //链接没超时
             if (status !== 2) {
                 clearTimeout(timer);
-                timer = null;
                 status = 1;
-                setTimeout(()=> {
-                    this.setState({showMessage: '网络错误'})
-                    this.setModalVisible(true)
-                    setTimeout(() => {
-                        this.setModalVisible(false)
-                    }, 1500)
-                    this.setState({loginLoading: false})
-                    console.error(error)
-                },1000)
+                this.setState({loginLoading: false})
+                Alert.alert("提示","网络连接失败！",  [{text: '确定', onPress: null }]);
+                console.error(error)
             }
         })
     }
 
     render() {
+        console.log(this.state.loginLoading,"sds")
         const designWidth = 128
         const designHeight = 98
         let bl = designWidth / designHeight
@@ -219,34 +199,20 @@ export default class Login extends React.Component {
                 </View>
             </View>,
             <Modal
-                animationType="fade"
-                transparent={true}
-                visible={this.state.modalVisible}
-            >
-                <View style={styleScope.overMes}>
-                    <Text style={{
-                        textAlign: 'center',
-                        fontSize: 20,
-                        marginTop: 10,
-                        color: 'white'
-                    }}>{this.state.showMessage}</Text>
-                </View>
-            </Modal>,
-            <Modal
             animationType="fade"
             transparent={true}
             visible={this.state.loginLoading}
                 >
                 <View style={{ flex: 1,
-                textAlign:'center',
-                alignItems:'center',
-                justifyContent:'center',
-                textAlignVertical:'center',
-                backgroundColor: 'white',
-                opacity: 0.8,
-            }}>
-                <ActivityIndicator size="large" color="#0000ff" />
-                        </View>
+                    textAlign:'center',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    textAlignVertical:'center',
+                    backgroundColor: 'white',
+                    opacity: 0.8,
+                }}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
             </Modal>
         ]
     }
