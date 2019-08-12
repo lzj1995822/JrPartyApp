@@ -9,7 +9,7 @@ import {
     ScrollView,
     ImageBackground,
     Alert,
-    Modal, Dimensions
+    Modal, Dimensions, Platform, BackHandler
 } from "react-native";
 import { WebView } from 'react-native-webview';
 import {Flex, Carousel, List, NoticeBar, SearchBar} from '@ant-design/react-native';
@@ -53,6 +53,43 @@ const styleScope = StyleSheet.create({
         marginTop: 5,
     }
 });
+
+const BaseScript =  `
+    (function () {
+    var obj=document.getElementsByTagName("span");
+    for(i=0;i<obj.length;i++){
+    obj[i].style.fontSize='40px'
+    obj[i].style.textIndent='80px',
+    obj[i].style.lineHeight='70px'
+    if(obj[i].style.color){
+     while(obj[i].hasChildNodes()) 
+    {
+        obj[i].removeChild(obj[i].firstChild);
+    }
+    }
+    }
+    var objp=document.getElementsByTagName("p");
+    for(i=0;i<objp.length;i++){
+    objp[i].style.textIndent='80px',
+    objp[i].style.lineHeight='70px'
+    }
+        var height = null;
+        function changeHeight() {
+          if (document.body.scrollHeight != height) {
+           var _sh=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight); 
+           var _ch=Math.max(document.body.clientHeight,document.documentElement.clientHeight); 
+            height = Math.max(_sh,_ch);
+            if (window.ReactNativeWebView.postMessage) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'setHeight',
+                height: height,
+              }))
+            }
+          }
+        }
+        setTimeout(changeHeight, 300);
+    } ())
+    `
 const carouselStyles = StyleSheet.create({
     wrapper: {
         backgroundColor: '#fff',
@@ -88,7 +125,8 @@ export default class HomePage extends React.Component {
             modalVisible: false,
             partyNewsDetail: '',
             selectNews: {},
-            partyNewsImg:[]
+            partyNewsImg:[],
+            webHeight:500
         };
         this.fetchPartyBuild = this.fetchPartyBuild.bind(this);
         this.fetchNotice = this.fetchNotice.bind(this);
@@ -179,17 +217,37 @@ export default class HomePage extends React.Component {
     }
 
     showModal(is, val) {
-        console.log(val.nr)
         this.setState({modalVisible: is, selectNews: val})
         this.state.modalVisible = is
+        this.setState({modalVisible:is})
         if (this.state.modalVisible == true) {
             // let reg = /<\/?.+?\/?>/g;
             // this.state.partyNewsDetail = val.nr.replace(reg, '')
-            this.state.partyNewsDetail = val.nr
+            let str = `<div style="font-size: 70px; font-weight: 500; color: #444;margin-bottom: 20px; margin-top: 10px;text-align:center">` +
+                    val.bt+`</div>`+
+                `<div style="font-size:42px;color: #898989;text-align:center">类型:`+val.fl+`  阅读量:`+val.ydl+`  时间:`+val.createtime+`</div>`
+                +val.nr
+            this.setState({partyNewsDetail:str})
         } else {
-            this.state.partyNewsDetail = null
+            this.setState({partyNewsDetail:null})
         }
-        console.log(this.state.modalVisible)
+    }
+
+    /**
+     * web端发送过来的交互消息
+     */
+    onMessage (event) {
+        try {
+            const action = JSON.parse(event.nativeEvent.data)
+            if (action.type === 'setHeight' && action.height > 0) {
+                console.log(action.height,123)
+                this.setState({ webHeight: action.height})
+                // this.state.webHeight = action.height *160/Dimensions.get('window').scale
+            }
+            console.log(this.state)
+        } catch (error) {
+            // pass
+        }
     }
 
     render() {
@@ -314,12 +372,15 @@ export default class HomePage extends React.Component {
                     transparent={false}
                     visible={this.state.modalVisible}
                     onRequestClose={() => {
-                        alert("Modal has been closed.")
+                        this.setState({modalVisible: false})
                     }}
                 >
                     <NavigationBar leftButton={
                         <TouchableOpacity onPress={() => {
                             this.setState({modalVisible: false})
+                            this.setState({partyNewsDetail:null})
+                            this.state.partyNewsDetail = null
+
                         }}>
                             <AntDesign name='left' size={26} style={{color: 'white'}}/>
                         </TouchableOpacity>}
@@ -333,17 +394,19 @@ export default class HomePage extends React.Component {
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}
                     >
-                  <View style={{width:'96%',marginLeft:'2%'}}>
-                    <Text style={{
-                    fontSize: 25, fontWeight: '500', color: '#444', marginBottom: 10, marginTop: 5,textAlign:"center"}}>
-                    {this.state.selectNews.bt}</Text>
-                  </View>
-                    <View style={{width:'96%',marginLeft:'2%'}}><Text style={{color: '#898989',textAlign:"center"}}>类型:{this.state.selectNews.fl}  阅读量:{this.state.selectNews.ydl}  时间:{this.state.selectNews.createtime}</Text></View>
                         <WebView
-                            style={{height:winHeight-200}}
-                            scrollEnabled={false}
+                            injectedJavaScript={BaseScript}
+                            style={{ height: Dimensions.get('window').height-100}}
+                            scrollEnabled = {true}
+                            automaticallyAdjustContentInsets = {true}
+                            bounces = {false}
+                            startInLoadingState={true}
                             source={{html:this.state.partyNewsDetail}}
-                        ></WebView>
+                            decelerationRate='normal'
+                            scalesPageToFit = {true}
+                            javaScriptEnabled = {true} // 仅限Android平台。iOS平台JavaScript是默认开启的。
+                            onMessage={this.onMessage.bind(this)}
+                        />
 
                     </ScrollView></Modal>
             </View>
