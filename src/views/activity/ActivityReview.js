@@ -266,8 +266,11 @@ export default class ActivityReview extends React.Component {
                 [
                     {text: '确认', onPress: () => {
                             this.setState({
-                                modalVis: false
+                                modalVis: false,
+                                activityList: []
                             })
+                            this.page = 1;
+                            this.fetchActivityData();
                         }},
                 ],
             )
