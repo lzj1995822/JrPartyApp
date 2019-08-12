@@ -338,11 +338,11 @@ export default class Mine extends React.Component {
         let noticeNavigationBar = <NavigationBar leftButton={noticeButton} linerGradient={true} title='消息中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         return (
             <View>
-                <ScrollView
+               {/* <ScrollView
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
-                >
+                >*/}
                     <View>
                     <ImageBackground
                     source={require('../../static/drawable-xxxhdpi/banner.png')}
@@ -364,7 +364,7 @@ export default class Mine extends React.Component {
                         <Image source={require('../../static/img/blue.jpg')} style={styles.avator}/>
                         <Text style={styles.userName}>{this.state.user.name}</Text>
                         <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
-                        <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 22,top:10,borderRadius:45,fontSize:14}}>
+                        <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,borderRadius:45,fontSize:14}}>
                             <Flex>
                                 <Image source={require('../../static/img/xing.png')} style={{width:16,height:14.45,}}/>
                                 <Text>&nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}</Text>
@@ -416,9 +416,9 @@ export default class Mine extends React.Component {
                         <Text style={{fontSize:16}}>关于句容党建</Text>
                     </Item>
                 </List>
-                <Button   type="primary" style={{marginRight: 10,marginLeft:10 ,marginTop:30,fontSize:16}} onPress={() => { this.logout();}}>退出</Button>
+                <Button   type="primary" style={{marginRight: 10,marginLeft:10 ,marginTop:30,fontSize:16,marginBottom:50}} onPress={() => { this.logout();}}>退出</Button>
                     </View>
-                </ScrollView>
+          {/*      </ScrollView>*/}
                 <Modal animationType="slide" transparent={false} visible={this.state.pswModalVisible} onRequestClose={() => {this.setPswModalVisible(false);}}>
                     {pswNavigationBar}
                     <InputItem clear type="password" value={this.state.password} placeholder="请输入密码" style={{fontSize:14}}
