@@ -184,10 +184,10 @@ export default class ActingActivity extends React.Component {
             this.fetchPhonePic(item);
         }
     }
-    renderItem = (item) => {
+    renderItem = (item, index) => {
         let logo = item.taskType === 'Party' ? require('../../static/img/party-logo.png') : require('../../static/img/learning-logo.png');
         return (
-                <View style={styles.activityItem} key={item.id}>
+                <View style={styles.activityItem}>
                         <Shadow cornerRadius={7} opacity={0.3} elevation={5} style={{margin: 10, width: width-20, fontSize: 14}} >
                             <TouchableOpacity onPress={() => {this.showModal(item)}}>
                             <Card>
@@ -361,7 +361,7 @@ export default class ActingActivity extends React.Component {
                      return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
                  });
                  return (
-                     <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
+                     <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
                         <ScrollView horizontal={true}>
                             <Flex style={{overflowX: 'scroll'}}>
                                 {images}
@@ -454,6 +454,7 @@ export default class ActingActivity extends React.Component {
             })
         });
         let timer = setTimeout(() => {
+            console.log('还在压缩')
             if (successInt === images.length) {
                 let parActivityObj = this.state.currentRow;
                 this.uploadFiles(formData).then(files => {
@@ -476,6 +477,7 @@ export default class ActingActivity extends React.Component {
                     }).then(res => res.json()).then(resp => {
                         clearTimeout(timer);
                         this.setState({executeLoading: false, files: []});
+                        console.log(this.state);
                         Alert.alert(
                             '提示',
                             '提交成功!',
@@ -496,6 +498,7 @@ export default class ActingActivity extends React.Component {
         }, 1000);
     }
     uploadFiles(formData) {
+        console.log('上传文件')
         let url = api + '/api/identity/accessory/singleBatch';
         return fetch(url, {
             method: 'POST',
@@ -506,6 +509,17 @@ export default class ActingActivity extends React.Component {
             body: formData
         }).then(res => res.json()).then(resp => resp.content)
             .catch(e => {
+                Alert.alert(
+                    '提示',
+                    '上传失败，请重新上传!',
+                    [
+                        {text: '确认', onPress: () => {
+                                this.setState({
+                                    executeLoading: false
+                                })
+                            }},
+                    ],
+                )
                 console.log(e,"上传失败")
             })
     }

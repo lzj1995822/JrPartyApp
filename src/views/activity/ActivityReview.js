@@ -187,7 +187,7 @@ export default class ActivityReview extends React.Component {
     renderItem = (item) => {
         let logo = item.taskType === 'Party' ? require('../../static/img/party-logo.png') : require('../../static/img/learning-logo.png');
         return (
-            <View style={styles.activityItem} key={item.id}>
+            <View style={styles.activityItem}>
                 <Shadow cornerRadius={7} opacity={0.3} elevation={5} style={{margin: 10, width: width-20, fontSize: 14}} >
                     <TouchableOpacity onPress={() => {this.showModal(item)}}>
                         <Card>
@@ -411,7 +411,7 @@ export default class ActivityReview extends React.Component {
                 return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
             });
             return (
-                <Accordion.Panel key={item.id} header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
+                <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
                     <ScrollView horizontal={true}>
                         <Flex style={{overflowX: 'scroll'}}>
                             {images}
@@ -421,10 +421,10 @@ export default class ActivityReview extends React.Component {
             )
         });
         let tvPics = this.state.tvPic.map((item) => {
-            return (<Image key={item.id} resizeMode='contain' style={{width: 200, height: 355, margin: 6}} source={{uri: this.handlePhonePath(item.imageURL)}}/>)
+            return (<Image resizeMode='contain' style={{width: 200, height: 355, margin: 6}} source={{uri: this.handlePhonePath(item.imageURL)}}/>)
         })
         let tvPlane =
-            <Accordion.Panel key={'tv-01'} header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`电视端执行记录${this.state.tvPic.length>=1 ? `(${this.state.tvPic[0].replace(/T/g, ' ')})` : ''}`}</Text>}>
+            <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`电视端执行记录${this.state.tvPic.length>=1 ? `(${this.state.tvPic[0].replace(/T/g, ' ')})` : ''}`}</Text>}>
                     {
                         tvPics.length >= 1 ?
                             <ScrollView horizontal={true}>
