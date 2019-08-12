@@ -485,6 +485,9 @@ export default class ActingActivity extends React.Component {
                                     this.setState({
                                         modalVis: false
                                     })
+                                    this.page = 1;
+                                    this.setState({activityList: []})
+                                    this.fetchActivityData();
                                 }},
                             ],
                         )
