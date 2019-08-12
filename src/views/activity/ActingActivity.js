@@ -402,14 +402,13 @@ export default class ActingActivity extends React.Component {
                      <Modal
                             animationType="fade"
                             transparent={true}
-                            visible={this.state.executeLoading}
-                    >
+                            visible={this.state.executeLoading}>
                         <View style={{ flex: 1,
                             textAlign:'center',
                             alignItems:'center',
                             justifyContent:'center',
                             textAlignVertical:'center',
-                            backgroundColor: 'black',
+                            backgroundColor: 'white',
                             opacity: 0.8,
                         }}>
                             <ActivityIndicator size="large" color="#0000ff" />
