@@ -29,17 +29,17 @@ const {width, height} = dimensions.get('window');
 
 const styles = StyleSheet.create({
     avator: {
-        width: 90,
-        height: 90,
+        width: 0.1*height,
+        height: 0.1*height,
         borderRadius: 45,
-        borderColor: '#fff',
+        borderColor: '#52B8F5',
         borderWidth: 3,
     },
     userName: {
-        fontSize: 28,
+        fontSize: 16,
         color: '#FFFFFF',
         fontWeight: 'bold',
-        paddingTop: 20,
+        marginTop: 8,
 
     },
     latestLoginTime: {
@@ -338,29 +338,46 @@ export default class Mine extends React.Component {
         let noticeNavigationBar = <NavigationBar leftButton={noticeButton} linerGradient={true} title='消息中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         return (
             <View>
-                {navigationBar}
                 <ScrollView
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                 >
                     <View>
-
                     <ImageBackground
                     source={require('../../static/drawable-xxxhdpi/banner.png')}
-                    style={{height: 250, width: '100%',alignItems: 'center',justifyContent: 'center'}}
+                    style={{height: 0.32* height, width: '100%',alignItems: 'center',justifyContent: 'center'}}
                     resizeMode="cover"
                 >
-                    <Flex direction='row'  align='stretch' style={{alignItems: 'center',paddingBottom:50}}>
+                        <View style={{marginLeft:0.85 * width,}}>
+                            <Badge dot={this.state.doteVisible}>
+                                <AntDesign
+                                    size={22}
+                                    name={'bells'}
+                                    style={{color: '#fff'}}
+                                    onPress={() => {
+                                        this.setNoticeModalVisible(true);
+                                    }}
+                                />
+                            </Badge>
+                        </View>
+                        <Image source={require('../../static/img/blue.jpg')} style={styles.avator}/>
+                        <Text style={styles.userName}>{this.state.user.name}</Text>
+                        <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
+                        <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 22,marginTop: 8,borderRadius:45}}>
+                            <Image source={require('../../static/img/xing.png')} style={{width:16,height:14}}/>
+                            &nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}
+                        </Tag>
+                  {/*  <Flex direction='row'  align='stretch' style={{alignItems: 'center',paddingBottom:50}}>
                         <View style={{flex: 0.33,alignItems: 'flex-end'}}>
                             <Image source={require('../../static/img/blue.jpg')} style={styles.avator}/>
                         </View>
                         <View style={{marginLeft: 20,flex: 0.66}}>
                             <Flex>
                                  <Text style={styles.userName}>{this.state.user.name}</Text>
-                                {/*<View style={{borderColor: 'blue',display: 'inline-block'}}>*/}
+                                <View style={{borderColor: 'blue',display: 'inline-block'}}>
                                 <Tag textStyle={{color: '#fff'}} style={{backgroundColor: '#67c23a', height: 22, marginTop: 28, marginLeft:10, borderColor: '#67c23a'}}>{this.state.user.roleName.replace(/角色/g, '')}</Tag>
-                                {/*</View>*/}
+                                </View>
                             </Flex>
                             <Flex style={{height: 35}} align='end'>
                                 <AntDesign
@@ -377,9 +394,9 @@ export default class Mine extends React.Component {
                                 <Text style={styles.latestLoginTime}> 最近登录{this.state.user.lastTime.toString().split('.')[0].replace('T',' ')}</Text>
                             </Flex>
                         </View>
-                    </Flex>
+                    </Flex>*/}
                 </ImageBackground>
-                <List renderHeader=' '>
+                <List renderHeader={null}>
                     <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/密码重置.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
                            arrow="horizontal" onPress={this.showAlert.bind(this)}>
                         <Text style={{fontSize:16}}>密码重置</Text>
@@ -397,32 +414,32 @@ export default class Mine extends React.Component {
                         <Text style={{fontSize:16}}>关于句容党建</Text>
                     </Item>
                 </List>
-                <Button style={{marginRight: 10,marginLeft:10 ,marginTop:30}} onPress={() => { this.logout();}}>退出</Button>
+                <Button   type="primary" style={{marginRight: 10,marginLeft:10 ,marginTop:30,fontSize:16}} onPress={() => { this.logout();}}>退出</Button>
                     </View>
                 </ScrollView>
-                <Modal animationType="slide" transparent={false} visible={this.state.pswModalVisible} onRequestClose={() => {alert("Modal has been closed.");}}>
+                <Modal animationType="slide" transparent={false} visible={this.state.pswModalVisible} onRequestClose={() => {this.setPswModalVisible(false);}}>
                     {pswNavigationBar}
-                    <InputItem clear type="password" value={this.state.password} placeholder="请输入密码"
+                    <InputItem clear type="password" value={this.state.password} placeholder="请输入密码" style={{fontSize:14}}
                                onChange={value => {
                                     this.setState({
                                         password: value,
                                     });
                                }}
                     >
-                        密码
+                        <Text style={{fontSize:14}}> 密码</Text>
                     </InputItem>
-                    <InputItem clear type="password" value={this.state.rePassword} placeholder="再次输入密码"
+                    <InputItem clear type="password" value={this.state.rePassword} placeholder="再次输入密码" style={{fontSize:14}}
                                onChange={value => {
                                    this.setState({
                                        rePassword: value,
                                    });
                                }}
                     >
-                        确认密码
+                        <Text style={{fontSize:14}}>确认密码</Text>
                     </InputItem>
-                    <Button type="primary" style={{marginRight: 10,marginLeft:10 }} onPress={() => {this.confirmPsw(this.state.password,this.state.rePassword)}}>确认</Button>
+                    <Button type="primary" style={{marginRight: 10,marginLeft:10 }} onPress={() => {this.confirmPsw(this.state.password,this.state.rePassword)}}><Text style={{fontSize:14}}>确认</Text></Button>
                 </Modal>
-                <Modal animationType="slide" transparent={false} visible={this.state.questionModal} onRequestClose={() => {alert("Modal has been closed.");}}>
+                <Modal animationType="slide" transparent={false} visible={this.state.questionModal} onRequestClose={() => {this.setQuestionModal(false);}}>
                     {questionNavigationBar}
                     <WingBlank>
                         <TextInput
@@ -436,13 +453,13 @@ export default class Mine extends React.Component {
                         <Button type="primary" style={{marginTop:20}} onPress={() => {this.setQuestionModal(false)}}>确认</Button>
                     </WingBlank>
                 </Modal>
-                <Modal animationType="slide" transparent={false} visible={this.state.aboutModal} onRequestClose={() => {alert("Modal has been closed.");}}>
+                <Modal animationType="slide" transparent={false} visible={this.state.aboutModal} onRequestClose={() => {this.setAboutModalVisible(false);}}>
                     {aboutNavigationBar}
                     <Flex direction='row'  align='stretch' style={{alignItems: 'center',paddingBottom:50}}>
-                        <View style={{flex: 0.33}}>
-                            <Image source={require('../../static/img/blue.jpg')} style={{width:120,height:120,marginTop:50,marginLeft:30,borderRadius:5,borderColor:'#eaedf1',borderWidth:1}}/>
+                        <View style={{flex: 1}}>
+                            <Image source={require('../../static/img/blue.jpg')} style={{width:1/4*width,height:1/4*width,marginTop:50,marginLeft:30,borderRadius:5,borderColor:'#eaedf1',borderWidth:1}}/>
                         </View>
-                        <View style={{marginLeft: 40,marginTop:50,flex:0.66}}>
+                        <View style={{marginLeft: 40,marginTop:50,flex:2}}>
                             <Flex>
                                 <Text style={{fontSize:16,color:'#b36d28',height:40}}>句容党建</Text>
                             </Flex>
@@ -456,7 +473,7 @@ export default class Mine extends React.Component {
                         与基层党建工作者基层党员缺乏良好互动的弊端。
                     </Text>
                 </Modal>
-                <Modal  animationType="slide" transparent={false} visible={this.state.noticeModal} onRequestClose={() => {alert("Modal has been closed.");}}>
+                <Modal  animationType="slide" transparent={false} visible={this.state.noticeModal} onRequestClose={() => {this.setNoticeModalVisible(false);}}>
                     {noticeNavigationBar}
                     <View style={{flex: 1, backgroundColor: 'rgb(245, 245, 249)'}}>
                         <FlatList
@@ -526,29 +543,33 @@ export default class Mine extends React.Component {
 
     /*创建布局*/
     _createListItem(item) {
+        let infoUrl = '../../static/img/info-notice.png';
+        let partyUrl = '../../static/img/party-notice.png';
+        let learning = '../../static/img/learning-notice.png';
         return (
             <WingBlank>
                 <TouchableOpacity activeOpacity={0.5}>
                     <View style={{marginTop: 5, backgroundColor: '#fff', padding: 5,marginBottom:5,borderRadius:5}}>
                         <Flex>
                             <Badge dot={item.isRead=='0'}>
-                            <FontAwesome
+                                <Image source={item.type=='information'?require(infoUrl):(item.type=='party'?require(partyUrl):require(learning))} style={{width:50,height:50}}/>
+                           {/* <FontAwesome
                                 size={30}
                                 name={item.type=='information'?'bullhorn':(item.type=='party'?'file-text-o':'circle-o')}
                                 style={{color: '#f66',width:40,padding:5}}
-                            />
+                            />*/}
                             </Badge>
                             <View>
                                 <Flex>
-                                    <Text style={{fontSize: 14,marginBottom: 5, marginTop: 5,marginLeft:10,flex:1 }}>{item.content.split("]")[0].split("[")[1]}</Text>
-                                    <Text style={{fontSize: 12,color:'#444',marginTop:4,marginRight:8,flex:1,textAlign: 'right'}}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+                                    <Text style={{fontSize: 14,marginBottom: 5, marginTop: 5,marginLeft:15,flex:1 }}>{item.content.split("]")[0].split("[")[1]}</Text>
+                                    <Text style={{fontSize: 10,color:'#B6B6B6',marginTop:4,marginRight:12,flex:1,textAlign: 'right'}}>{new Date(item.createdAt).toLocaleDateString()}</Text>
                                 </Flex>
-                                <Text style={{fontSize: 12, marginLeft:10,marginRight:8,lineHeight: 25,color:'#444',width:width-100 }}>{item.content.split("]")[1]}</Text>
+                                <Text style={{fontSize: 10, marginLeft:15,marginRight:8,lineHeight: 18,color:'#B6B6B6',width:width-100 }}>{item.content.split("]")[1]}</Text>
                             </View>
                         </Flex>
-
-                            <Text style={{fontSize: 12,color:'#444',marginTop:4,marginRight:8,textAlign: 'right'}} onPress={()=>{this.editMessage(item)}}>
-                                {item.isRead=='0'?'标为已读':''}</Text>
+                        {item.isRead == '0' ?
+                            <Text style={{fontSize: 10, color: '#B6B6B6', marginTop:2, marginRight: 8, textAlign: 'right'}} onPress={() => {this.editMessage(item)}}>标为已读</Text>:null
+                        }
                     </View>
                 </TouchableOpacity>
             </WingBlank>

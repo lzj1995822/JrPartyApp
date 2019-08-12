@@ -185,7 +185,7 @@ export default class  Information extends React.Component  {
                 keyExtractor={this._extraUniqueKey}
             />
 
-          <Modal animationType={"slide"} transparent={false} visible={this.state.modalVis} onRequestClose={() => {alert("Modal has been closed.")}}>
+          <Modal animationType={"slide"} transparent={false} visible={this.state.modalVis} onRequestClose={() => {this.setModalVis(false,"");}}>
             {informationNavigationBar}
             <ScrollView
                 style={{flex: 1, padding: 10}}
