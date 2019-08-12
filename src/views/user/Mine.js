@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         borderWidth: 3,
     },
     userName: {
-        fontSize: 16,
+        fontSize: 18,
         color: '#FFFFFF',
         fontWeight: 'bold',
         marginTop: 8,
@@ -364,9 +364,11 @@ export default class Mine extends React.Component {
                         <Image source={require('../../static/img/blue.jpg')} style={styles.avator}/>
                         <Text style={styles.userName}>{this.state.user.name}</Text>
                         <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
-                        <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 22,marginTop: 8,borderRadius:45}}>
-                            <Image source={require('../../static/img/xing.png')} style={{width:16,height:14}}/>
-                            &nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}
+                        <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 22,top:10,borderRadius:45,fontSize:14}}>
+                            <Flex>
+                                <Image source={require('../../static/img/xing.png')} style={{width:16,height:14.45,}}/>
+                                <Text>&nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}</Text>
+                            </Flex>
                         </Tag>
                   {/*  <Flex direction='row'  align='stretch' style={{alignItems: 'center',paddingBottom:50}}>
                         <View style={{flex: 0.33,alignItems: 'flex-end'}}>
