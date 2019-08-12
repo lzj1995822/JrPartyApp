@@ -457,6 +457,22 @@ export default class ActivityReview extends React.Component {
                     />
                 </ScrollView>
                 {this.renderModal()}
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={this.state.executeLoading}>
+                    <View style={{ flex: 1,
+                        textAlign:'center',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        textAlignVertical:'center',
+                        backgroundColor: 'white',
+                        opacity: 0.8,
+                    }}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                        <Text>提交中</Text>
+                    </View>
+                </Modal>
             </View>
         )
     }
