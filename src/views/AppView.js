@@ -11,6 +11,8 @@ import {
 import Mine from "./user/Mine";
 import Activity from './activity/Activity';
 import ScoreRank from './score/ScoreRank';
+import ProgressSummary from './ProgressSummary/ProgressSummary';
+import PositionShow from './PositionShow/PositionShow';
 import Information from './information/Information';
 import Login from './Login';
 import Cal from './cal/Cal';
@@ -21,6 +23,7 @@ import NavigationUtils from './navigation/NavigationUtils';
 import colors from '../styles/color';
 import NavigationBar from "./navigation/NavigationBar";
 import CameraScreen from "../components/CameraScreen";
+import OnGoing from './activity/OnGoing';
 
 const THEME_COLOR = colors.THEME_COLOR;
 
@@ -51,6 +54,18 @@ const stack = createStackNavigator({
         navigationOptions: {
             header: null
         }
+    },
+    PositionShow:{
+        screen: PositionShow,
+        navigationOptions: ({ navigation }) => ({
+            headerTitle: '阵地展示',
+        })
+    },
+    ProgressSummary:{
+        screen: ProgressSummary,
+        navigationOptions: ({ navigation }) => ({
+            headerTitle: '进度汇总',
+        })
     },
     Information: {
         screen: Information,
@@ -84,6 +99,12 @@ const stack = createStackNavigator({
             case 'Activity':
                 title = '活动管理';
                 break;
+            case 'PositionShow':
+                title = '阵地展示';
+                break;
+            case 'ProgressSummary':
+                title = '进度汇总';
+                break;
             case 'Information':
                 title = '通知公告';
                 break;
@@ -116,13 +137,13 @@ const tab = createBottomTabNavigator({
         })
     },
     Calendar: {
-        screen: HomePage,
+        screen: OnGoing,
         navigationOptions: ({ navigation }) => ({
             tabBarLabel: "台账"
         })
     },
     Cal: {
-        screen: Cal,
+        screen: OnGoing,
         navigationOptions: ({ navigation }) => ({
             tabBarLabel: "统计"
         })
