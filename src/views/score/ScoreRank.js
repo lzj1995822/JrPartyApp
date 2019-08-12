@@ -54,14 +54,14 @@ export default class ScoreRank extends React.Component {
             pageNow: 0,
             pageSize:10,
             loading: false,
-            myDataIndex:0,
-            myDataExam:0,
+            myDataIndex:'暂无',
+            myDataExam:'暂无',
             flatData: [],
             onEndReachedCalledDuringMomentum:false,
             showFoot:0,
             totalPage:0,
             uerImg:store.getState().user.value.image? {uri:store.getState().user.value.image }:require("../../static/drawable-xxxhdpi/头像-01.png"),
-            orgName:''
+            orgName:store.getState().user.value.organizationName
         }
         this.handleRefresh = this.handleRefresh.bind(this);
         this.handleLoadMore = this.handleLoadMore.bind(this);
@@ -92,7 +92,7 @@ export default class ScoreRank extends React.Component {
         this.state.pageSize = Math.ceil(height/50)-2
         this.state.flatData = []
 
-        let url01 = api + '/api/identity/exaScore/scoreCunPercentAll?page='+pa+'&size='+size+'&sort=desc&year='+2019+''
+        let url01 = api + '/api/identity/exaScore/scoreCunPercentAll?page='+0+'&size='+1000+'&sort=desc&year='+2019+''
         let tokenNew =  store.getState().token.value
         fetch(url01, {
             method: 'POST',
@@ -106,7 +106,7 @@ export default class ScoreRank extends React.Component {
             resJson.content.forEach((item,index)=>{
                 if(item.cun == this.state.orgName){
                     this.setState({myDataExam:item.exam})
-                    this.setState({myDataIndex:index})
+                    this.setState({myDataIndex:index+1})
                 }
             })
         })
@@ -198,15 +198,15 @@ export default class ScoreRank extends React.Component {
     showRankImg(val){
         if(val == 1){
             return (
-            <Image source={require('../../static/drawable-xxxhdpi/第一.png')} style={{height:30,width:22,marginBottom:2}}/>
+            <Image source={require('../../static/drawable-xxxhdpi/第一.png')} style={{height:25,width:18,marginBottom:6}}/>
         )
         }else  if(val == 2){
             return (
-                <Image source={require('../../static/drawable-xxxhdpi/第二.png')} style={{height:30,width:22,marginBottom:2}}/>
+                <Image source={require('../../static/drawable-xxxhdpi/第二.png')} style={{height:25,width:18,marginBottom:6}}/>
             )
         }else  if(val == 3){
             return (
-                <Image source={require('../../static/drawable-xxxhdpi/第三.png')} style={{height:30,width:22,marginBottom:2}}/>
+                <Image source={require('../../static/drawable-xxxhdpi/第三.png')} style={{height:25,width:18,marginBottom:6}}/>
             )
         }else {
             return val
@@ -216,31 +216,31 @@ export default class ScoreRank extends React.Component {
     renderItem(item){
         return (
             <View style={styleScope.borderList}>
-                <View style={{width: "20%", height: 50}} >
-                    <Text style={{ fontSize: 20,
+                <View style={{width: "20%", height: 40}} >
+                    <Text style={{ fontSize: 16,
                         textAlign:'center',
                         alignItems:'center',
                         justifyContent:'center',
                         textAlignVertical:'center',
-                        lineHeight:50
+                        lineHeight:40
                     }}
                           key={item}>{this.showRankImg(item.index+1)}</Text>
                 </View>
-                <View style={{width: "52%", height: 50}} >
+                <View style={{width: "52%", height: 40}} >
                     <Text style={{textAlign:'center',
                         alignItems:'center',
                         justifyContent:'center',
                         textAlignVertical:'center',
-                        lineHeight:50,
-                        fontSize: 20}} key={item}>{item.cun}</Text>
+                        lineHeight:40,
+                        fontSize: 16}} key={item}>{item.cun}</Text>
                 </View>
-                <View style={{width:"25%", height: 50}} >
+                <View style={{width:"25%", height: 40}} >
                     <Text style={{textAlign:'center',
                         alignItems:'center',
                         justifyContent:'center',
                         textAlignVertical:'center',
-                        lineHeight:50,
-                        fontSize: 20,color:'#14BCF5'}} key={item}>{item.exam}</Text>
+                        lineHeight:40,
+                        fontSize: 16,color:'#14BCF5'}} key={item}>{item.exam}</Text>
                 </View>
 
             </View>
@@ -267,14 +267,14 @@ export default class ScoreRank extends React.Component {
                 >
                     <Flex direction='row'  align='stretch' style={{textAlign:'center',alignItems: 'center',justifyContent: 'center',paddingBottom:50}}>
                         <View style={{marginTop:width/7,paddingRight:width/15,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}>
-                            <Text style={{fontSize:parseInt(width/14),color:'white',fontWeight:'300'}}>123</Text>
+                            <Text style={{fontSize:parseInt(width/14),color:'white',fontWeight:'300'}}>{this.state.myDataIndex}</Text>
                             <Text style={{fontSize:parseInt(width/26),color:'white'}}>当前排名</Text>
                         </View>
                         <View style={{}}>
                         <Image source={this.state.uerImg} style={styleScope.avator}/>
                     </View>
                         <View style={{marginTop:width/7,paddingLeft:width/15,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}>
-                            <Text style={{fontSize:parseInt(width/14),color:'white',fontWeight:'300'}}>123</Text>
+                            <Text style={{fontSize:parseInt(width/14),color:'white',fontWeight:'300'}}>{this.state.myDataExam}</Text>
                             <Text style={{fontSize:parseInt(width/26),color:'white'}}>我的分数</Text>
                         </View>
 
@@ -290,7 +290,7 @@ export default class ScoreRank extends React.Component {
                 <Image source={require('../../static/drawable-xxxhdpi/排名.png')} style={{height:25,width:25,marginTop:14}}/>
             </View>
             <View style={{flex: 1, flexDirection: 'row',width: parseInt(width*0.1), height: 50}} >
-                <Text style={{ fontSize: 25,
+                <Text style={{ fontSize: 18,
                     marginLeft:5, justifyContent:'center', textAlignVertical:'center', fontWeight:"500", lineHeight:50
                 }}
                       key="titileO">排名</Text>
@@ -300,7 +300,7 @@ export default class ScoreRank extends React.Component {
             </View>
             <View style={{width: width*0.35, height: 50}} >
                 <Text style={{
-                    marginLeft:5, justifyContent:'center', textAlignVertical:'center', lineHeight:50, fontSize: 25, fontWeight:"500",
+                    marginLeft:5, justifyContent:'center', textAlignVertical:'center', lineHeight:50, fontSize: 18, fontWeight:"500",
                 }} key="titileT">组织名</Text>
             </View>
             <View sryle={{width:width*0.1, height: 50}}>
@@ -312,7 +312,7 @@ export default class ScoreRank extends React.Component {
                     justifyContent:'center',
                     textAlignVertical:'center',
                     lineHeight:50,
-                    fontSize: 25,
+                    fontSize: 18,
                     fontWeight:"500",
                 }}  key="titileTh">分数</Text>
             </View>
