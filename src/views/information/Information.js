@@ -111,7 +111,7 @@ export default class  Information extends React.Component  {
         if(resJson.content.totalPages===0){
           this.setState({
             isLoadMore:false,
-            showFoot:2,
+            showFoot:3,
             informationList:resJson.content.content
           })
         }else{
@@ -238,11 +238,7 @@ export default class  Information extends React.Component  {
    * 创建头部布局
    */
   _createListHeader() {
-    return (
-        <View style={{marginTop:5}}>
-
-        </View>
-    )
+    return null;
   }
 
   /**
@@ -253,7 +249,7 @@ export default class  Information extends React.Component  {
         <View style={styles.footerView}>
           {this.state.showFoot === 1 && <ActivityIndicator/>}
           <Text style={{color: '#444'}}>
-            {this.state.showFoot === 1 ? '正在加载更多数据...' : '没有更多数据了'}
+            {this.state.showFoot === 1 ? '正在加载更多数据...' : (this.state.showFoot === 2 ?'没有更多数据了':null)}
           </Text>
         </View>
     )
@@ -292,9 +288,7 @@ export default class  Information extends React.Component  {
   _createEmptyView() {
     return (
         <View style={{height: '100%', alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={{fontSize: 16}}>
-            暂无列表数据，下拉刷新
-          </Text>
+          <Text style={{fontSize: 16}}>暂无数据</Text>
         </View>
     );
   }
