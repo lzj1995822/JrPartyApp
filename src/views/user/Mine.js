@@ -481,8 +481,8 @@ export default class Mine extends React.Component {
                                 <Text style={{fontSize:14,color:'#999999',height:40,width:'100%'}}>当前版本：1.1</Text>
                             </Flex>
                         </Flex>
-                        <Text style={{fontSize:16,color:'#b36d28',textAlign:'left',lineHeight:30}}>    句容党建App是一款为党的各级党组织和广大党员提供基层党建工作管理、监督、学习和交流的平台。</Text>
-                        <Text style={{fontSize:16,color:'#b36d28',textAlign:'left',lineHeight:30}}>    通过合理有效的大数据分析统计，做到信息及时送达，基层党员声音通过大数据分析 平台分析统计汇总，解决以前层级汇报，效率低下，
+                        <Text style={{fontSize:16,color:'#b36d28',textAlign:'justify',lineHeight:30}}>    句容党建App是一款为党的各级党组织和广大党员提供基层党建工作管理、监督、学习和交流的平台。</Text>
+                        <Text style={{fontSize:16,color:'#b36d28',textAlign:'justify',lineHeight:30}}>    通过合理有效的大数据分析统计，做到信息及时送达，基层党员声音通过大数据分析 平台分析统计汇总，解决以前层级汇报，效率低下，
                             与基层党建工作者基层党员缺乏良好互动的弊端。
                         </Text>
                     </WingBlank>
