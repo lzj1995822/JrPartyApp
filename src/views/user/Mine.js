@@ -470,21 +470,22 @@ export default class Mine extends React.Component {
                 </Modal>
                 <Modal animationType="slide" transparent={false} visible={this.state.aboutModal} onRequestClose={() => {this.setAboutModalVisible(false);}}>
                     {aboutNavigationBar}
-                    <Flex direction='row'  align='stretch' style={{alignItems: 'center',paddingBottom:50}}>
-                        <View style={{flex: 1}}>
-                            <Image source={require('../../static/img/blue.jpg')} style={{width:1/4*width,height:1/4*width,marginTop:50,marginLeft:30,borderRadius:5,borderColor:'#eaedf1',borderWidth:1}}/>
-                        </View>
-                        <View style={{marginLeft: 40,marginTop:50,flex:2}}>
-                            <Flex direction='column'>
-                                <Text style={{fontSize:16,color:'#b36d28',height:40}}>句容党建</Text>
-                                <Text style={{fontSize:16,color:'#b36d28',height:40}}>当前版本：1.1</Text>
+                    <WingBlank>
+                        <Flex direction='row' justify="center" align="start" style={{height: 120, marginTop: 40, marginBottom: 20}}>
+                            <View style={{flex: 0.45, alignItems: 'center'}}>
+                                <Image source={require('../../static/img/template.png')} style={{width:90,height:90,borderRadius:20,borderColor:'#eaedf1',borderWidth:1,}}/>
+                            </View>
+                            <View style={{flex: 0.1}}></View>
+                            <Flex direction='column' align="center" style={{flex: 0.45,marginLeft: -30,marginTop: 10}}>
+                                <Text style={{fontSize:18,color:'#000',height:40,width:'100%'}}>句容党建</Text>
+                                <Text style={{fontSize:14,color:'#999999',height:40,width:'100%'}}>当前版本：1.1</Text>
                             </Flex>
-                        </View>
-                    </Flex>
-                    <Text style={{fontSize:16,color:'#b36d28',marginLeft:30,marginRight:30,lineHeight:30}}>    句容党建App是一款为党的各级党组织和广大党员提供基层党建工作管理、监督、学习和交流的平台。</Text>
-                    <Text style={{fontSize:16,color:'#b36d28',marginLeft:30,marginRight:30,lineHeight:30}}>    通过合理有效的大数据分析统计，做到信息及时送达，基层党员声音通过大数据分析 平台分析统计汇总，解决以前层级汇报，效率低下，
-                        与基层党建工作者基层党员缺乏良好互动的弊端。
-                    </Text>
+                        </Flex>
+                        <Text style={{fontSize:16,color:'#b36d28',textAlign:'left',lineHeight:30}}>    句容党建App是一款为党的各级党组织和广大党员提供基层党建工作管理、监督、学习和交流的平台。</Text>
+                        <Text style={{fontSize:16,color:'#b36d28',textAlign:'left',lineHeight:30}}>    通过合理有效的大数据分析统计，做到信息及时送达，基层党员声音通过大数据分析 平台分析统计汇总，解决以前层级汇报，效率低下，
+                            与基层党建工作者基层党员缺乏良好互动的弊端。
+                        </Text>
+                    </WingBlank>
                 </Modal>
                 <Modal  animationType="slide" transparent={false} visible={this.state.noticeModal} onRequestClose={() => {this.setNoticeModalVisible(false);}}>
                     {noticeNavigationBar}
