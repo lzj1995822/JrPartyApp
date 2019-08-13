@@ -286,8 +286,8 @@ export default class HomePage extends React.Component {
                         <View
                             style={carouselStyles.containerHorizontal}
                         >
-                            <ImageBackground source={require('../../static/carousel/example.png')}
-                                             style={{width: '100%', height: '100%', resizeMode: 'cover'}}>
+                            <ImageBackground source={require('../../static/drawable-xxhdpi/dj_banner.png')}
+                                             style={{width: '100%', height: '100%', resizeMode: 'contain'}}>
 
                             </ImageBackground>
                         </View>
