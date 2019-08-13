@@ -57,7 +57,7 @@ export default class ScoreRank extends React.Component {
             onEndReachedCalledDuringMomentum:false,
             showFoot:0,
             totalPage:0,
-            uerImg:store.getState().user.value.image? {uri:store.getState().user.value.image }:require("../../static/drawable-xxxhdpi/头像-01.png"),
+            uerImg:store.getState().user.value.image? {uri:store.getState().user.value.image }:require("../../static/img/partyPortrait.jpg"),
             orgName:store.getState().user.value.organizationName
         }
         this.handleRefresh = this.handleRefresh.bind(this);
@@ -120,7 +120,6 @@ export default class ScoreRank extends React.Component {
             },
             body: JSON.stringify({})
         }).then((response) => response.json()).then((resJson) => {
-            console.log(resJson.content)
             if(resJson.content){
                 this.state.totalPage = Math.ceil(resJson.content[0].total/size)
             }else {
@@ -141,12 +140,10 @@ export default class ScoreRank extends React.Component {
     }
 
     handleLoadMore(){
-        console.log(this.state.flatData)
         if (!this.state.onEndReachedCalledDuringMomentum) {
             this.state.onEndReachedCalledDuringMomentum = true;
             let pp = this.state.pageNow
             pp = pp+1
-            console.log(pp,555)
             this.state.pageNow = pp
             this.setState({
                 pageNow: pp,
@@ -155,7 +152,6 @@ export default class ScoreRank extends React.Component {
             })
             let pa = this.state.pageNow
             let size = this.state.pageSize
-            console.log(pa,size)
             let url = api + '/api/identity/exaScore/scoreCunPercentAll?page=' + pa + '&size=' + size + '&sort=desc&year=' + 2019 + ''
             let tokenNew = store.getState().token.value
             fetch(url, {
@@ -168,7 +164,6 @@ export default class ScoreRank extends React.Component {
                 body: JSON.stringify({})
             }).then((response) => response.json()).then((resJson) => {
                 if(this.state.pageNow+1<this.state.totalPage){
-                    console.log(6666666)
                     this.state.showFoot = 1
                 }else {
                     this.state.showFoot = 2
