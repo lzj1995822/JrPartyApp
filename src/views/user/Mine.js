@@ -594,7 +594,7 @@ export default class Mine extends React.Component {
         return (
             <View style={{height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontSize: 16}}>
-                    暂无列表数据，下拉刷新
+                    没有更多数据了
                 </Text>
             </View>
         );
