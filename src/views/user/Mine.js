@@ -214,27 +214,36 @@ export default class Mine extends React.Component {
             },
             body: JSON.stringify({districtId:this.state.user.districtId})
         }).then((response) => response.json()).then((resJson) => {
-            if (this.state.currentPage === 0) {
+            if(resJson.content.totalPages===0){
                 this.setState({
-                    isLoadMore: false,
-                    messageList: resJson.content.content
+                    isLoadMore:false,
+                    showFoot:3,
+                    informationList:resJson.content.content
                 })
-            } else {
-                this.setState({
-                    isLoadMore: false,
-                    // 数据源刷新 add
-                    messageList: this.state.messageList.concat(resJson.content.content)
-                });
-                if (this.state.currentPage <= resJson.content.totalPages-1) {
+            }else{
+                if (this.state.currentPage === 0) {
                     this.setState({
-                        showFoot: 1
+                        isLoadMore: false,
+                        messageList: resJson.content.content
                     })
-                } else if (this.state.currentPage > resJson.content.totalPages-1) {
+                } else {
                     this.setState({
-                        showFoot: 2
-                    })
+                        isLoadMore: false,
+                        // 数据源刷新 add
+                        messageList: this.state.messageList.concat(resJson.content.content)
+                    });
+                    if (this.state.currentPage <= resJson.content.totalPages-1) {
+                        this.setState({
+                            showFoot: 1
+                        })
+                    } else if (this.state.currentPage > resJson.content.totalPages-1) {
+                        this.setState({
+                            showFoot: 2
+                        })
+                    }
                 }
             }
+
         }).catch((error) => {
             console.error(error)
         })
@@ -453,7 +462,10 @@ export default class Mine extends React.Component {
                           editable = {true}
                           maxLength = {400}
                         />
-                        <Button type="primary" style={{marginTop:20}} onPress={() => {this.setQuestionModal(false)}}>确认</Button>
+                        <Button type="primary" style={{marginTop:20}} onPress={() => {
+                            Alert.alert("提交成功！","",[
+                                {text: '我知道了', onPress: () =>  this.setQuestionModal(false)},
+                            ],)}}>确认</Button>
                     </WingBlank>
                 </Modal>
                 <Modal animationType="slide" transparent={false} visible={this.state.aboutModal} onRequestClose={() => {this.setAboutModalVisible(false);}}>
@@ -535,7 +547,7 @@ export default class Mine extends React.Component {
             <View style={styles.footerView}>
                 {this.state.showFoot === 1 && <ActivityIndicator/>}
                 <Text style={{color: '#444',textAlign: 'center'}}>
-                    {this.state.showFoot === 1 ? '正在加载更多数据...' : '没有更多数据了'}
+                    {this.state.showFoot === 1 ? '正在加载更多数据...' : (this.state.showFoot === 2 ?'没有更多数据了':null)}
                 </Text>
             </View>
         )
@@ -590,7 +602,7 @@ export default class Mine extends React.Component {
 
     /*下拉刷新*/
     _onRefresh = () => {
-        // 不处于 下拉刷新
+        // 不处于下拉刷新
         if (!this.state.isRefresh) {
             // this.state.currentPage=0;
             this.showMessageList();
@@ -600,7 +612,7 @@ export default class Mine extends React.Component {
     /* 加载更多*/
     _onLoadMore() {
         // 不处于正在加载更多 && 有下拉刷新过，因为没数据的时候 会触发加载
-        if (!this.state.isLoadMore && this.state.messageList.length > 0 && this.state.showFoot !== 2) {
+        if (!this.state.isLoadMore && (this.state.messageList.length > 0) && this.state.showFoot !== 2) {
             this.state.currentPage ++;
             this.showMessageList();
         }

@@ -68,7 +68,7 @@ export default class  Information extends React.Component  {
         if(resJson.content.totalPages===0){
           this.setState({
             isLoadMore:false,
-            showFoot:2,
+            showFoot:3,
             informationList:resJson.content.content
           })
         }else{
@@ -116,7 +116,6 @@ export default class  Information extends React.Component  {
           })
         }else{
           if (this.state.currentPage === 0) {
-            console.log(resJson.content.totalPages,"ggggg")
             if(resJson.content.totalPages==0){
               this.setState({shoFoot:2})
             }
@@ -125,7 +124,6 @@ export default class  Information extends React.Component  {
               informationList: resJson.content.content
             })
           } else {
-            console.log("加载更多")
             this.setState({
               isLoadMore: false,
               // 数据源刷新 add
@@ -288,7 +286,7 @@ export default class  Information extends React.Component  {
   _createEmptyView() {
     return (
         <View style={{height: '100%', alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={{fontSize: 16}}>暂无数据</Text>
+          <Text style={{fontSize: 16}}>没有更多数据了</Text>
         </View>
     );
   }
