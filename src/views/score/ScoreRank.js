@@ -24,15 +24,12 @@ import {Flex} from "@ant-design/react-native";
 var {height,width} =  Dimensions.get('window');
 const styleScope = StyleSheet.create({
     borderList:{
-        flex: 1,
-        flexDirection: 'row',
         marginBottom: 5,
         borderWidth: 1,
         borderColor:'#ebeef5',
         borderRadius: 4,
         borderStyle: "solid",
-        width:'98%',
-        marginLeft:'1%',
+        width:'100%',
         shadowColor:'black'
     },
     avator: {
@@ -209,40 +206,40 @@ export default class ScoreRank extends React.Component {
                 <Image source={require('../../static/drawable-xxxhdpi/第三.png')} style={{height:25,width:18,marginBottom:6}}/>
             )
         }else {
-            return val
+            return <Text style={{ fontSize: 16,
+                textAlign:'center',
+                alignItems:'center',
+                justifyContent:'center',
+                textAlignVertical:'center',
+                lineHeight:40
+            }}>{val}</Text>
         }
     }
 
     renderItem(item){
         return (
             <View style={styleScope.borderList}>
-                <View style={{width: "20%", height: 40}} >
-                    <Text style={{ fontSize: 16,
-                        textAlign:'center',
-                        alignItems:'center',
-                        justifyContent:'center',
-                        textAlignVertical:'center',
-                        lineHeight:40
-                    }}
-                          key={item}>{this.showRankImg(item.index+1)}</Text>
-                </View>
-                <View style={{width: "52%", height: 40}} >
-                    <Text style={{textAlign:'center',
-                        alignItems:'center',
-                        justifyContent:'center',
-                        textAlignVertical:'center',
-                        lineHeight:40,
-                        fontSize: 16}} key={item}>{item.cun}</Text>
-                </View>
-                <View style={{width:"25%", height: 40}} >
-                    <Text style={{textAlign:'center',
-                        alignItems:'center',
-                        justifyContent:'center',
-                        textAlignVertical:'center',
-                        lineHeight:40,
-                        fontSize: 16,color:'#14BCF5'}} key={item}>{item.exam}</Text>
-                </View>
-
+                <Flex style={{width: '100%'}} justify='around'>
+                    <View style={{flex: 0.33, alignItems:'center'}}>
+                        {this.showRankImg(item.index+1)}
+                    </View>
+                    <View style={{flex: 0.33}}>
+                        <Text style={{textAlign:'center',
+                            alignItems:'center',
+                            justifyContent:'center',
+                            textAlignVertical:'center',
+                            lineHeight:40,
+                            fontSize: 16}} key={item}>{item.cun}</Text>
+                    </View>
+                    <View style={{flex: 0.33}}>
+                        <Text style={{textAlign:'center',
+                            alignItems:'center',
+                            justifyContent:'center',
+                            textAlignVertical:'center',
+                            lineHeight:40,
+                            fontSize: 16,color:'#14BCF5'}} key={item}>{item.exam}</Text>
+                    </View>
+                </Flex>
             </View>
         )
     }
@@ -265,60 +262,55 @@ export default class ScoreRank extends React.Component {
                     style={{height: height, width: width,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}
                     resizeMode="cover"
                 >
-                    <Flex direction='row'  align='stretch' style={{textAlign:'center',alignItems: 'center',justifyContent: 'center',paddingBottom:50}}>
+                    <Flex direction='row'  align='stretch' style={{textAlign:'center',alignItems: 'center',justifyContent: 'center',paddingBottom:40}}>
                         <View style={{marginTop:width/7,paddingRight:width/15,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}>
-                            <Text style={{fontSize:parseInt(width/14),color:'white',fontWeight:'300'}}>{this.state.myDataIndex}</Text>
+                            <Text style={{fontSize:parseInt(width/20),color:'white',fontWeight:'300'}}>{this.state.myDataIndex}</Text>
                             <Text style={{fontSize:parseInt(width/26),color:'white'}}>当前排名</Text>
                         </View>
                         <View style={{}}>
                         <Image source={this.state.uerImg} style={styleScope.avator}/>
                     </View>
                         <View style={{marginTop:width/7,paddingLeft:width/15,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}>
-                            <Text style={{fontSize:parseInt(width/14),color:'white',fontWeight:'300'}}>{this.state.myDataExam}</Text>
+                            <Text style={{fontSize:parseInt(width/20),color:'white',fontWeight:'300'}}>{this.state.myDataExam}</Text>
                             <Text style={{fontSize:parseInt(width/26),color:'white'}}>我的分数</Text>
                         </View>
 
                     </Flex>
                 </ImageBackground>
 
-            <View style={{ flex: 1,
-            flexDirection: 'row',
+            <View style={{
             marginBottom: 5,
             width:'100%',
             backgroundColor: '#F5F5F4'}}>
-            <View style={{width:width*0.05, height: 50,marginLeft:6}}>
-                <Image source={require('../../static/drawable-xxxhdpi/排名.png')} style={{height:25,width:25,marginTop:14}}/>
+                <Flex style={{width: '100%'}} justify='around'>
+                    <Flex style={{flex: 0.33}} justify='center' align='center'>
+                        <Image source={require('../../static/drawable-xxxhdpi/排名.png')} style={{height:25,width:25}}/>
+                        <Text style={{ fontSize: 18,
+                            marginLeft:5, justifyContent:'center', textAlignVertical:'center', fontWeight:"500", lineHeight:50
+                        }}
+                              key="titileO">排名</Text>
+                    </Flex>
+                    <Flex style={{flex: 0.33}} justify='center' align='center'>
+                        <Image source={require('../../static/drawable-xxxhdpi/组织.png')} style={{height:25,width:25}}/>
+                        <Text style={{
+                            marginLeft:5, justifyContent:'center', textAlignVertical:'center', lineHeight:50, fontSize: 18, fontWeight:"500",
+                        }} key="titileT">组织名</Text>
+                    </Flex>
+                    <Flex style={{flex: 0.33}} justify='center' align='center'>
+                        <Image source={require('../../static/drawable-xxxhdpi/分数.png')} style={{height:25,width:25}}/>
+                        <Text style={{
+                            marginLeft:5,
+                            justifyContent:'center',
+                            textAlignVertical:'center',
+                            lineHeight:50,
+                            fontSize: 18,
+                            fontWeight:"500",
+                        }}  key="titileTh">分数</Text>
+                    </Flex>
+                </Flex>
             </View>
-            <View style={{flex: 1, flexDirection: 'row',width: parseInt(width*0.1), height: 50}} >
-                <Text style={{ fontSize: 18,
-                    marginLeft:5, justifyContent:'center', textAlignVertical:'center', fontWeight:"500", lineHeight:50
-                }}
-                      key="titileO">排名</Text>
             </View>
-            <View sryle={{width:width*0.1, height: 50}}>
-                <Image source={require('../../static/drawable-xxxhdpi/组织.png')} style={{height:25,width:25,marginTop:14}}/>
-            </View>
-            <View style={{width: width*0.35, height: 50}} >
-                <Text style={{
-                    marginLeft:5, justifyContent:'center', textAlignVertical:'center', lineHeight:50, fontSize: 18, fontWeight:"500",
-                }} key="titileT">组织名</Text>
-            </View>
-            <View sryle={{width:width*0.1, height: 50}}>
-                <Image source={require('../../static/drawable-xxxhdpi/分数.png')} style={{height:25,width:25,marginTop:14}}/>
-            </View>
-            <View style={{width:  width*0.2, height: 50}} >
-                <Text style={{
-                    marginLeft:5,
-                    justifyContent:'center',
-                    textAlignVertical:'center',
-                    lineHeight:50,
-                    fontSize: 18,
-                    fontWeight:"500",
-                }}  key="titileTh">分数</Text>
-            </View>
-
-        </View>
-            </View>)
+                )
     }
 
     renderEndComp(){
