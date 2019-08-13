@@ -15,7 +15,7 @@ import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Badge from "@ant-design/react-native/es/badge/index";
-import { List, Flex, InputItem, Button, WingBlank} from "@ant-design/react-native";
+import {List, Flex, InputItem, Button, WingBlank, WhiteSpace} from "@ant-design/react-native";
 import {Tag} from "beeshell";
 import { store } from '../../redux/store';
 import {api} from "../../api";
@@ -439,6 +439,7 @@ export default class Mine extends React.Component {
                     >
                         <Text style={{fontSize:14}}>确认密码</Text>
                     </InputItem>
+                    <WhiteSpace size="lg"/>
                     <Button type="primary" style={{marginRight: 10,marginLeft:10 }} onPress={() => {this.confirmPsw(this.state.password,this.state.rePassword)}}><Text style={{fontSize:14}}>确认</Text></Button>
                 </Modal>
                 <Modal animationType="slide" transparent={false} visible={this.state.questionModal} onRequestClose={() => {this.setQuestionModal(false);}}>
@@ -462,10 +463,8 @@ export default class Mine extends React.Component {
                             <Image source={require('../../static/img/blue.jpg')} style={{width:1/4*width,height:1/4*width,marginTop:50,marginLeft:30,borderRadius:5,borderColor:'#eaedf1',borderWidth:1}}/>
                         </View>
                         <View style={{marginLeft: 40,marginTop:50,flex:2}}>
-                            <Flex>
+                            <Flex direction='column'>
                                 <Text style={{fontSize:16,color:'#b36d28',height:40}}>句容党建</Text>
-                            </Flex>
-                            <Flex>
                                 <Text style={{fontSize:16,color:'#b36d28',height:40}}>当前版本：1.1</Text>
                             </Flex>
                         </View>

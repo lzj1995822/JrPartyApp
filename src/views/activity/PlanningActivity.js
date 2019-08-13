@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-    BackHandler, Platform
+    BackHandler, Platform, ActivityIndicator
 } from "react-native";
 import {Card} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
@@ -47,7 +47,7 @@ export default class ActingActivity extends React.Component {
     constructor() {
         super();
         this.page = 1;
-        this.size = 13;
+        this.size = 6;
         this.TownCodeKey = {
             '01' : 'totalPercent',
             '0101': 'xiaShuPercent',
@@ -157,7 +157,7 @@ export default class ActingActivity extends React.Component {
         let logo = item.taskType === 'Party' ? require('../../static/img/party-logo.png') : require('../../static/img/learning-logo.png');
         return (
             <View style={styles.activityItem} key={item.id}>
-                <Shadow cornerRadius={7} opacity={0.3} elevation={5} style={{margin: 10, width: width-20, fontSize: 14}} >
+                <Shadow cornerRadius={7} opacity={0.3} elevation={2} style={{margin: 10, width: width-20, fontSize: 14}} >
                     <TouchableOpacity onPress={() => {this.showModal(item)}}>
                         <Card>
                             <Card.Header
@@ -183,7 +183,26 @@ export default class ActingActivity extends React.Component {
         this.fetchActivityData()
     }
     renderFooter() {
-        return <Text style={{textAlign: 'center'}}>暂无更多</Text>
+        let msg = '';
+        let isend = Math.floor(this.state.activityList.length/this.size) === this.state.totalPage - 1;
+        if (isend) {
+            msg = '没有更多数据了'
+        } else {
+            msg = '正在加载更多数据'
+        }
+        return (
+            <View style={{flexDirection: 'row',
+                width: width,
+                height: 50,
+                //backgroundColor: 'red',
+                justifyContent: 'center',
+                alignItems: 'center'}}>
+                {!isend && <ActivityIndicator/>}
+                <Text style={{color: '#444'}}>
+                    {msg}
+                </Text>
+            </View>
+        )
     }
     // 获取镇所属村的活动完成情况
     fetchDetailProgress(item) {

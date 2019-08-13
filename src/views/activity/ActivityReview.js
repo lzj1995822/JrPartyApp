@@ -83,7 +83,7 @@ export default class ActivityReview extends React.Component {
     constructor() {
         super();
         this.page = 1;
-        this.size = 13;
+        this.size = 6;
         this.TownCodeKey = {
             '01' : 'totalPercent',
             '0101': 'xiaShuPercent',
@@ -188,7 +188,7 @@ export default class ActivityReview extends React.Component {
         let logo = item.taskType === 'Party' ? require('../../static/img/party-logo.png') : require('../../static/img/learning-logo.png');
         return (
             <View style={styles.activityItem}>
-                <Shadow cornerRadius={7} opacity={0.3} elevation={5} style={{margin: 10, width: width-20, fontSize: 14}} >
+                <Shadow cornerRadius={7} opacity={0.3} elevation={2} style={{margin: 10, width: width-20, fontSize: 14}} >
                     <TouchableOpacity onPress={() => {this.showModal(item)}}>
                         <Card>
                             <Card.Header
@@ -230,11 +230,26 @@ export default class ActivityReview extends React.Component {
         this.fetchActivityData()
     }
     renderFooter() {
-        if (Math.round(this.state.activityList.length/this.size) === this.state.totalPage - 1) {
-            return <Text style={{textAlign: 'center'}}>暂无更多</Text>
+        let msg = '';
+        let isend = Math.floor(this.state.activityList.length/this.size) === this.state.totalPage - 1;
+        if (isend) {
+            msg = '没有更多数据了'
         } else {
-            return <Text style={{textAlign: 'center'}}>上划加载更多</Text>
+            msg = '正在加载更多数据'
         }
+        return (
+            <View style={{flexDirection: 'row',
+                width: width,
+                height: 50,
+                //backgroundColor: 'red',
+                justifyContent: 'center',
+                alignItems: 'center'}}>
+                {!isend && <ActivityIndicator/>}
+                <Text style={{color: '#444'}}>
+                    {msg}
+                </Text>
+            </View>
+        )
     }
     review(ispass) {
         this.setState({executeLoading: true});
@@ -448,8 +463,8 @@ export default class ActivityReview extends React.Component {
     }
     render() {
         return (
-            <View>
-                <ScrollView style={{backgroundColor: '#f4f4ea'}}>
+            <View style={{backgroundColor: '#f4f4ea', minHeight:height}}>
+                <ScrollView>
                     <FlatList
                         style={{flex: 1}}
                         data={this.state.activityList}
