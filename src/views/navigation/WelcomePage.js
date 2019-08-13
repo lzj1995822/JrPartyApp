@@ -29,11 +29,19 @@ export default class WelcomePage extends React.Component {
         }
         let retaio = 750 / 1344;
         console.log(width,height,width/height, 564/1002)
-        let path = `../../static/drawable-${ActualParam.actualType}/引导页.png`
-        return (
-            <View>
-                <Image resizeMode='stretch' source={images[ActualParam.actualType]} style={{width: width, height: height}} />
-            </View>
-        )
+        let path = `../../static/drawable-${ActualParam.actualType}/引导页.png`;
+        if (ActualParam.isIPhoneX) {
+            return (
+                <View>
+                    <Image resizeMode='stretch' source={require('../../static/iPhoneX/引导页X.png')} style={{width: width, height: height}} />
+                </View>
+            )
+        } else {
+            return (
+                <View>
+                    <Image resizeMode='stretch' source={images[ActualParam.actualType]} style={{width: width, height: height}} />
+                </View>
+            )
+        }
     }
 }

@@ -370,7 +370,7 @@ export default class Mine extends React.Component {
                                 />
                             </Badge>
                         </View>
-                        <Image source={require('../../static/img/blue.jpg')} style={styles.avator}/>
+                        <Image source={require('../../static/img/dq.png')} style={styles.avator}/>
                         <Text style={styles.userName}>{this.state.user.name}</Text>
                         <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
                         <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,borderRadius:45,fontSize:14}}>

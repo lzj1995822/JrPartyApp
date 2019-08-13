@@ -461,6 +461,9 @@ export default class ActivityReview extends React.Component {
             </View>
         )
     }
+    keyExtractor(item, index) {
+        return "index" + index + item;
+    }
     render() {
         return (
             <View style={{backgroundColor: '#f4f4ea', minHeight:height}}>
@@ -468,10 +471,11 @@ export default class ActivityReview extends React.Component {
                     <FlatList
                         style={{flex: 1}}
                         data={this.state.activityList}
-                        onEndReachedThreshold={100}
                         onEndReached={() => {this.onLoadMore()}}
                         ListFooterComponent={this.renderFooter.bind(this)}
                         renderItem={({item}) => this.renderItem(item)}
+                        keyExtractor={this.keyExtractor}
+                        onEndReachedThreshold={0.1}
                     />
                 </ScrollView>
                 {this.renderModal()}

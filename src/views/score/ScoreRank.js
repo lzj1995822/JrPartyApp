@@ -57,7 +57,7 @@ export default class ScoreRank extends React.Component {
             onEndReachedCalledDuringMomentum:false,
             showFoot:0,
             totalPage:0,
-            uerImg:store.getState().user.value.image? {uri:store.getState().user.value.image }:require("../../static/img/partyPortrait.jpg"),
+            uerImg:store.getState().user.value.image? {uri:store.getState().user.value.image }:require("../../static/img/dq.png"),
             orgName:store.getState().user.value.organizationName
         }
         this.handleRefresh = this.handleRefresh.bind(this);
@@ -263,7 +263,7 @@ export default class ScoreRank extends React.Component {
                             <Text style={{fontSize:parseInt(width/26),color:'white'}}>当前排名</Text>
                         </View>
                         <View style={{}}>
-                        <Image source={this.state.uerImg} style={styleScope.avator}/>
+                        <Image source={this.state.uerImg} resizeMode='contain' style={styleScope.avator}/>
                     </View>
                         <View style={{marginTop:width/7,paddingLeft:width/15,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}>
                             <Text style={{fontSize:parseInt(width/20),color:'white',fontWeight:'300'}}>{this.state.myDataExam}</Text>

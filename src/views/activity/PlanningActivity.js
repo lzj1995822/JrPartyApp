@@ -568,6 +568,9 @@ export default class ActingActivity extends React.Component {
             )
         }
     }
+    keyExtractor(item, index) {
+        return "index" + index + item;
+    }
     render() {
         return (
             <View>
@@ -575,10 +578,11 @@ export default class ActingActivity extends React.Component {
                     <FlatList
                         style={{flex: 1}}
                         data={this.state.activityList}
-                        onEndReachedThreshold={100}
                         onEndReached={() => {this.onLoadMore()}}
                         ListFooterComponent={this.renderFooter.bind(this)}
                         renderItem={({item}) => this.renderItem(item)}
+                        keyExtractor={this.keyExtractor}
+                        onEndReachedThreshold={0.1}
                     />
                 </ScrollView>
                 {this.renderModal()}
