@@ -425,7 +425,7 @@ export default class Mine extends React.Component {
                         <Text style={{fontSize:16}}>关于句容党建</Text>
                     </Item>
                 </List>
-                <Button   type="primary" style={{marginRight: 10,marginLeft:10 ,marginTop:30,fontSize:16,marginBottom:50}} onPress={() => { this.logout();}}>退出</Button>
+                <Button   type="primary" style={{marginRight: 10,marginLeft:10 ,marginTop:30,marginBottom:50}} onPress={() => { this.logout();}}><Text style={{fontSize:16}}>退出</Text></Button>
                     </View>
           {/*      </ScrollView>*/}
                 <Modal animationType="slide" transparent={false} visible={this.state.pswModalVisible} onRequestClose={() => {this.setPswModalVisible(false);}}>
