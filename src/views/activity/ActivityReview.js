@@ -100,7 +100,7 @@ export default class ActivityReview extends React.Component {
         };
         this.state = {
             activityList: [],
-            totalPage: 0,
+            totalPage: 1,
             modalVis: false,
             currentRow: {
                 title: ''
@@ -231,7 +231,10 @@ export default class ActivityReview extends React.Component {
     }
     renderFooter() {
         let msg = '';
-        let isend = Math.floor(this.state.activityList.length/this.size) === this.state.totalPage - 1;
+        let isend = Math.floor(this.state.activityList.length/this.size)  === this.state.totalPage - 1;
+        if (this.state.activityList.length === 0) {
+            isend = true;
+        }
         if (isend) {
             msg = '没有更多数据了'
         } else {
@@ -244,7 +247,7 @@ export default class ActivityReview extends React.Component {
                 //backgroundColor: 'red',
                 justifyContent: 'center',
                 alignItems: 'center'}}>
-                {!isend && <ActivityIndicator/>}
+                {!isend ?  <ActivityIndicator/> : null}
                 <Text style={{color: '#444'}}>
                     {msg}
                 </Text>
