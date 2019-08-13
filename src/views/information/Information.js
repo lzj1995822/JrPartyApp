@@ -65,27 +65,33 @@ export default class  Information extends React.Component  {
         },
         body: JSON.stringify({})
       }).then((response) => response.json()).then((resJson) => {
-        if (this.state.currentPage === 0) {
-          console.log("重新加载",resJson.content);
-          console.log(url);
+        if(resJson.content.totalPages===0){
           this.setState({
-            isLoadMore: false,
-            informationList: resJson.content.content
+            isLoadMore:false,
+            showFoot:2,
+            informationList:resJson.content.content
           })
-        } else {
-          this.setState({
-            isLoadMore: false,
-            // 数据源刷新 add
-            informationList: this.state.informationList.concat(resJson.content.content)
-          })
-          if (this.state.currentPage <= resJson.content.totalPages-1) {
+        }else{
+          if (this.state.currentPage === 0) {
             this.setState({
-              showFoot: 1
+              isLoadMore: false,
+              informationList: resJson.content.content
             })
-          } else if (this.state.currentPage > resJson.content.totalPages-1) {
+          } else {
             this.setState({
-              showFoot: 2
+              isLoadMore: false,
+              // 数据源刷新 add
+              informationList: this.state.informationList.concat(resJson.content.content)
             })
+            if (this.state.currentPage <= resJson.content.totalPages-1) {
+              this.setState({
+                showFoot: 1
+              })
+            } else if (this.state.currentPage > resJson.content.totalPages-1) {
+              this.setState({
+                showFoot: 2
+              })
+            }
           }
         }
       }).catch((error) => {
@@ -102,30 +108,40 @@ export default class  Information extends React.Component  {
         },
         body: JSON.stringify({objs:this.state.user.districtId})
       }).then((response) => response.json()).then((resJson) => {
-        if (this.state.currentPage === 0) {
-          console.log("重新加载")
+        if(resJson.content.totalPages===0){
           this.setState({
-            isLoadMore: false,
-            informationList: resJson.content.content
+            isLoadMore:false,
+            showFoot:2,
+            informationList:resJson.content.content
           })
-        } else {
-          console.log("加载更多")
-          this.setState({
-            isLoadMore: false,
-            // 数据源刷新 add
-            informationList: this.state.informationList.concat(resJson.content.content)
-          })
-          if (this.state.currentPage <= resJson.content.totalPages-1) {
+        }else{
+          if (this.state.currentPage === 0) {
+            console.log(resJson.content.totalPages,"ggggg")
+            if(resJson.content.totalPages==0){
+              this.setState({shoFoot:2})
+            }
             this.setState({
-              showFoot: 1
+              isLoadMore: false,
+              informationList: resJson.content.content
             })
-          } else if (this.state.currentPage > resJson.content.totalPages-1) {
+          } else {
+            console.log("加载更多")
             this.setState({
-              showFoot: 2
+              isLoadMore: false,
+              // 数据源刷新 add
+              informationList: this.state.informationList.concat(resJson.content.content)
             })
+            if (this.state.currentPage <= resJson.content.totalPages-1) {
+              this.setState({
+                showFoot: 1
+              })
+            } else if (this.state.currentPage > resJson.content.totalPages-1) {
+              this.setState({
+                showFoot: 2
+              })
+            }
           }
         }
-      //  this.setInformationList(resJson.content);
       }).catch((error) => {
         console.error(error)
       })
