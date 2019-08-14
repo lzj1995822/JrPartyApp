@@ -9,7 +9,7 @@ export default class  ProgressSummary extends React.Component {
     render() {
         return(
             <View>
-                <Image source={require('../../static/img/developing.png')} style={{marginLeft:width/2-88,width:177,height:236,marginTop:(height-40)/2-128}}/>
+                <Image source={require('../../static/img/developing.png')} style={{marginLeft:width/2-126,width:252,height:335,marginTop:height/2-168-30}}/>
             </View>);
     }
 }

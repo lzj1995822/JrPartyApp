@@ -15,7 +15,6 @@ import ProgressSummary from './ProgressSummary/ProgressSummary';
 import PositionShow from './PositionShow/PositionShow';
 import Information from './information/Information';
 import Login from './Login';
-import Cal from './cal/Cal';
 import {TouchableOpacity, View} from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
@@ -24,6 +23,7 @@ import colors from '../styles/color';
 import NavigationBar from "./navigation/NavigationBar";
 import CameraScreen from "../components/CameraScreen";
 import OnGoing from './activity/OnGoing';
+import Cal from './cal/Cal'
 
 const THEME_COLOR = colors.THEME_COLOR;
 
@@ -143,7 +143,7 @@ const tab = createBottomTabNavigator({
         })
     },
     Cal: {
-        screen: OnGoing,
+        screen: Cal,
         navigationOptions: ({ navigation }) => ({
             tabBarLabel: "统计"
         })

@@ -1,11 +1,14 @@
 import React from 'react';
-import { View, Text} from "react-native";
+import {View, Text, Image} from "react-native";
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
 const THEME_COLOR = color.THEME_COLOR;
 
+//屏幕信息
+const dimensions = require('Dimensions');
+//获取屏幕的宽度和高度
+const {width, height} = dimensions.get('window');
 export default class Cal extends React.Component {
-
     render() {
         let statusBar = {
             backgroundColor: THEME_COLOR,
@@ -15,6 +18,7 @@ export default class Cal extends React.Component {
         return (
             <View>
                 {navigationBar}
+                <Image source={require('../../static/img/developing.png')} style={{marginLeft:width/2-126,width:252,height:335,marginTop:height/2-168-30}}/>
             </View>
         )
     }
