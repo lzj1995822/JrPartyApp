@@ -44,10 +44,10 @@ export default class Login extends React.Component {
         super(props);
         this.redux = store;
         this.state = {
-            name: '宝华镇',
-            password: '123',
+            name: '句容市委',
+            password: '123456',
             modalVisible: false,
-            showMessage: '登陆成功',
+            showMessage: '登录成功',
             token: '',
             loginLoading: false
         }

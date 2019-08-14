@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-    BackHandler, Platform, ActivityIndicator
+    BackHandler, Platform, ActivityIndicator, RefreshControl
 } from "react-native";
 import {Card} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
@@ -77,7 +77,9 @@ export default class ActingActivity extends React.Component {
             cameraType: RNCamera.Constants.Type.back,
             camVis: false,
             files: [],
-            executeLoading: false
+            executeLoading: false,
+            //下拉刷新,
+            isRefresh:false,
         };
         this.fetchActivityData.bind(this);
         this.onLoadMore.bind(this);
@@ -182,6 +184,7 @@ export default class ActingActivity extends React.Component {
         this.page++;
         this.fetchActivityData()
     }
+
     renderFooter() {
         let msg = '';
         let isend = Math.floor(this.state.activityList.length/this.size) === this.state.totalPage - 1;
@@ -204,6 +207,27 @@ export default class ActingActivity extends React.Component {
             </View>
         )
     }
+    /**
+     * 空布局
+     */
+    _createEmptyView() {
+        return (
+            <View style={{height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={{fontSize: 16}}>没有更多数据了</Text>
+            </View>
+        );
+    }
+    /**
+     * 下拉刷新
+     * @private
+     */
+    _onRefresh = () => {
+        // 不处于 下拉刷新
+        if (!this.state.isRefresh) {
+            // this.state.currentPage=0;
+            this.fetchActivityData();
+        }
+    };
     // 获取镇所属村的活动完成情况
     fetchDetailProgress(item) {
         let url = api + '/api/identity/parActivityObject/list';
@@ -574,15 +598,28 @@ export default class ActingActivity extends React.Component {
     render() {
         return (
             <View>
-                <ScrollView style={{backgroundColor: '#f4f4ea'}}>
+                <ScrollView style={{backgroundColor: '#f4f4ea',height:height-120}}>
                     <FlatList
                         style={{flex: 1}}
                         data={this.state.activityList}
                         onEndReached={() => {this.onLoadMore()}}
+                        // 空布局
+                        ListEmptyComponent={this._createEmptyView}
                         ListFooterComponent={this.renderFooter.bind(this)}
                         renderItem={({item}) => this.renderItem(item)}
                         keyExtractor={this.keyExtractor}
                         onEndReachedThreshold={0.1}
+                        refreshControl={
+                            <RefreshControl
+                                title={'Loading'}
+                                colors={['#444']}
+                                refreshing={this.state.isRefresh}
+                                onRefresh={() => {
+                                    this._onRefresh();
+                                }}
+                            />
+                        }
+                        refreshing={this.state.isRefresh}
                     />
                 </ScrollView>
                 {this.renderModal()}

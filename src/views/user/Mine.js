@@ -408,19 +408,19 @@ export default class Mine extends React.Component {
                     </Flex>*/}
                 </ImageBackground>
                 <List renderHeader={null}>
-                    <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/密码重置.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
+                    <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/pswReset.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
                            arrow="horizontal" onPress={this.showAlert.bind(this)}>
                         <Text style={{fontSize:16}}>密码重置</Text>
                     </Item>
-                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/钥匙.png')} style={{marginRight:9,marginLeft: 0,height:18,width:11}}/>}
+                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/pswEdit.png')} style={{marginRight:9,marginLeft: 0,height:18,width:11}}/>}
                           arrow="horizontal" onPress={() => {this.setPswModalVisible(true);}}>
                         <Text style={{fontSize:16}}>密码修改</Text>
                     </Item>
-                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/意见.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
+                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/question.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
                           arrow="horizontal" onPress={() => {this.setQuestionModal(true);}}>
                         <Text style={{fontSize:16}}>问题反馈</Text>
                     </Item>
-                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/关于.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
+                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/about.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
                           arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize: 12}}>版本号 1.1.0</Text>}>
                         <Text style={{fontSize:16}}>关于句容党建</Text>
                     </Item>

@@ -316,7 +316,7 @@ export default class HomePage extends React.Component {
                     <Flex justify="between" align="center" style={styleScope.btnList}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("Activity")}>
                             <View style={{textAlign: 'center', marginRight: 2}}>
-                                <Image source={require('../../static/drawable-xxxhdpi/活动管理.png')}
+                                <Image source={require('../../static/drawable-xxxhdpi/activity.png')}
                                        style={styleScope.listImage}/>
                                 <Text style={styleScope.btnLabel}>活动管理</Text>
                             </View>
@@ -326,28 +326,28 @@ export default class HomePage extends React.Component {
                             this.props.navigation.navigate("PositionShow")
                         }}>
                             <View style={{textAlign: 'center', marginLeft:1, marginRight: 1}}>
-                                <Image source={require('../../static/drawable-xxxhdpi/阵地展示.png')}
+                                <Image source={require('../../static/drawable-xxxhdpi/positionShow.png')}
                                        style={styleScope.listImage}/>
                                 <Text style={styleScope.btnLabel}>阵地展示</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("ProgressSummary")}>
                             <View style={{textAlign: 'center', marginLeft:2, marginRight: 2}}>
-                                <Image source={require('../../static/drawable-xxxhdpi/进度汇总.png')}
+                                <Image source={require('../../static/drawable-xxxhdpi/progressSummary.png')}
                                        style={styleScope.listImage}/>
                                 <Text style={styleScope.btnLabel}>进度汇总</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("Information")}>
                             <View style={{textAlign: 'center', marginLeft:2, marginRight: 2}}>
-                                <Image source={require('../../static/drawable-xxxhdpi/通知公告.png')}
+                                <Image source={require('../../static/drawable-xxxhdpi/information.png')}
                                        style={styleScope.listImage}/>
                                 <Text style={styleScope.btnLabel}>通知公告</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("ScoreRank")}>
                             <View style={{textAlign: 'center', marginLeft:2}}>
-                                <Image source={require('../../static/drawable-xxxhdpi/积分排名.png')}
+                                <Image source={require('../../static/drawable-xxxhdpi/scoreRank.png')}
                                        style={styleScope.listImage}/>
                                 <Text style={styleScope.btnLabel}>积分排名</Text>
                             </View>
