@@ -391,6 +391,13 @@ export default class ActingActivity extends React.Component {
                         <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.houBaiPercent)}/>
                         <Text style={styles.itemValue}>{Math.round(this.state.currentRow.houBaiPercent * 1000)/10 + '%'}</Text>
                     </Flex>
+                </Flex>,
+                <Flex justify='between' style={styles.formItem}>
+                    <Text style={styles.itemLabel}>天王镇</Text>
+                    <Flex>
+                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.tianWangPercent)}/>
+                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.tianWangPercent * 1000)/10 + '%'}</Text>
+                    </Flex>
                 </Flex>
                ]
         } else {
