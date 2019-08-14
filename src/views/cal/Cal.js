@@ -18,7 +18,7 @@ export default class Cal extends React.Component {
         return (
             <View>
                 {navigationBar}
-                <Image source={require('../../static/img/developing.png')} style={{marginLeft:width/2-126,width:252,height:335,marginTop:height/2-168-30}}/>
+                <Image source={require('../../static/img/developing.png')} style={{width:width,height:height-100}}/>
             </View>
         )
     }
