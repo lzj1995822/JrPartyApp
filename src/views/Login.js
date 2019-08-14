@@ -149,7 +149,7 @@ export default class Login extends React.Component {
                     justifyContent: 'center',
                     textAlignVertical: 'center',
                 }}>
-                    <Image resizeMode='stretch' source={require('../static/drawable-xxxhdpi/组10.png')}
+                    <Image resizeMode='stretch' source={require('../static/drawable-xxxhdpi/head.png')}
                            style={{height: topHeight, width: topWidth}}/>
                     <View style={{width:jrWidth,
                         textAlign: 'center',
@@ -172,7 +172,7 @@ export default class Login extends React.Component {
                             }}
                             placeholder="输入用户名"
                         >
-                            <Image resizeMode='stretch' source={require('../static/drawable-xhdpi/头像.png')} style={{width: 20,height: 20}}/>
+                            <Image resizeMode='stretch' source={require('../static/drawable-xhdpi/user.png')} style={{width: 20,height: 20}}/>
                         </InputItem>
                     </View>
                     <View style={{marginTop:30}}>
@@ -188,7 +188,7 @@ export default class Login extends React.Component {
                             }}
                             placeholder="输入密码"
                         >
-                            <Image source={require('../static/drawable-xhdpi/密码.png')} style={{width: 19,height: 24,marginRight: 0}}/>
+                            <Image source={require('../static/drawable-xhdpi/psw.png')} style={{width: 19,height: 24,marginRight: 0}}/>
                         </InputItem>
                     </View>
                     <Button

@@ -190,15 +190,15 @@ export default class ScoreRank extends React.Component {
     showRankImg(val){
         if(val == 1){
             return (
-            <Image source={require('../../static/drawable-xxxhdpi/第一.png')} style={{height:25,width:18,marginBottom:6}}/>
+            <Image source={require('../../static/drawable-xxxhdpi/NO1.png')} style={{height:25,width:18,marginBottom:6}}/>
         )
         }else  if(val == 2){
             return (
-                <Image source={require('../../static/drawable-xxxhdpi/第二.png')} style={{height:25,width:18,marginBottom:6}}/>
+                <Image source={require('../../static/drawable-xxxhdpi/NO2.png')} style={{height:25,width:18,marginBottom:6}}/>
             )
         }else  if(val == 3){
             return (
-                <Image source={require('../../static/drawable-xxxhdpi/第三.png')} style={{height:25,width:18,marginBottom:6}}/>
+                <Image source={require('../../static/drawable-xxxhdpi/NO3.png')} style={{height:25,width:18,marginBottom:6}}/>
             )
         }else {
             return <Text style={{ fontSize: 16,
@@ -253,7 +253,7 @@ export default class ScoreRank extends React.Component {
         return (
             <View>
                 <ImageBackground
-                    source={require('../../static/drawable-xxxhdpi/组14.png')}
+                    source={require('../../static/drawable-xxxhdpi/scoreBg.png')}
                     style={{height: height, width: width,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}
                     resizeMode="cover"
                 >
@@ -279,20 +279,20 @@ export default class ScoreRank extends React.Component {
             backgroundColor: '#F5F5F4'}}>
                 <Flex style={{width: '100%'}} justify='around'>
                     <Flex style={{flex: 0.33}} justify='center' align='center'>
-                        <Image source={require('../../static/drawable-xxxhdpi/排名.png')} style={{height:25,width:25}}/>
+                        <Image source={require('../../static/drawable-xxxhdpi/rank.png')} style={{height:25,width:25}}/>
                         <Text style={{ fontSize: 18,
                             marginLeft:5, justifyContent:'center', textAlignVertical:'center', fontWeight:"500", lineHeight:50
                         }}
                               key="titileO">排名</Text>
                     </Flex>
                     <Flex style={{flex: 0.33}} justify='center' align='center'>
-                        <Image source={require('../../static/drawable-xxxhdpi/组织.png')} style={{height:25,width:25}}/>
+                        <Image source={require('../../static/drawable-xxxhdpi/org.png')} style={{height:25,width:25}}/>
                         <Text style={{
                             marginLeft:5, justifyContent:'center', textAlignVertical:'center', lineHeight:50, fontSize: 18, fontWeight:"500",
                         }} key="titileT">组织名</Text>
                     </Flex>
                     <Flex style={{flex: 0.33}} justify='center' align='center'>
-                        <Image source={require('../../static/drawable-xxxhdpi/分数.png')} style={{height:25,width:25}}/>
+                        <Image source={require('../../static/drawable-xxxhdpi/score.png')} style={{height:25,width:25}}/>
                         <Text style={{
                             marginLeft:5,
                             justifyContent:'center',

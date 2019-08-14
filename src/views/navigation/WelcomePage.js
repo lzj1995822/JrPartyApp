@@ -22,18 +22,18 @@ export default class WelcomePage extends React.Component {
         let bl1 = designWidth/designHeight
         let realHeight = width/bl1;
         let images = {
-            hdpi: require('../../static/drawable-hdpi/引导页.png'),
-            xhdpi: require('../../static/drawable-xhdpi/引导页.png'),
-            xxhdpi: require('../../static/drawable-xxhdpi/引导页.png'),
-            xxxhdpi: require('../../static/drawable-xxxhdpi/引导页.png'),
+            hdpi: require('../../static/drawable-hdpi/guide.png'),
+            xhdpi: require('../../static/drawable-xhdpi/guide.png'),
+            xxhdpi: require('../../static/drawable-xxhdpi/guide.png'),
+            xxxhdpi: require('../../static/drawable-xxxhdpi/guide.png'),
         }
         let retaio = 750 / 1344;
         console.log(width,height,width/height, 564/1002)
-        let path = `../../static/drawable-${ActualParam.actualType}/引导页.png`;
+        let path = `../../static/drawable-${ActualParam.actualType}/guide.png`;
         if (ActualParam.isIPhoneX) {
             return (
                 <View>
-                    <Image resizeMode='stretch' source={require('../../static/iPhoneX/引导页X.png')} style={{width: width, height: height}} />
+                    <Image resizeMode='stretch' source={require('../../static/iPhoneX/guideX.png')} style={{width: width, height: height}} />
                 </View>
             )
         } else {
