@@ -19,6 +19,7 @@ import {store} from '../../redux/store';
 import {Dimensions} from 'react-native';
 import {api} from "../../api";
 import {Flex} from "@ant-design/react-native";
+import NavigationUtils from  "../navigation/NavigationUtils"
 
 
 var {height,width} =  Dimensions.get('window');
@@ -64,6 +65,7 @@ export default class ScoreRank extends React.Component {
         this.handleLoadMore = this.handleLoadMore.bind(this);
         this.renderEndComp = this.renderEndComp.bind(this);
         this.renderHeadComp = this.renderHeadComp.bind(this);
+        this.backForAndroid.bind(this)
         // if(store.getState().user.value.image){
         //     this.setState({uerImg:'uri:'+store.getState().user.value.image})
         // }else {
@@ -74,10 +76,14 @@ export default class ScoreRank extends React.Component {
     }
     componentDidMount(): void {
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation.navigate("Main"))});
+            BackHandler.addEventListener('hardwareBackPress', () => {
+                return this.backForAndroid(NavigationUtils.navigation)});
         }
     }
-
+    backForAndroid(navigator) {
+        navigator.navigate('Main');
+        return true;
+    }
     scoreData(){
 
     }

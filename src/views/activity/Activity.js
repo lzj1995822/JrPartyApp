@@ -4,12 +4,25 @@ import PlanningActivity from './PlanningActivity';
 import ActivityReview from './ActivityReview';
 import { createMaterialTopTabNavigator, createAppContainer } from 'react-navigation';
 import {store} from "../../redux/store";
+import {BackHandler, DeviceEventEmitter, Platform} from "react-native";
+import NavigationUtils from "../navigation/NavigationUtils";
 
 export default class Activity extends React.Component {
 
     constructor() {
         super();
         this.generateTopBar.bind(this);
+        this.backForAndroid.bind(this)
+    }
+
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            return this.backForAndroid(NavigationUtils.navigation)
+        });
+    }
+    backForAndroid(navigator) {
+        navigator.navigate('Main');
+        return true;
     }
 
     generateTopBar() {
