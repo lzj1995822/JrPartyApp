@@ -133,7 +133,7 @@ export default class HomePage extends React.Component {
         this.showModal = this.showModal.bind(this);
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.fetchPartyBuild().then((news) => {
             this.fetchNotice().then((notice) => {
                 this.setState({
