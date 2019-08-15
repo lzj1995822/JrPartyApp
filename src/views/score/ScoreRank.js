@@ -33,13 +33,13 @@ const styleScope = StyleSheet.create({
         shadowColor:'black'
     },
     avator: {
-        width: 90,
-        height: 90,
-        borderRadius: 45,
-        borderColor: '#fff',
+        width: 0.1*height,
+        height: 0.1*height,
+        borderRadius: 0.5*height,
+        borderColor: '#ffffff',
         borderWidth: 3,
+        overflow:'hidden'
     }
-
 
 })
 export default class ScoreRank extends React.Component {
@@ -262,9 +262,9 @@ export default class ScoreRank extends React.Component {
                             <Text style={{fontSize:parseInt(width/20),color:'white',fontWeight:'300'}}>{this.state.myDataIndex}</Text>
                             <Text style={{fontSize:parseInt(width/26),color:'white'}}>当前排名</Text>
                         </View>
-                        <View style={{}}>
-                        <Image source={this.state.uerImg} resizeMode='contain' style={styleScope.avator}/>
-                    </View>
+                        <View style={styleScope.avator}>
+                        <Image source={this.state.uerImg} resizeMode='contain'style={{width:'100%',height:'100%'}}/>
+                        </View>
                         <View style={{marginTop:width/7,paddingLeft:width/15,textAlign:'center',alignItems: 'center',justifyContent: 'center'}}>
                             <Text style={{fontSize:parseInt(width/20),color:'white',fontWeight:'300'}}>{this.state.myDataExam}</Text>
                             <Text style={{fontSize:parseInt(width/26),color:'white'}}>我的分数</Text>
@@ -354,8 +354,8 @@ export default class ScoreRank extends React.Component {
                     keyExtractor={this.keyExtractor}
                     onEndReachedThreshold={0.1}
                     onMomentumScrollBegin={() => {
-                        this.setState({onEndReachedCalledDuringMomentum:false});
-                    }}
+                    this.setState({onEndReachedCalledDuringMomentum:false});
+                }}
 
                 />
 
