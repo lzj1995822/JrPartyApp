@@ -218,7 +218,20 @@ export default class ActingActivity extends React.Component {
     }
     renderFooter() {
         let msg = '';
-        let isend = Math.floor(this.state.activityList.length/this.size) === this.state.totalPage - 1;
+        let currentPage =  Math.floor(this.state.activityList.length/this.size);
+        let leftSize =  this.state.activityList.length%this.size;
+        let isend;
+        if (this.state.totalPage === 0) {
+            isend = true;
+        }else{
+            if(leftSize>0&&currentPage===this.state.totalPage-1){
+                isend = true;
+            }else if(leftSize==0&&currentPage==this.state.totalPage){
+                isend = true;
+            }else{
+                isend = false;
+            }
+        }
         if (isend) {
             msg = '没有更多数据了'
         } else {
