@@ -24,7 +24,10 @@ import InputItem from "@ant-design/react-native/es/input-item";
 import TextAreaItem from "@ant-design/react-native/lib/textarea-item";
 import List from "@ant-design/react-native/es/list";
 import {Input} from "beeshell";
+import NavigationUtils from "../navigation/NavigationUtils";
 const THEME_COLOR = color.THEME_COLOR;
+
+
 const { width, height} = Dimensions.get('window');
 const camStyle = StyleSheet.create({
     container: {
@@ -140,7 +143,8 @@ export default class ActivityReview extends React.Component {
         });
         this.fetchActivityData();
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation.navigate("Main"))});
+            BackHandler.addEventListener('hardwareBackPress', () => {
+                return this.backForAndroid(NavigationUtils.navigation)});
         }
     }
     backForAndroid(navigator) {
@@ -150,7 +154,8 @@ export default class ActivityReview extends React.Component {
     componentWillUnmount() {
         this.deEmitter.remove();
         if (Platform.OS === 'android') {
-            BackHandler.removeEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation)});
+            BackHandler.addEventListener('hardwareBackPress', () => {
+                return this.backForAndroid(NavigationUtils.navigation)});
         }
     }
     fetchActivityData() {

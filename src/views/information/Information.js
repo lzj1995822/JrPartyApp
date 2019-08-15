@@ -16,6 +16,8 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import color from "../styles/color";
 import {api} from "../../api";
+import NavigationUtils from "../navigation/NavigationUtils";
+
 
 //屏幕信息
 const dimensions = require('Dimensions');
@@ -45,11 +47,17 @@ export default class  Information extends React.Component  {
       user:store.getState().user.value,
     }
     this.showInformationList();
+    this.backForAndroid.bind(this)
   }
   componentDidMount(): void {
     if (Platform.OS === 'android') {
-      BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation.navigate("Main"))});
+      BackHandler.addEventListener('hardwareBackPress', () => {
+        return this.backForAndroid(NavigationUtils.navigation)});
     }
+  }
+  backForAndroid(navigator) {
+    navigator.navigate('Main');
+    return true;
   }
   setModalVis(visible,item){
     this.setState({modalVis:visible});

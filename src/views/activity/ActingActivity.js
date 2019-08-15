@@ -19,6 +19,7 @@ import { RNCamera } from 'react-native-camera';
 import CameraScreen from "../../components/CameraScreen";
 import ImageResizer from "react-native-image-resizer";
 import {api} from "../../api";
+import NavigationUtils from "../navigation/NavigationUtils";
 const THEME_COLOR = color.THEME_COLOR;
 const { width, height} = Dimensions.get('window');
 const camStyle = StyleSheet.create({
@@ -134,7 +135,8 @@ export default class ActingActivity extends React.Component {
         });
         this.fetchActivityData();
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation.navigate("Main"))});
+            BackHandler.addEventListener('hardwareBackPress', () => {
+                return this.backForAndroid(NavigationUtils.navigation)});
         }
     }
     backForAndroid(navigator) {
@@ -145,7 +147,8 @@ export default class ActingActivity extends React.Component {
     componentWillUnmount() {
         this.deEmitter.remove();
         if (Platform.OS === 'android') {
-            BackHandler.removeEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation)});
+            BackHandler.addEventListener('hardwareBackPress', () => {
+                return this.backForAndroid(NavigationUtils.navigation)});
         }
     }
     fetchActivityData() {
