@@ -104,7 +104,7 @@ export default class ActingActivity extends React.Component {
         });
         this.fetchActivityData();
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation)});
+            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation.navigate("Main"))});
         }
     }
     backForAndroid(navigator) {

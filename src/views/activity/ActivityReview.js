@@ -140,7 +140,7 @@ export default class ActivityReview extends React.Component {
         });
         this.fetchActivityData();
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation)});
+            BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation.navigate("Main"))});
         }
     }
     backForAndroid(navigator) {

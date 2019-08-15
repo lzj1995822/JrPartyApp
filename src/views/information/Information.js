@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  ActivityIndicator,
+  ActivityIndicator, BackHandler,
   FlatList,
-  Modal,
+  Modal, Platform,
   RefreshControl, ScrollView,
   StyleSheet,
   Text,
@@ -46,7 +46,11 @@ export default class  Information extends React.Component  {
     }
     this.showInformationList();
   }
-
+  componentDidMount(): void {
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', () => {return this.backForAndroid(this.props.navigation.navigate("Main"))});
+    }
+  }
   setModalVis(visible,item){
     this.setState({modalVis:visible});
     this.state.currentInformation = item;
