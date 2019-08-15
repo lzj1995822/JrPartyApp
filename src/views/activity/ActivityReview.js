@@ -277,13 +277,14 @@ export default class ActivityReview extends React.Component {
             this.fetchActivityData();
         }
     };
+
     review(ispass) {
         this.setState({executeLoading: true});
         let url = `${api}/api/identity/parActivityPerform/check`;
         let params = {
             activityID: this.state.currentRow.activityId,
             activityTime: this.state.currentRow.month,
-            createTime: "2019-08-12T14:55:35",
+            createTime: new Date().Format("yyyy-MM-ddTHH:mm:ss"),
             districtId: this.state.currentRow.organizationId,
             organizationId: this.state.currentRow.districtId,
             remark: this.state.opinion,
@@ -468,7 +469,7 @@ export default class ActivityReview extends React.Component {
             return (<Image resizeMode='contain' style={{width: 200, height: 355, margin: 6}} source={{uri: this.handlePhonePath(item.imageURL)}}/>)
         })
         let tvPlane =
-            <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`电视端执行记录${this.state.tvPic.length>=1 ? `(${this.state.tvPic[0].replace(/T/g, ' ')})` : ''}`}</Text>}>
+            <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`电视端执行记录${this.state.tvPic.length>=1 ? `(${this.state.tvPic[0].createTime.replace(/T/g, ' ')})` : ''}`}</Text>}>
                     {
                         tvPics.length >= 1 ?
                             <ScrollView horizontal={true}>
