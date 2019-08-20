@@ -84,6 +84,12 @@ const stack = createStackNavigator({
         navigationOptions: {
             header: null
         }
+    },
+    Main: {
+        screen: Mine,
+        navigationOptions: {
+            header: null
+        }
     }
 },{
     //默认导航配置
@@ -129,68 +135,9 @@ const stack = createStackNavigator({
     }
 });
 
-const tab = createBottomTabNavigator({
-    HomePage: {
-        screen: HomePage,
-        navigationOptions: ({ navigation }) => ({
-            tabBarLabel: "首页",
-        })
-    },
-    Calendar: {
-        screen: OnGoing,
-        navigationOptions: ({ navigation }) => ({
-            tabBarLabel: "台账"
-        })
-    },
-    Cal: {
-        screen: Cal,
-        navigationOptions: ({ navigation }) => ({
-            tabBarLabel: "统计"
-        })
-    },
-    Mine: {
-        screen: Mine,
-        navigationOptions: ({ navigation }) => ({
-            tabBarLabel: "我的"
-        })
-    }
-},{
-    defaultNavigationOptions: ({ navigation }) => ({
-        tabBarIcon: ({ focused }) => {
-            const { routeName } = navigation.state;
-            let iconSource;
-            switch (routeName) {
-                case 'HomePage':
-                    iconSource = 'home';
-                    break;
-                case 'Calendar':
-                    iconSource = 'calendar';
-                    break;
-                case 'Cal':
-                    iconSource = 'linechart';
-                    break;
-                case 'Mine':
-                    iconSource = 'user';
-                    break;
-            }
-            return (
-                <View>
-                    <AntDesign
-                        size={26}
-                        name={iconSource}
-                        style={{color: focused ? '#409eff' : 'grey'}}
-                    />
-                </View>
-            );
-        },
-
-    })
-});
-
 export default createAppContainer(createSwitchNavigator({
     Welcome: welcome,
     Init: stack,
-    Main: tab,
 }, {
     initialRouteName: 'Welcome',
     defaultNavigationOptions: {
