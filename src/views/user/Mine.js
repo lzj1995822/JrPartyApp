@@ -19,7 +19,7 @@ import {List, Flex, InputItem, Button, WingBlank, WhiteSpace} from "@ant-design/
 import {Tag} from "beeshell";
 import { store } from '../../redux/store';
 import {api} from "../../api";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Entypo from "react-native-vector-icons/Entypo";
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
 //屏幕信息
@@ -373,30 +373,44 @@ export default class Mine extends React.Component {
         let aboutNavigationBar = <NavigationBar leftButton={leftAboutBtn} linerGradient={true} title='关于句容党建' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         let noticeNavigationBar = <NavigationBar leftButton={noticeButton} linerGradient={true} title='消息中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         return (
-            <View>
+            <View style={{backgroundColor:'#f4f4ea'}}>
                {/* <ScrollView
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                 >*/}
-                    <View>
+                    <View >
                     <ImageBackground
                     source={require('../../static/drawable-xxxhdpi/banner.png')}
                     style={{height: 0.32* height, width: '100%',alignItems: 'center',justifyContent: 'center'}}
                     resizeMode="cover"
                 >
-                        <View style={{marginLeft:0.85 * width,}}>
-                            <Badge dot={this.state.doteVisible}>
-                                <AntDesign
+                        <Flex style={{marginBottom:20}}>
+                            <View style={{flex:0.5}}>
+                                <Badge dot={this.state.doteVisible}>
+                                    <AntDesign
+                                        size={22}
+                                        name={'bells'}
+                                        style={{color: '#fff',marginLeft:'20%'}}
+                                        onPress={() => {
+                                            this.setNoticeModalVisible(true);
+
+                                        }}
+                                    />
+                                </Badge>
+                            </View>
+                            <View style={{flex:0.5,}}>
+                                <Entypo
                                     size={22}
-                                    name={'bells'}
-                                    style={{color: '#fff'}}
+                                    name={'log-out'}
+                                    style={{color: '#fff',marginLeft:'85%'}}
                                     onPress={() => {
-                                        this.setNoticeModalVisible(true);
+                                        this.logout();
                                     }}
                                 />
-                            </Badge>
-                        </View>
+                            </View>
+                        </Flex>
+
                         <Image source={require('../../static/img/dq.png')} style={styles.avator}/>
                         <Text style={styles.userName}>{this.state.user.name}</Text>
                         <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
@@ -406,36 +420,9 @@ export default class Mine extends React.Component {
                                 <Text>&nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}</Text>
                             </Flex>
                         </Tag>
-                  {/*  <Flex direction='row'  align='stretch' style={{alignItems: 'center',paddingBottom:50}}>
-                        <View style={{flex: 0.33,alignItems: 'flex-end'}}>
-                            <Image source={require('../../static/img/blue.jpg')} style={styles.avator}/>
-                        </View>
-                        <View style={{marginLeft: 20,flex: 0.66}}>
-                            <Flex>
-                                 <Text style={styles.userName}>{this.state.user.name}</Text>
-                                <View style={{borderColor: 'blue',display: 'inline-block'}}>
-                                <Tag textStyle={{color: '#fff'}} style={{backgroundColor: '#67c23a', height: 22, marginTop: 28, marginLeft:10, borderColor: '#67c23a'}}>{this.state.user.roleName.replace(/角色/g, '')}</Tag>
-                                </View>
-                            </Flex>
-                            <Flex style={{height: 35}} align='end'>
-                                <AntDesign
-                                    size={18}
-                                    name={'mobile1'}
-                                />
-                                <Text style={{ paddingLeft: 5,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
-                            </Flex>
-                            <Flex style={{height: 40}} align='end'>
-                                <AntDesign
-                                    size={18}
-                                    name={'clockcircleo'}
-                                />
-                                <Text style={styles.latestLoginTime}> 最近登录{this.state.user.lastTime.toString().split('.')[0].replace('T',' ')}</Text>
-                            </Flex>
-                        </View>
-                    </Flex>*/}
                 </ImageBackground>
                         {/*按钮集合展示区*/}
-                        <List style={{marginTop:10}}>
+                        <List style={{marginTop:20}}>
                             <Item key={'btnss'}>
                                 <Flex justify="between" align="center" style={styleScope.btnList}>
                                     <TouchableOpacity onPress={() => this.props.navigation.navigate("Activity")}>
@@ -479,7 +466,7 @@ export default class Mine extends React.Component {
                                 </Flex>
                             </Item>
                         </List>
-                <List renderHeader={null}>
+                <List renderHeader={null} style={{marginTop:20}}>
                     <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/pswReset.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
                            arrow="horizontal" onPress={this.showAlert.bind(this)}>
                         <Text style={{fontSize:16}}>密码重置</Text>
@@ -497,7 +484,6 @@ export default class Mine extends React.Component {
                         <Text style={{fontSize:16}}>关于句容党建</Text>
                     </Item>
                 </List>
-                <Button   type="primary" style={{marginRight: 10,marginLeft:10 ,marginTop:30,marginBottom:50}} onPress={() => { this.logout();}}><Text style={{fontSize:16}}>退出</Text></Button>
                     </View>
           {/*      </ScrollView>*/}
                 <Modal animationType="slide" transparent={false} visible={this.state.pswModalVisible} onRequestClose={() => {this.setPswModalVisible(false);}}>
