@@ -222,6 +222,15 @@ export default class Mine extends React.Component {
     }
     logout(){
         this.props.navigation.navigate("Login");
+        store.dispatch({
+            type: 'SET_TOKEN',
+            value: ''
+        });
+        store.dispatch({
+            type: 'SET_USER',
+            value:''
+        })
+
     }
 
     setDoteVis(){
@@ -421,11 +430,11 @@ export default class Mine extends React.Component {
 
                             <Flex style={{top:0}}>
                                 <View style={{flex:0.5}}>
-                                    <Badge dot={this.state.doteVisible}>
+                                    <Badge dot={this.state.doteVisible} style={{marginLeft:'10%'}}>
                                         <AntDesign
                                             size={22}
                                             name={'bells'}
-                                            style={{color: '#fff',marginLeft:'20%'}}
+                                            style={{color: '#fff'}}
                                             onPress={() => {
                                                 this.setNoticeModalVisible(true);
                                             }}
