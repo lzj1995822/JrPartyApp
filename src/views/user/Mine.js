@@ -9,8 +9,8 @@ import {
     Alert,
     Modal,
     TextInput,
-    ScrollView, FlatList, RefreshControl, ActivityIndicator
-} from "react-native";
+    ScrollView, FlatList, RefreshControl, ActivityIndicator, StatusBar, Platform, DeviceInfo,
+} from 'react-native';
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -21,6 +21,7 @@ import { store } from '../../redux/store';
 import {api} from "../../api";
 import Entypo from "react-native-vector-icons/Entypo";
 import { hex_md5} from "../utils/md5";
+const STATUS_BAR_HEIGHT = DeviceInfo.isIPhoneX_deprecated ? 30 : 20;
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
 //屏幕信息
@@ -404,6 +405,9 @@ export default class Mine extends React.Component {
         let noticeNavigationBar = <NavigationBar leftButton={noticeButton} linerGradient={true} title='消息中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         return (
             <View style={{backgroundColor:'#f4f4ea'}}>
+                <View style={{height: Platform.OS === 'ios' ? STATUS_BAR_HEIGHT : 0, backgroundColor: THEME_COLOR}}>
+                    <StatusBar barStyle={'light-content'}/>
+                </View>
                 <View style={{width:width,height:40,backgroundColor:THEME_COLOR,alignItems:'center'}}>
                     <ImageBackground source={require('../../static/img/title.png')} style={{width:width*0.9,height:35,top:5,backgroundColor:THEME_COLOR}}/>
                 </View>
@@ -418,8 +422,7 @@ export default class Mine extends React.Component {
                         style={{height: 0.34* height, width: '100%',alignItems: 'center',justifyContent: 'center'}}
                         resizeMode="cover"
                         >
-
-                            <Flex style={{top:0}}>
+                            <Flex style={{top:-10}}>
                                 <View style={{flex:0.5}}>
                                     <Badge dot={this.state.doteVisible}>
                                         <AntDesign

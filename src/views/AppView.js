@@ -93,6 +93,7 @@ const stack = createStackNavigator({
     }
 },{
     //默认导航配置
+    initialRouteName: 'Login',
     defaultNavigationOptions: ({ navigation }) => {
         NavigationUtils.navigation = navigation;
         let statusBar = {
@@ -135,12 +136,5 @@ const stack = createStackNavigator({
     }
 });
 
-export default createAppContainer(createSwitchNavigator({
-    Welcome: welcome,
-    Init: stack,
-}, {
-    initialRouteName: 'Welcome',
-    defaultNavigationOptions: {
-        header: null
-    }
-}))
+export default createAppContainer(stack);
+

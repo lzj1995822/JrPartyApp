@@ -152,7 +152,6 @@ export default class ActingActivity extends React.Component {
         }
     }
     fetchActivityData() {
-        console.log("拉取活动数据");
         let isCountrySide = this.state.user.roleCode === 'COUNTRY_SIDE_ACTOR';
         let url = `${api}/api/identity/${isCountrySide ? 'parActivityObject' : 'parActivity'}/page?page=${this.page - 1}&size=${this.size}`;
         let params = {
@@ -582,7 +581,6 @@ export default class ActingActivity extends React.Component {
                             }},
                     ],
                 )
-                console.log(e,"上传失败")
             })
     }
     handlePhonePath(imgUrl) {

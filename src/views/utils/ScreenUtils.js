@@ -29,7 +29,6 @@ const XXXHDPI_RATIO = 3.5;
     xxxhdpi 安卓 倍数3.5
 */
 const actualDpiRatio = PixelRatio.get();
-console.log(actualDpiRatio, '实际dpi');
 
 /*对应dpi倍数的code，用于适配不同的图片*/
 let actualType;
