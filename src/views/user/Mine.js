@@ -21,6 +21,8 @@ import { store } from '../../redux/store';
 import {api} from "../../api";
 import Entypo from "react-native-vector-icons/Entypo";
 import { hex_md5} from "../utils/md5";
+
+
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
 //屏幕信息
@@ -102,6 +104,8 @@ export default class Mine extends React.Component {
         };
         this.showMessageList();
     }
+
+
     setResetPswModal(visible) {
         this.setState({
             oldPsw:'',
