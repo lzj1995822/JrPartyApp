@@ -20,6 +20,7 @@ import {Tag} from "beeshell";
 import { store } from '../../redux/store';
 import {api} from "../../api";
 import Entypo from "react-native-vector-icons/Entypo";
+import { hex_md5} from "../utils/md5";
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
 //屏幕信息
@@ -80,8 +81,10 @@ export default class Mine extends React.Component {
     constructor() {
         super();
         this.state = {
+            oldPsw:'',
             password:'',
             rePassword:'',
+            resetPswModal:false,
             pswModalVisible: false,
             questionModal:false,
             aboutModal:false,
@@ -99,9 +102,19 @@ export default class Mine extends React.Component {
         };
         this.showMessageList();
     }
-
+    setResetPswModal(visible) {
+        this.setState({
+            oldPsw:'',
+            resetPswModal: visible
+        });
+    }
     setPswModalVisible(visible) {
-        this.setState({ pswModalVisible: visible });
+        this.setState({
+            oldPsw:'',
+            password:'',
+            rePassword:'',
+            pswModalVisible: visible
+        });
     }
 
     setQuestionModal(visible){
@@ -120,16 +133,6 @@ export default class Mine extends React.Component {
         this.setState({doteVisible: visible});
     }
 
-    showAlert() {
-        Alert.alert(
-          '',
-          '是否确认重置密码？',
-          [
-              {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-              {text: '确认', onPress: () => this.resetPsw()},
-          ],
-        )
-    }
     resetPsw(){
         let userUrl= api + '/api/identity/sysUser/'+this.state.user.id+'id';
         return fetch(userUrl, {
@@ -192,12 +195,26 @@ export default class Mine extends React.Component {
             console.error(error)
         })
     }
-    confirmPsw(password,rePassword){
-        if(password==''||rePassword==''){
+    confirmRePsw(oldPsw){
+        if(oldPsw==''){
+            Alert.alert("","信息未填写完整",  [{text: '我知道了', onPress: () => console.log('Cancel Pressed'), style: 'cancel'}]);
+        }
+        else if(hex_md5(oldPsw)!==this.state.user.password){
+            Alert.alert("","原密码输入错误",  [{text: '我知道了', onPress: () =>this.setState({oldPsw:''}), style: 'cancel'}]);
+        }
+        else{
+           this.resetPsw();
+        }
+    }
+    confirmPsw(password,rePassword,oldPsw){
+        if(password==''||rePassword==''||oldPsw==''){
            Alert.alert("","信息未填写完整",  [{text: '我知道了', onPress: () => console.log('Cancel Pressed'), style: 'cancel'}]);
         }
+        else if(hex_md5(oldPsw)!==this.state.user.password){
+            Alert.alert("","原密码输入错误",  [{text: '我知道了', onPress: () =>this.setState({oldPsw:''}), style: 'cancel'}]);
+        }
         else if(password!==rePassword){
-            Alert.alert("","密码不一致，请重新输入",  [{text: '我知道了', onPress: () =>this.setState({password:'',rePassword:''}), style: 'cancel'}]);
+            Alert.alert("","密码不一致，请重新输入",  [{text: '我知道了', onPress: () =>this.setState({password:'',rePassword:'',oldPsw:''}), style: 'cancel'}]);
         }
         else{
             this.editPsw(password);
@@ -328,6 +345,19 @@ export default class Mine extends React.Component {
                     />
                 </View>
             </TouchableOpacity>;
+        let leftReButton =
+            <TouchableOpacity style = {{flexDirection: 'row'}}>
+                <View style={{padding: 10}}>
+                    <AntDesign
+                        size={26}
+                        name={'left'}
+                        style={{color: '#fff'}}
+                        onPress={() => {
+                            this.setResetPswModal(false);
+                        }}
+                    />
+                </View>
+            </TouchableOpacity>;
         let leftButton =
           <TouchableOpacity style = {{flexDirection: 'row'}}>
               <View style={{padding: 10}}>
@@ -367,60 +397,62 @@ export default class Mine extends React.Component {
                   />
               </View>
           </TouchableOpacity>;
-        let navigationBar = <NavigationBar rightButton={rightButton} linerGradient={true} title='个人中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
+        let RePswNavigationBar = <NavigationBar leftButton={leftReButton} linerGradient={true} title='重置密码' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         let pswNavigationBar = <NavigationBar leftButton={leftButton} linerGradient={true} title='修改密码' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         let questionNavigationBar = <NavigationBar leftButton={leftQuestionBtn} linerGradient={true} title='问题反馈' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         let aboutNavigationBar = <NavigationBar leftButton={leftAboutBtn} linerGradient={true} title='关于句容党建' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         let noticeNavigationBar = <NavigationBar leftButton={noticeButton} linerGradient={true} title='消息中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         return (
             <View style={{backgroundColor:'#f4f4ea'}}>
-               {/* <ScrollView
+                <View style={{width:width,height:40,backgroundColor:THEME_COLOR,alignItems:'center'}}>
+                    <ImageBackground source={require('../../static/img/title.png')} style={{width:width*0.9,height:35,top:5,backgroundColor:THEME_COLOR}}/>
+                </View>
+                <ScrollView
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
-                >*/}
-                    <View >
-                    <ImageBackground
-                    source={require('../../static/drawable-xxxhdpi/banner.png')}
-                    style={{height: 0.32* height, width: '100%',alignItems: 'center',justifyContent: 'center'}}
-                    resizeMode="cover"
                 >
-                        <Flex style={{marginBottom:20}}>
-                            <View style={{flex:0.5}}>
-                                <Badge dot={this.state.doteVisible}>
-                                    <AntDesign
-                                        size={22}
-                                        name={'bells'}
-                                        style={{color: '#fff',marginLeft:'20%'}}
-                                        onPress={() => {
-                                            this.setNoticeModalVisible(true);
+                    <View >
+                        <ImageBackground
+                        source={require('../../static/drawable-xxxhdpi/banner.png')}
+                        style={{height: 0.34* height, width: '100%',alignItems: 'center',justifyContent: 'center'}}
+                        resizeMode="cover"
+                        >
 
+                            <Flex style={{top:0}}>
+                                <View style={{flex:0.5}}>
+                                    <Badge dot={this.state.doteVisible}>
+                                        <AntDesign
+                                            size={22}
+                                            name={'bells'}
+                                            style={{color: '#fff',marginLeft:'20%'}}
+                                            onPress={() => {
+                                                this.setNoticeModalVisible(true);
+                                            }}
+                                        />
+                                    </Badge>
+                                </View>
+                                <View style={{flex:0.5,}}>
+                                    <Entypo
+                                        size={22}
+                                        name={'log-out'}
+                                        style={{color: '#fff',marginLeft:'85%'}}
+                                        onPress={() => {
+                                            this.logout();
                                         }}
                                     />
-                                </Badge>
-                            </View>
-                            <View style={{flex:0.5,}}>
-                                <Entypo
-                                    size={22}
-                                    name={'log-out'}
-                                    style={{color: '#fff',marginLeft:'85%'}}
-                                    onPress={() => {
-                                        this.logout();
-                                    }}
-                                />
-                            </View>
-                        </Flex>
-
-                        <Image source={require('../../static/img/dq.png')} style={styles.avator}/>
-                        <Text style={styles.userName}>{this.state.user.name}</Text>
-                        <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
-                        <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,borderRadius:45,fontSize:14}}>
-                            <Flex>
-                                <Image source={require('../../static/img/xing.png')} style={{width:16,height:14.45,}}/>
-                                <Text>&nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}</Text>
+                                </View>
                             </Flex>
-                        </Tag>
-                </ImageBackground>
+                            <Image source={require('../../static/img/dq.png')} style={styles.avator}/>
+                            <Text style={styles.userName}>{this.state.user.name}</Text>
+                            <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
+                            <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,borderRadius:45,fontSize:14}}>
+                                <Flex>
+                                    <Image source={require('../../static/img/xing.png')} style={{width:16,height:14.45,}}/>
+                                    <Text>&nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}</Text>
+                                </Flex>
+                            </Tag>
+                        </ImageBackground>
                         {/*按钮集合展示区*/}
                         <List style={{marginTop:20}}>
                             <Item key={'btnss'}>
@@ -466,28 +498,53 @@ export default class Mine extends React.Component {
                                 </Flex>
                             </Item>
                         </List>
-                <List renderHeader={null} style={{marginTop:20}}>
-                    <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/pswReset.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
-                           arrow="horizontal" onPress={this.showAlert.bind(this)}>
-                        <Text style={{fontSize:16}}>密码重置</Text>
-                    </Item>
-                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/pswEdit.png')} style={{marginRight:9,marginLeft: 0,height:18,width:11}}/>}
-                          arrow="horizontal" onPress={() => {this.setPswModalVisible(true);}}>
-                        <Text style={{fontSize:16}}>密码修改</Text>
-                    </Item>
-                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/question.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
-                          arrow="horizontal" onPress={() => {this.setQuestionModal(true);}}>
-                        <Text style={{fontSize:16}}>问题反馈</Text>
-                    </Item>
-                    <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/about.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
-                          arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize: 12}}>版本号 1.1.0</Text>}>
-                        <Text style={{fontSize:16}}>关于句容党建</Text>
-                    </Item>
-                </List>
+                        <List renderHeader={null} style={{marginTop:20,}}>
+                            <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/pswReset.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
+                                   arrow="horizontal" onPress={()=>{this.setResetPswModal(true)}}>
+                                <Text style={{fontSize:14}}>密码重置</Text>
+                            </Item>
+                            <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/pswEdit.png')} style={{marginRight:9,marginLeft: 0,height:18,width:11}}/>}
+                                  arrow="horizontal" onPress={() => {this.setPswModalVisible(true);}}>
+                                <Text style={{fontSize:14}}>密码修改</Text>
+                            </Item>
+                            <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/question.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
+                                  arrow="horizontal" onPress={() => {this.setQuestionModal(true);}}>
+                                <Text style={{fontSize:14}}>问题反馈</Text>
+                            </Item>
+                            <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/about.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
+                                  arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize: 10}}>版本号 1.1.0</Text>}>
+                                <Text style={{fontSize:14}}>关于句容党建</Text>
+                            </Item>
+                        </List>
                     </View>
-          {/*      </ScrollView>*/}
+                </ScrollView>
+                <Modal animationType="slide" transparent={false} visible={this.state.resetPswModal} onRequestClose={() => {this.setResetPswModal(false);}}>
+                    {RePswNavigationBar}
+                    <InputItem clear type="password" value={this.state.oldPsw} placeholder="请输入原密码" style={{fontSize:14}}
+                               onChange={value => {
+                                   this.setState({
+                                       oldPsw: value,
+                                   });
+                               }}
+                    >
+                        <Text style={{fontSize:14}}> 原密码</Text>
+                    </InputItem>
+                    <WhiteSpace size="lg"/>
+                    <Button type="primary" style={{marginRight: 10,marginLeft:10 }} onPress={() => {this.confirmRePsw(this.state.oldPsw)}}><Text style={{fontSize:14}}>确认</Text></Button>
+                </Modal>
+
+
                 <Modal animationType="slide" transparent={false} visible={this.state.pswModalVisible} onRequestClose={() => {this.setPswModalVisible(false);}}>
                     {pswNavigationBar}
+                    <InputItem clear type="password" value={this.state.oldPsw} placeholder="请输入原密码" style={{fontSize:14}}
+                               onChange={value => {
+                                   this.setState({
+                                       oldPsw: value,
+                                   });
+                               }}
+                    >
+                        <Text style={{fontSize:14}}> 原密码</Text>
+                    </InputItem>
                     <InputItem clear type="password" value={this.state.password} placeholder="请输入密码" style={{fontSize:14}}
                                onChange={value => {
                                     this.setState({
@@ -507,7 +564,7 @@ export default class Mine extends React.Component {
                         <Text style={{fontSize:14}}>确认密码</Text>
                     </InputItem>
                     <WhiteSpace size="lg"/>
-                    <Button type="primary" style={{marginRight: 10,marginLeft:10 }} onPress={() => {this.confirmPsw(this.state.password,this.state.rePassword)}}><Text style={{fontSize:14}}>确认</Text></Button>
+                    <Button type="primary" style={{marginRight: 10,marginLeft:10 }} onPress={() => {this.confirmPsw(this.state.password,this.state.rePassword,this.state.oldPsw)}}><Text style={{fontSize:14}}>确认</Text></Button>
                 </Modal>
                 <Modal animationType="slide" transparent={false} visible={this.state.questionModal} onRequestClose={() => {this.setQuestionModal(false);}}>
                     {questionNavigationBar}
