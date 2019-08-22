@@ -22,7 +22,7 @@ import {api} from "../../api";
 import Entypo from "react-native-vector-icons/Entypo";
 import { hex_md5} from "../utils/md5";
 import DeviceVersion from 'react-native-device-info';
-import {NativeModules} from 'react-native';
+import { NativeModules,Linking } from 'react-native';
 import NavigationUtils from "../navigation/NavigationUtils";
 
 const STATUS_BAR_HEIGHT = DeviceInfo.isIPhoneX_deprecated ? 30 : 20;
@@ -105,6 +105,7 @@ export default class Mine extends React.Component {
             showFoot: 1,
             doteVisible:false,
             version:DeviceVersion.getVersion(),
+            storeUrl:'',
         };
         this.showMessageList();
     }
@@ -142,7 +143,14 @@ export default class Mine extends React.Component {
         if(Platform.OS === 'android'){
             NativeModules.DownloadApk.downloading("http://122.97.218.162:18006/JRParty/JRParty/JRDemo/app/SocialManage-release.apk", "app-release.apk");
         }else if(Platform.OS === 'ios'){
-
+            fetch('https://itunes.apple.com/lookup?bundleId=您的bundleId').then((response) => response.json()).then((responseJson) =>{
+                this.setState({
+                    storeUrl:responseJson.results[0].trackViewUrl,//应用商城下载的地址
+                });
+                Linking.openURL(this.state.storeUrl).catch(err => console.error('An error occurred', err));
+            }).catch((error) => {
+                console.error(error);
+            });
         }
 
     }
