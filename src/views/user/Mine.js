@@ -113,7 +113,7 @@ export default class Mine extends React.Component {
         let params;
         if(Platform.OS === 'android'){
             params = {
-                code: "ANDROID_APP_VERSION",
+                code: "APP_VERSION",
             };
         }else if(Platform.OS === 'ios'){
             params = {
@@ -140,7 +140,7 @@ export default class Mine extends React.Component {
     }
     downLoadAPP (){
         if(Platform.OS === 'android'){
-            NativeModules.DownloadApk.downloading("http://122.97.218.162:18017/JRCivilizationService/app/app-release.apk", "app-release.apk");
+            NativeModules.DownloadApk.downloading("http://122.97.218.162:18006/JRParty/JRParty/JRDemo/app/SocialManage-release.apk", "app-release.apk");
         }else if(Platform.OS === 'ios'){
 
         }
