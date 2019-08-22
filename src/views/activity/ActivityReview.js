@@ -1,9 +1,9 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-    ActivityIndicator, BackHandler, Platform, TextInput, RefreshControl
+     BackHandler, Platform, TextInput, RefreshControl
 } from "react-native";
-import {Card, Button, WhiteSpace} from "@ant-design/react-native";
+import {Card, Button, WhiteSpace,ActivityIndicator} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Flex from "@ant-design/react-native/es/flex/Flex";
@@ -546,7 +546,7 @@ export default class ActivityReview extends React.Component {
                         backgroundColor: 'white',
                         opacity: 0.8,
                     }}>
-                        <ActivityIndicator size="large" color="#0000ff" />
+                        <ActivityIndicator size="large" color="#0000ff" animating={this.state.executeLoading}/>
                         <Text>提交中</Text>
                     </View>
                 </Modal>
