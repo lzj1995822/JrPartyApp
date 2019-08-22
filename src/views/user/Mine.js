@@ -159,11 +159,9 @@ export default class Mine extends React.Component {
                   console.error(error)
             })
         }else if(Platform.OS === 'ios'){
-            fetch('https://itunes.apple.com/lookup?bundleId=1111').then((response) => response.json()).then((responseJson) =>{
-                this.setState({
-                    storeUrl:responseJson.results[0].trackViewUrl,//应用商城下载的地址
-                });
-                Linking.openURL(this.state.storeUrl).catch(err => console.error('An error occurred', err));
+            fetch('https://itunes.apple.com/lookup?id=1197227551').then((response) => response.json()).then((responseJson) =>{
+                console.log(responseJson,"ss")
+                Linking.openURL('https://apps.apple.com/cn/app/党建iso9001体系/id1251839978').catch(err => console.error('An error occurred', err));
             }).catch((error) => {
                 console.error(error);
             });
