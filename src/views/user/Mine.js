@@ -130,7 +130,6 @@ export default class Mine extends React.Component {
             },
             body: JSON.stringify(params)
         }).then((response) => response.json()).then((resJson) => {
-            console.log()
             let latestVersion = resJson.content[0].codeValue;
            if(this.state.version != latestVersion){
                Alert.alert("","当前版本不是最新版本请更新",  [{text: '立即更新', onPress: () => this.downLoadAPP() }]);
@@ -141,9 +140,26 @@ export default class Mine extends React.Component {
     }
     downLoadAPP (){
         if(Platform.OS === 'android'){
-            NativeModules.DownloadApk.downloading("http://122.97.218.162:18006/JRParty/JRParty/JRDemo/app/SocialManage-release.apk", "app-release.apk");
+            let url = api + '/api/identity/sysConfiguration/list';
+            let param = {
+                  code: "ANDROID_APP_ADDRESS",
+             };
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'authorization': store.getState().token.value
+                },
+                body: JSON.stringify(param)
+            }).then((response) => response.json()).then((resJson) => {
+                 let appUrl = resJson.content[0].codeValue;
+                 NativeModules.DownloadApk.downloading( appUrl, "app-release.apk");
+            }).catch((error) => {
+                  console.error(error)
+            })
         }else if(Platform.OS === 'ios'){
-            fetch('https://itunes.apple.com/lookup?bundleId=您的bundleId').then((response) => response.json()).then((responseJson) =>{
+            fetch('https://itunes.apple.com/lookup?bundleId=1111').then((response) => response.json()).then((responseJson) =>{
                 this.setState({
                     storeUrl:responseJson.results[0].trackViewUrl,//应用商城下载的地址
                 });
