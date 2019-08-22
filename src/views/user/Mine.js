@@ -130,7 +130,6 @@ export default class Mine extends React.Component {
             },
             body: JSON.stringify(params)
         }).then((response) => response.json()).then((resJson) => {
-            console.log()
             let latestVersion = resJson.content[0].codeValue;
            if(this.state.version != latestVersion){
                Alert.alert("","当前版本不是最新版本请更新",  [{text: '立即更新', onPress: () => this.downLoadAPP() }]);
@@ -143,11 +142,9 @@ export default class Mine extends React.Component {
         if(Platform.OS === 'android'){
             NativeModules.DownloadApk.downloading("http://122.97.218.162:18006/JRParty/JRParty/JRDemo/app/SocialManage-release.apk", "app-release.apk");
         }else if(Platform.OS === 'ios'){
-            fetch('https://itunes.apple.com/lookup?bundleId=您的bundleId').then((response) => response.json()).then((responseJson) =>{
-                this.setState({
-                    storeUrl:responseJson.results[0].trackViewUrl,//应用商城下载的地址
-                });
-                Linking.openURL(this.state.storeUrl).catch(err => console.error('An error occurred', err));
+            fetch('https://itunes.apple.com/lookup?id=1197227551').then((response) => response.json()).then((responseJson) =>{
+                console.log(responseJson,"ss")
+                Linking.openURL('https://apps.apple.com/cn/app/党建iso9001体系/id1251839978').catch(err => console.error('An error occurred', err));
             }).catch((error) => {
                 console.error(error);
             });
