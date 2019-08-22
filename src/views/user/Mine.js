@@ -9,7 +9,7 @@ import {
     Alert,
     Modal,
     TextInput,
-    ScrollView, FlatList, RefreshControl, ActivityIndicator, DeviceEventEmitter, Platform, BackHandler, StatusBar, DeviceInfo,
+    ScrollView, FlatList, RefreshControl, ActivityIndicator, DeviceEventEmitter, Platform, BackHandler, StatusBar, DeviceInfo, Platform
 } from 'react-native';
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
@@ -110,9 +110,16 @@ export default class Mine extends React.Component {
     }
     componentDidMount() {
         let url = api + '/api/identity/sysConfiguration/list';
-        let params = {
-            code: "APP_VERSION",
-        };
+        let params;
+        if(Platform.OS === 'android'){
+            params = {
+                code: "ANDROID_APP_VERSION",
+            };
+        }else if(Platform.OS === 'ios'){
+            params = {
+                code: "IOS_APP_VERSION",
+            };
+        }
         return fetch(url, {
             method: 'POST',
             headers: {
@@ -131,7 +138,12 @@ export default class Mine extends React.Component {
         })
     }
     downLoadAPP (){
-       NativeModules.DownloadApk.downloading("http://122.97.218.162:18017/JRCivilizationService/app/app-release.apk", "app-release.apk");
+        if(Platform.OS === 'android'){
+            NativeModules.DownloadApk.downloading("http://122.97.218.162:18017/JRCivilizationService/app/app-release.apk", "app-release.apk");
+        }else if(Platform.OS === 'ios'){
+
+        }
+
     }
     setResetPswModal(visible) {
         this.setState({
