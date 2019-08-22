@@ -9,7 +9,7 @@ import {
     Alert,
     Modal,
     TextInput,
-    ScrollView, FlatList, RefreshControl, ActivityIndicator, StatusBar, Platform, DeviceInfo,
+    ScrollView, FlatList, RefreshControl, ActivityIndicator, DeviceEventEmitter, Platform, BackHandler, StatusBar, DeviceInfo, Platform
 } from 'react-native';
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
@@ -21,6 +21,10 @@ import { store } from '../../redux/store';
 import {api} from "../../api";
 import Entypo from "react-native-vector-icons/Entypo";
 import { hex_md5} from "../utils/md5";
+import DeviceVersion from 'react-native-device-info';
+import {NativeModules} from 'react-native';
+import NavigationUtils from "../navigation/NavigationUtils";
+
 const STATUS_BAR_HEIGHT = DeviceInfo.isIPhoneX_deprecated ? 30 : 20;
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
@@ -100,8 +104,46 @@ export default class Mine extends React.Component {
             // 控制foot  1：正在加载   2 ：无更多数据
             showFoot: 1,
             doteVisible:false,
+            version:DeviceVersion.getVersion(),
         };
         this.showMessageList();
+    }
+    componentDidMount() {
+        let url = api + '/api/identity/sysConfiguration/list';
+        let params;
+        if(Platform.OS === 'android'){
+            params = {
+                code: "ANDROID_APP_VERSION",
+            };
+        }else if(Platform.OS === 'ios'){
+            params = {
+                code: "IOS_APP_VERSION",
+            };
+        }
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'authorization': store.getState().token.value
+            },
+            body: JSON.stringify(params)
+        }).then((response) => response.json()).then((resJson) => {
+            let latestVersion = resJson.content[0].codeValue;
+           if(this.state.version != latestVersion){
+               Alert.alert("","当前版本不是最新版本请更新",  [{text: '立即更新', onPress: () => this.downLoadAPP() }]);
+           }
+        }).catch((error) => {
+            console.error(error)
+        })
+    }
+    downLoadAPP (){
+        if(Platform.OS === 'android'){
+            NativeModules.DownloadApk.downloading("http://122.97.218.162:18017/JRCivilizationService/app/app-release.apk", "app-release.apk");
+        }else if(Platform.OS === 'ios'){
+
+        }
+
     }
     setResetPswModal(visible) {
         this.setState({
@@ -524,7 +566,7 @@ export default class Mine extends React.Component {
                                 <Text style={{fontSize:14}}>问题反馈</Text>
                             </Item>
                             <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/about.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
-                                  arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize: 10}}>版本号 1.1.0</Text>}>
+                                  arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize:10}}>{"版本号"+this.state.version}</Text>}>
                                 <Text style={{fontSize:14}}>关于句容党建</Text>
                             </Item>
                         </List>
@@ -605,7 +647,7 @@ export default class Mine extends React.Component {
                             <View style={{flex: 0.1}}></View>
                             <Flex direction='column' align="center" style={{flex: 0.45,marginLeft: -30,marginTop: 10}}>
                                 <Text style={{fontSize:18,color:'#000',height:40,width:'100%'}}>句容党建</Text>
-                                <Text style={{fontSize:14,color:'#999999',height:40,width:'100%'}}>当前版本：1.1</Text>
+                                <Text style={{fontSize:14,color:'#999999',height:40,width:'100%'}}>当前版本:{this.state.version}</Text>
                             </Flex>
                         </Flex>
                         <Text style={{fontSize:16,color:'#b36d28',textAlign:'justify',lineHeight:30}}>    句容党建App是一款为党的各级党组织和广大党员提供基层党建工作管理、监督、学习和交流的平台。</Text>
