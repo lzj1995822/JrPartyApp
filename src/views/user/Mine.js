@@ -9,8 +9,8 @@ import {
     Alert,
     Modal,
     TextInput,
-    ScrollView, FlatList, RefreshControl, ActivityIndicator
-} from "react-native";
+    ScrollView, FlatList, RefreshControl, ActivityIndicator, DeviceEventEmitter, Platform, BackHandler, StatusBar, DeviceInfo,
+} from 'react-native';
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -21,8 +21,11 @@ import { store } from '../../redux/store';
 import {api} from "../../api";
 import Entypo from "react-native-vector-icons/Entypo";
 import { hex_md5} from "../utils/md5";
+import DeviceVersion from 'react-native-device-info';
+import { NativeModules,Linking } from 'react-native';
+import NavigationUtils from "../navigation/NavigationUtils";
 
-
+const STATUS_BAR_HEIGHT = DeviceInfo.isIPhoneX_deprecated ? 30 : 20;
 const THEME_COLOR = color.THEME_COLOR;
 const Item = List.Item;
 //屏幕信息
@@ -32,8 +35,8 @@ const {width, height} = dimensions.get('window');
 
 const styles = StyleSheet.create({
     avator: {
-        width: 0.1*height,
-        height: 0.1*height,
+        width: 80,
+        height: 80,
         borderRadius: 45,
         borderColor: '#52B8F5',
         borderWidth: 3,
@@ -101,11 +104,70 @@ export default class Mine extends React.Component {
             // 控制foot  1：正在加载   2 ：无更多数据
             showFoot: 1,
             doteVisible:false,
+            version:DeviceVersion.getVersion(),
+            storeUrl:'',
         };
         this.showMessageList();
     }
+    componentDidMount() {
+        let url = api + '/api/identity/sysConfiguration/list';
+        let params;
+        if(Platform.OS === 'android'){
+            params = {
+                code: "ANDROID_APP_VERSION",
+            };
+        }else if(Platform.OS === 'ios'){
+            params = {
+                code: "IOS_APP_VERSION",
+            };
+        }
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'authorization': store.getState().token.value
+            },
+            body: JSON.stringify(params)
+        }).then((response) => response.json()).then((resJson) => {
+            let latestVersion = resJson.content[0].codeValue;
+           if(this.state.version != latestVersion){
+               Alert.alert("","当前版本不是最新版本请更新",  [{text: '立即更新', onPress: () => this.downLoadAPP() }]);
+           }
+        }).catch((error) => {
+            console.error(error)
+        })
+    }
+    downLoadAPP (){
+        if(Platform.OS === 'android'){
+            let url = api + '/api/identity/sysConfiguration/list';
+            let param = {
+                  code: "ANDROID_APP_ADDRESS",
+             };
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'authorization': store.getState().token.value
+                },
+                body: JSON.stringify(param)
+            }).then((response) => response.json()).then((resJson) => {
+                 let appUrl = resJson.content[0].codeValue;
+                 NativeModules.DownloadApk.downloading( appUrl, "app-release.apk");
+            }).catch((error) => {
+                  console.error(error)
+            })
+        }else if(Platform.OS === 'ios'){
+            fetch('https://itunes.apple.com/lookup?id=1197227551').then((response) => response.json()).then((responseJson) =>{
+                console.log(responseJson,"ss")
+                Linking.openURL('https://apps.apple.com/cn/app/党建iso9001体系/id1251839978').catch(err => console.error('An error occurred', err));
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
 
-
+    }
     setResetPswModal(visible) {
         this.setState({
             oldPsw:'',
@@ -417,6 +479,9 @@ export default class Mine extends React.Component {
         let noticeNavigationBar = <NavigationBar leftButton={noticeButton} linerGradient={true} title='消息中心' statusBar={statusBar} style={{backgroundColor: THEME_COLOR}}/>;
         return (
             <View style={{backgroundColor:'#f4f4ea'}}>
+                <View style={{height: Platform.OS === 'ios' ? STATUS_BAR_HEIGHT : 0, backgroundColor: THEME_COLOR}}>
+                    <StatusBar barStyle={'light-content'}/>
+                </View>
                 <View style={{width:width,height:40,backgroundColor:THEME_COLOR,alignItems:'center'}}>
                     <ImageBackground source={require('../../static/img/title.png')} style={{width:width*0.9,height:35,top:5,backgroundColor:THEME_COLOR}}/>
                 </View>
@@ -428,11 +493,10 @@ export default class Mine extends React.Component {
                     <View >
                         <ImageBackground
                         source={require('../../static/drawable-xxxhdpi/banner.png')}
-                        style={{height: 0.34* height, width: '100%',alignItems: 'center',justifyContent: 'center'}}
+                        style={{width: width,alignItems: 'center',justifyContent: 'center'}}
                         resizeMode="cover"
                         >
-
-                            <Flex style={{top:0}}>
+                            <Flex style={{paddingTop: 6}}>
                                 <View style={{flex:0.5}}>
                                     <Badge dot={this.state.doteVisible} style={{marginLeft:'10%'}}>
                                         <AntDesign
@@ -459,7 +523,7 @@ export default class Mine extends React.Component {
                             <Image source={require('../../static/img/dq.png')} style={styles.avator}/>
                             <Text style={styles.userName}>{this.state.user.name}</Text>
                             <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
-                            <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,borderRadius:45,fontSize:14}}>
+                            <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,marginBottom: 10,borderRadius:45,fontSize:14}}>
                                 <Flex>
                                     <Image source={require('../../static/img/xing.png')} style={{width:16,height:14.45,}}/>
                                     <Text>&nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}</Text>
@@ -525,7 +589,7 @@ export default class Mine extends React.Component {
                                 <Text style={{fontSize:14}}>问题反馈</Text>
                             </Item>
                             <Item thumb={<Image source={require('../../static/drawable-xxxhdpi/about.png')} style={{marginRight:2,marginLeft: 0,height:18,width:18}}/>}
-                                  arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize: 10}}>版本号 1.1.0</Text>}>
+                                  arrow="horizontal" onPress={() => {this.setAboutModalVisible(true);}} extra={<Text style={{fontSize:10}}>{"版本号"+this.state.version}</Text>}>
                                 <Text style={{fontSize:14}}>关于句容党建</Text>
                             </Item>
                         </List>
@@ -606,7 +670,7 @@ export default class Mine extends React.Component {
                             <View style={{flex: 0.1}}></View>
                             <Flex direction='column' align="center" style={{flex: 0.45,marginLeft: -30,marginTop: 10}}>
                                 <Text style={{fontSize:18,color:'#000',height:40,width:'100%'}}>句容党建</Text>
-                                <Text style={{fontSize:14,color:'#999999',height:40,width:'100%'}}>当前版本：1.1</Text>
+                                <Text style={{fontSize:14,color:'#999999',height:40,width:'100%'}}>当前版本:{this.state.version}</Text>
                             </Flex>
                         </Flex>
                         <Text style={{fontSize:16,color:'#b36d28',textAlign:'justify',lineHeight:30}}>    句容党建App是一款为党的各级党组织和广大党员提供基层党建工作管理、监督、学习和交流的平台。</Text>

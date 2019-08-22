@@ -298,7 +298,7 @@ export default class CameraScreen extends React.Component {
                 onTextRecognized={canDetectText ? this.textRecognized : null}
                 onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : null}
             >
-                <Flex align="center" style={{height: Dimensions.get('window').height, borderColor: 'red', borderWidth: 1, backgroundColor: 'transparent', flexDirection: 'column'}}>
+                <Flex align="center" style={{height: Dimensions.get('window').height, backgroundColor: 'transparent', flexDirection: 'column'}}>
                     <View style={{height: Dimensions.get('window').height - 120}}/>
                     <TouchableOpacity
                         style={[styles.flipButton, styles.picButton]}

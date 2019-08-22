@@ -38,6 +38,8 @@ target 'AwesomeProject' do
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
   target 'AwesomeProjectTests' do
     inherit! :search_paths
     # Pods for testing
