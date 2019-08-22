@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.BV.LinearGradient.LinearGradientPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;

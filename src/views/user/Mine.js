@@ -31,8 +31,8 @@ const {width, height} = dimensions.get('window');
 
 const styles = StyleSheet.create({
     avator: {
-        width: 0.1*height,
-        height: 0.1*height,
+        width: 80,
+        height: 80,
         borderRadius: 45,
         borderColor: '#52B8F5',
         borderWidth: 3,
@@ -428,10 +428,10 @@ export default class Mine extends React.Component {
                     <View >
                         <ImageBackground
                         source={require('../../static/drawable-xxxhdpi/banner.png')}
-                        style={{height: 0.34* height, width: '100%',alignItems: 'center',justifyContent: 'center'}}
+                        style={{width: width,alignItems: 'center',justifyContent: 'center'}}
                         resizeMode="cover"
                         >
-                            <Flex style={{top:-10}}>
+                            <Flex style={{paddingTop: 6}}>
                                 <View style={{flex:0.5}}>
                                     <Badge dot={this.state.doteVisible} style={{marginLeft:'10%'}}>
                                         <AntDesign
@@ -458,7 +458,7 @@ export default class Mine extends React.Component {
                             <Image source={require('../../static/img/dq.png')} style={styles.avator}/>
                             <Text style={styles.userName}>{this.state.user.name}</Text>
                             <Text style={{ marginTop: 8,color:'white' }}> {this.state.user.phone || '暂无'}</Text>
-                            <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,borderRadius:45,fontSize:14}}>
+                            <Tag textStyle={{color: '#000'}} style={{backgroundColor: '#fff', height: 24,marginTop:8,marginBottom: 10,borderRadius:45,fontSize:14}}>
                                 <Flex>
                                     <Image source={require('../../static/img/xing.png')} style={{width:16,height:14.45,}}/>
                                     <Text>&nbsp;&nbsp;{this.state.user.roleName.replace(/角色/g, '')}</Text>
