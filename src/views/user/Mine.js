@@ -9,7 +9,7 @@ import {
     Alert,
     Modal,
     TextInput,
-    ScrollView, FlatList, RefreshControl, ActivityIndicator, DeviceEventEmitter, Platform, BackHandler, StatusBar, DeviceInfo, Platform
+    ScrollView, FlatList, RefreshControl, ActivityIndicator, DeviceEventEmitter, Platform, BackHandler, StatusBar, DeviceInfo,
 } from 'react-native';
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
@@ -129,6 +129,7 @@ export default class Mine extends React.Component {
             },
             body: JSON.stringify(params)
         }).then((response) => response.json()).then((resJson) => {
+            console.log()
             let latestVersion = resJson.content[0].codeValue;
            if(this.state.version != latestVersion){
                Alert.alert("","当前版本不是最新版本请更新",  [{text: '立即更新', onPress: () => this.downLoadAPP() }]);
