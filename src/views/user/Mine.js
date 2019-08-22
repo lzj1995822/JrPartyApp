@@ -114,7 +114,7 @@ export default class Mine extends React.Component {
         let params;
         if(Platform.OS === 'android'){
             params = {
-                code: "APP_VERSION",
+                code: "ANDROID_APP_VERSION",
             };
         }else if(Platform.OS === 'ios'){
             params = {
