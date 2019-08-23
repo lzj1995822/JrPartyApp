@@ -345,6 +345,9 @@ export default class ActivityReview extends React.Component {
             return imgUrl
         }
     }
+    handleTvPath(item) {
+        return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${item}`
+    }
     fetchTVPic(item) {
         let url = api + '/api/identity/parPictureInfro/page?page=0&size=500&sort=CreateTime,desc';
         let params = {
@@ -468,7 +471,7 @@ export default class ActivityReview extends React.Component {
     renderRecords() {
         let records = this.state.phonePic.map((item) => {
             let images = item.imageUrl.map(subItem => {
-                return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
+                return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
             });
             return (
                 <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
@@ -481,7 +484,7 @@ export default class ActivityReview extends React.Component {
             )
         });
         let tvPics = this.state.tvPic.map((item) => {
-            return (<Image resizeMode='contain' style={{width: 200, height: 355, margin: 6}} source={{uri: this.handlePhonePath(item.imageURL)}}/>)
+            return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handleTvPath(item.imageURL)}}/>)
         })
         let tvPlane =
             <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`电视端执行记录${this.state.tvPic.length>=1 ? `(${this.state.tvPic[0].createTime.replace(/T/g, ' ')})` : ''}`}</Text>}>
