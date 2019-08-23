@@ -20,6 +20,9 @@ public class DownLoadBroadcastReceiver extends BroadcastReceiver {
     public void installApp(Context context) {
 
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), DownloadApk.description);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        // 由于没有在Activity环境下启动Activity,设置下面的标签
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
        /* if (file.exists()) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -27,21 +30,17 @@ public class DownLoadBroadcastReceiver extends BroadcastReceiver {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");*/
         if (file.exists()) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // 7.0+以上版本
                 Uri apkUri = FileProvider.getUriForFile(context, "com.awesomeproject.fileprovider", file);
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
             } else {
-                // 由于没有在Activity环境下启动Activity,设置下面的标签
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
             }
             context.startActivity(intent);
         }else{
             Toast.makeText(context, "安装包下载失败", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
