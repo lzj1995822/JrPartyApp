@@ -419,7 +419,7 @@ export default class ActingActivity extends React.Component {
         } else {
              let records = this.state.phonePic.map((item) => {
                  let images = item.imageUrl.map(subItem => {
-                     return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
+                     return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
                  });
                  return (
                      <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
@@ -463,7 +463,8 @@ export default class ActingActivity extends React.Component {
                      <Modal
                             animationType="fade"
                             transparent={true}
-                            visible={this.state.executeLoading}>
+                            visible={this.state.executeLoading}
+                            onDismiss={() => {this.setState({modalVis: false})}}>
                         <View style={{ flex: 1,
                             textAlign:'center',
                             alignItems:'center',
@@ -543,13 +544,9 @@ export default class ActingActivity extends React.Component {
                             '提交成功!',
                             [
                                 {text: '确认', onPress: () => {
-                                    this.setState({
-                                        modalVis: false
-                                    })
                                     this.page = 1;
-                                    this.setState({activityList: []})
-                                        this.setState({executeLoading: false, files: []});
-                                        this.fetchActivityData();
+                                    this.setState({activityList: [], executeLoading: false, files: []});
+                                    this.fetchActivityData();
                                 }},
                             ],
                         )
@@ -560,7 +557,7 @@ export default class ActingActivity extends React.Component {
     }
     uploadFiles(formData) {
         console.log('上传文件')
-        let url = api + '/api/identity/accessory/singleBatch';
+        let url = api + 'zuul/api/identity/accessory/singleBatch';
         return fetch(url, {
             method: 'POST',
             headers: {

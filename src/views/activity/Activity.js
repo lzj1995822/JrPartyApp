@@ -72,7 +72,6 @@ export default class Activity extends React.Component {
 
 
     render() {
-        console.log("render")
         return React.createElement(createAppContainer(this.generateTopBar()));
     }
 }

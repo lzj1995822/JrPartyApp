@@ -775,7 +775,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jtzh.jrapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jtzh.jurongdangjian;
 				PRODUCT_NAME = AwesomeProject;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -796,7 +796,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jtzh.jrapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jtzh.jurongdangjian;
 				PRODUCT_NAME = AwesomeProject;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
