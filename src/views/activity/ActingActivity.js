@@ -1,9 +1,9 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-    ActivityIndicator, BackHandler, Platform, RefreshControl
+     BackHandler, Platform, RefreshControl
 } from "react-native";
-import {Card, Button, WhiteSpace} from "@ant-design/react-native";
+import {Card, Button, WhiteSpace,ActivityIndicator} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Flex from "@ant-design/react-native/es/flex/Flex";
@@ -419,7 +419,7 @@ export default class ActingActivity extends React.Component {
         } else {
              let records = this.state.phonePic.map((item) => {
                  let images = item.imageUrl.map(subItem => {
-                     return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
+                     return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
                  });
                  return (
                      <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
@@ -463,7 +463,8 @@ export default class ActingActivity extends React.Component {
                      <Modal
                             animationType="fade"
                             transparent={true}
-                            visible={this.state.executeLoading}>
+                            visible={this.state.executeLoading}
+                            onDismiss={() => {this.setState({modalVis: false})}}>
                         <View style={{ flex: 1,
                             textAlign:'center',
                             alignItems:'center',
@@ -472,7 +473,7 @@ export default class ActingActivity extends React.Component {
                             backgroundColor: 'white',
                             opacity: 0.8,
                         }}>
-                            <ActivityIndicator size="large" color="#0000ff" />
+                            <ActivityIndicator size="large" color="#0000ff" animating={this.state.executeLoading}/>
                             <Text>提交中</Text>
                         </View>
                     </Modal>
@@ -515,7 +516,6 @@ export default class ActingActivity extends React.Component {
             })
         });
         let timer = setTimeout(() => {
-            console.log('还在压缩')
             if (successInt === images.length) {
                 let parActivityObj = this.state.currentRow;
                 this.uploadFiles(formData).then(files => {
@@ -537,18 +537,14 @@ export default class ActingActivity extends React.Component {
                         body: JSON.stringify(params)
                     }).then(res => res.json()).then(resp => {
                         clearTimeout(timer);
-                        this.setState({executeLoading: false, files: []});
                         console.log(this.state);
                         Alert.alert(
                             '提示',
                             '提交成功!',
                             [
                                 {text: '确认', onPress: () => {
-                                    this.setState({
-                                        modalVis: false
-                                    })
                                     this.page = 1;
-                                    this.setState({activityList: []})
+                                    this.setState({activityList: [], executeLoading: false, files: []});
                                     this.fetchActivityData();
                                 }},
                             ],
@@ -559,8 +555,7 @@ export default class ActingActivity extends React.Component {
         }, 1000);
     }
     uploadFiles(formData) {
-        console.log('上传文件')
-        let url = api + '/api/identity/accessory/singleBatch';
+        let url = api + 'api/zuul/identity/accessory/singleBatch';
         return fetch(url, {
             method: 'POST',
             headers: {

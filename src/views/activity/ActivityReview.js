@@ -1,9 +1,9 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-    ActivityIndicator, BackHandler, Platform, TextInput, RefreshControl
+     BackHandler, Platform, TextInput, RefreshControl
 } from "react-native";
-import {Card, Button, WhiteSpace} from "@ant-design/react-native";
+import {Card, Button, WhiteSpace,ActivityIndicator} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Flex from "@ant-design/react-native/es/flex/Flex";
@@ -345,6 +345,9 @@ export default class ActivityReview extends React.Component {
             return imgUrl
         }
     }
+    handleTvPath(item) {
+        return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${item}`
+    }
     fetchTVPic(item) {
         let url = api + '/api/identity/parPictureInfro/page?page=0&size=500&sort=CreateTime,desc';
         let params = {
@@ -468,7 +471,7 @@ export default class ActivityReview extends React.Component {
     renderRecords() {
         let records = this.state.phonePic.map((item) => {
             let images = item.imageUrl.map(subItem => {
-                return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
+                return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
             });
             return (
                 <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
@@ -481,7 +484,7 @@ export default class ActivityReview extends React.Component {
             )
         });
         let tvPics = this.state.tvPic.map((item) => {
-            return (<Image resizeMode='contain' style={{width: 200, height: 355, margin: 6}} source={{uri: this.handlePhonePath(item.imageURL)}}/>)
+            return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handleTvPath(item.imageURL)}}/>)
         })
         let tvPlane =
             <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`电视端执行记录${this.state.tvPic.length>=1 ? `(${this.state.tvPic[0].createTime.replace(/T/g, ' ')})` : ''}`}</Text>}>
@@ -546,7 +549,7 @@ export default class ActivityReview extends React.Component {
                         backgroundColor: 'white',
                         opacity: 0.8,
                     }}>
-                        <ActivityIndicator size="large" color="#0000ff" />
+                        <ActivityIndicator size="large" color="#0000ff" animating={this.state.executeLoading}/>
                         <Text>提交中</Text>
                     </View>
                 </Modal>

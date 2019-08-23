@@ -1,9 +1,9 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-    BackHandler, Platform, ActivityIndicator, RefreshControl
+    BackHandler, Platform, RefreshControl
 } from "react-native";
-import {Card} from "@ant-design/react-native";
+import {Card,ActivityIndicator} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Flex from "@ant-design/react-native/es/flex/Flex";

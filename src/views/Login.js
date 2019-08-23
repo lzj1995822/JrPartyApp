@@ -44,8 +44,8 @@ export default class Login extends React.Component {
         super(props);
         this.redux = store;
         this.state = {
-            name: '句容市委',
-            password: '123456',
+            name: '',
+            password: '',
             modalVisible: false,
             showMessage: '登录成功',
             token: '',
@@ -87,9 +87,9 @@ export default class Login extends React.Component {
                 isMobile: 1,
             })
         }).then((response) => response.json()).then((resJson) => {
+            clearTimeout(timer);
             //链接没超时
             if (status !== 2) {
-                clearTimeout(timer);
                 status = 1;
                 if (resJson.code == 200) {
                     this.redux.dispatch({
@@ -104,9 +104,9 @@ export default class Login extends React.Component {
                     this.setState({loginLoading:false});
                     navigation.navigate("Main");
                 } else {
-                    console.log('提示，，')
-                    this.setState({loginLoading:false});
-                    Alert.alert("提示","用户名或密码错误！",  [{text: '确定', onPress: null}]);
+                    Alert.alert("提示","用户名或密码错误！",  [{text: '确定', onPress: () => {
+                        this.setState({loginLoading:false});
+                    }}]);
                 }
             }
             return resJson.data;
