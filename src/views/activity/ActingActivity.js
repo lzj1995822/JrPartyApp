@@ -516,7 +516,6 @@ export default class ActingActivity extends React.Component {
             })
         });
         let timer = setTimeout(() => {
-            console.log('还在压缩')
             if (successInt === images.length) {
                 let parActivityObj = this.state.currentRow;
                 this.uploadFiles(formData).then(files => {
@@ -556,8 +555,7 @@ export default class ActingActivity extends React.Component {
         }, 1000);
     }
     uploadFiles(formData) {
-        console.log('上传文件')
-        let url = api + 'zuul/api/identity/accessory/singleBatch';
+        let url = api + 'api/zuul/identity/accessory/singleBatch';
         return fetch(url, {
             method: 'POST',
             headers: {
