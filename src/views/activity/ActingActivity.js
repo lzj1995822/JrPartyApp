@@ -537,7 +537,6 @@ export default class ActingActivity extends React.Component {
                         body: JSON.stringify(params)
                     }).then(res => res.json()).then(resp => {
                         clearTimeout(timer);
-                        this.setState({executeLoading: false, files: []});
                         console.log(this.state);
                         Alert.alert(
                             '提示',
@@ -549,7 +548,8 @@ export default class ActingActivity extends React.Component {
                                     })
                                     this.page = 1;
                                     this.setState({activityList: []})
-                                    this.fetchActivityData();
+                                        this.setState({executeLoading: false, files: []});
+                                        this.fetchActivityData();
                                 }},
                             ],
                         )
