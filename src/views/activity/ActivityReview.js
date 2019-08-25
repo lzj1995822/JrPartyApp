@@ -346,6 +346,9 @@ export default class ActivityReview extends React.Component {
         }
     }
     handleTvPath(item) {
+        if (item.indexOf('http') !== -1) {
+            return item;
+        }
         return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${item}`
     }
     fetchTVPic(item) {

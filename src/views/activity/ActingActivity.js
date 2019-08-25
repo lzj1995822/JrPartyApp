@@ -126,6 +126,8 @@ export default class ActingActivity extends React.Component {
         this.handlePhonePath.bind(this);
         this.uploadFiles.bind(this);
         this.backForAndroid.bind(this);
+        this.execute.bind(this);
+        this.uploadPreHandler.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
@@ -450,7 +452,9 @@ export default class ActingActivity extends React.Component {
                      <WhiteSpace size="lg"/>,
                      <Button
                          style={{flex: 1,width: '100%'}}
-                         onPress={this.execute.bind(this)}
+                         onPress={() => {this.execute() }}
+                         loading={this.state.executeLoading}
+                         disabled={this.state.executeLoading}
                          type="primary"
                      ><Text>提交</Text></Button>,
                      <WhiteSpace size="lg"/>,
@@ -459,24 +463,7 @@ export default class ActingActivity extends React.Component {
                             visible={this.state.camVis}
                             onRequestClose={() => {this.setState({camVis: false})}}>
                          <CameraScreen/>
-                     </Modal>,
-                     <Modal
-                            animationType="fade"
-                            transparent={true}
-                            visible={this.state.executeLoading}
-                            onDismiss={() => {this.setState({modalVis: false})}}>
-                        <View style={{ flex: 1,
-                            textAlign:'center',
-                            alignItems:'center',
-                            justifyContent:'center',
-                            textAlignVertical:'center',
-                            backgroundColor: 'white',
-                            opacity: 0.8,
-                        }}>
-                            <ActivityIndicator size="large" color="#0000ff" animating={this.state.executeLoading}/>
-                            <Text>提交中</Text>
-                        </View>
-                    </Modal>
+                     </Modal>
                  ];
             if (enable) {
                 return executeComponent;
@@ -492,7 +479,6 @@ export default class ActingActivity extends React.Component {
         }
     }
     execute() {
-        this.setState({executeLoading: true});
         let images = this.state.files;
         if (images.length <= 0) {
             Alert.alert(
@@ -502,8 +488,11 @@ export default class ActingActivity extends React.Component {
                     {text: '确认', onPress: () => {}},
                 ],
             )
-            return;
+        } else {
+            this.setState({executeLoading: true}, this.uploadPreHandler(images));
         }
+    }
+    uploadPreHandler(images) {
         let formData = new FormData();
         let successInt = 0;
         images.forEach(item => {
@@ -543,10 +532,10 @@ export default class ActingActivity extends React.Component {
                             '提交成功!',
                             [
                                 {text: '确认', onPress: () => {
-                                    this.page = 1;
-                                    this.setState({activityList: [], executeLoading: false, files: []});
-                                    this.fetchActivityData();
-                                }},
+                                        this.page = 1;
+                                        this.setState({activityList: [], executeLoading: false, files: []}, () => {this.setState({modalVis: false})});
+                                        this.fetchActivityData();
+                                    }},
                             ],
                         )
                     })
