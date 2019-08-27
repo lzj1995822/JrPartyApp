@@ -496,8 +496,8 @@ export default class ActingActivity extends React.Component {
         let formData = new FormData();
         let successInt = 0;
         images.forEach(item => {
-            let ratio = item.value.width/500;
-            ImageResizer.createResizedImage(item.url, 1000, item.value.width/ratio, 'PNG', 100).then(res => {
+            let ratio = item.value.width/750;
+            ImageResizer.createResizedImage(item.url, 750, item.value.height/ratio, 'JPEG', 70).then(res => {
                 successInt++;
                 formData.append('files', {uri: res.uri, type: 'multipart/form-data', name: res.name})
             }).catch(e => {
