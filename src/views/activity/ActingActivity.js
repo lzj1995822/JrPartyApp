@@ -489,7 +489,7 @@ export default class ActingActivity extends React.Component {
                 ],
             )
         } else {
-            this.setState({executeLoading: true}, this.uploadPreHandler(images));
+            this.setState({executeLoading: true},this.uploadPreHandler(images));
         }
     }
     uploadPreHandler(images) {
@@ -500,48 +500,50 @@ export default class ActingActivity extends React.Component {
             ImageResizer.createResizedImage(item.url, 750, item.value.height/ratio, 'JPEG', 70).then(res => {
                 successInt++;
                 formData.append('files', {uri: res.uri, type: 'multipart/form-data', name: res.name})
+                if (successInt === images.length) {
+                    this.excuteSubmit(formData);
+                }
             }).catch(e => {
-                console.log('压缩失败')
+                console.log('压缩失败');
+                this.setState({executeLoading: false});
             })
         });
-        let timer = setTimeout(() => {
-            if (successInt === images.length) {
-                let parActivityObj = this.state.currentRow;
-                this.uploadFiles(formData).then(files => {
-                    let url = api + '/api/identity/parActivityObject/execute';
-                    let params = {
-                        activityId: parActivityObj.activityId,
-                        organizationId: this.state.user.sysDistrict.districtId,
-                        phoneOrTv: 'phone',
-                        userId: this.state.user.id,
-                        phoneImgList: files.map(item => item.path)
-                    };
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                            'authorization': this.state.token
-                        },
-                        body: JSON.stringify(params)
-                    }).then(res => res.json()).then(resp => {
-                        clearTimeout(timer);
-                        console.log(this.state);
-                        Alert.alert(
-                            '提示',
-                            '提交成功!',
-                            [
-                                {text: '确认', onPress: () => {
-                                        this.page = 1;
-                                        this.setState({activityList: [], executeLoading: false, files: []}, () => {this.setState({modalVis: false})});
-                                        this.fetchActivityData();
-                                    }},
-                            ],
-                        )
-                    })
-                })
-            }
-        }, 1000);
+    }
+    excuteSubmit(formData){
+        let parActivityObj = this.state.currentRow;
+        this.uploadFiles(formData).then(files => {
+            let url = api + '/api/identity/parActivityObject/execute';
+            let params = {
+                activityId: parActivityObj.activityId,
+                organizationId: this.state.user.sysDistrict.districtId,
+                phoneOrTv: 'phone',
+                userId: this.state.user.id,
+                phoneImgList: files.map(item => item.path)
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'authorization': this.state.token
+                },
+                body: JSON.stringify(params)
+            }).then(res => res.json()).then(resp => {
+                console.log(this.state);
+                Alert.alert(
+                    '提示',
+                    '提交成功!',
+                    [
+                        {text: '确认', onPress: () => {
+                                this.page = 1;
+                                this.setState({activityList: [], executeLoading: false, files: []}, () => {this.setState({modalVis: false})});
+                                this.fetchActivityData();
+                        }},
+                    ],
+                )
+            })
+        })
+
     }
     uploadFiles(formData) {
         let url = api + 'api/zuul/identity/accessory/singleBatch';
