@@ -111,6 +111,7 @@ export default class ActingActivity extends React.Component {
             executeLoading: false,
             // 下拉刷新
             isRefresh: false,
+            filePaths: []
         };
         this.fetchActivityData.bind(this);
         this.onLoadMore.bind(this);
@@ -124,16 +125,17 @@ export default class ActingActivity extends React.Component {
             this.setState({ activeSections });
         };
         this.handlePhonePath.bind(this);
-        this.uploadFiles.bind(this);
+        this.uploadFile.bind(this);
         this.backForAndroid.bind(this);
         this.execute.bind(this);
-        this.uploadPreHandler.bind(this);
+        this.uploadOne.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
             let temp = this.state.files;
             temp.push({url: a.uri, value: a});
-            this.setState({files: temp,camVis: false})
+            this.setState({files: temp,camVis: false});
+            this.uploadOne(a);
         });
         this.fetchActivityData();
         if (Platform.OS === 'android') {
@@ -443,7 +445,14 @@ export default class ActingActivity extends React.Component {
                      <Flex direction='column' justify='between' align='start' style={styles.formItem}>
                          <Text style={[styles.itemLabel, {marginBottom: 20, color: '#b3ad27'}]}>执行照片</Text>
                          <ImagePicker
-                             onChange={(files, type, index) => {this.setState({files: files});}}
+                             onChange={(files, type, index) => {
+                                 console.log(type, 'type')
+                                 if (type === 'remove') {
+                                     let filePaths = this.state.filePaths;
+                                     filePaths.splice(index, 1);
+                                     this.setState({filePaths: filePaths})
+                                 }
+                                 this.setState({files: files});}}
                              onAddImageClick={() => {this.setState({camVis: true})}}
                              files={this.state.files}
                          />
@@ -489,64 +498,69 @@ export default class ActingActivity extends React.Component {
                 ],
             )
         } else {
-            this.setState({executeLoading: true},this.uploadPreHandler(images));
+            this.setState({executeLoading: true}, () => {this.excuteSubmit()});
         }
     }
-    uploadPreHandler(images) {
-        let formData = new FormData();
-        let successInt = 0;
-        images.forEach(item => {
-            let ratio = item.value.width/750;
-            ImageResizer.createResizedImage(item.url, 750, item.value.height/ratio, 'JPEG', 70).then(res => {
-                successInt++;
-                formData.append('files', {uri: res.uri, type: 'multipart/form-data', name: res.name})
-                if (successInt === images.length) {
-                    this.excuteSubmit(formData);
-                }
+    uploadOne(file) {
+        let ratio = file.width/750;
+        ImageResizer.createResizedImage(file.uri, 750, file.height/ratio, 'JPEG', 70)
+            .then(res => {
+                let formData = new FormData();
+                formData.append('file', {uri: res.uri, type: 'multipart/form-data', name: res.name})
+                this.uploadFile(formData);
             }).catch(e => {
-                console.log('压缩失败');
-                this.setState({executeLoading: false});
-            })
-        });
-    }
-    excuteSubmit(formData){
-        let parActivityObj = this.state.currentRow;
-        this.uploadFiles(formData).then(files => {
-            let url = api + '/api/identity/parActivityObject/execute';
-            let params = {
-                activityId: parActivityObj.activityId,
-                organizationId: this.state.user.sysDistrict.districtId,
-                phoneOrTv: 'phone',
-                userId: this.state.user.id,
-                phoneImgList: files.map(item => item.path)
-            };
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': this.state.token
-                },
-                body: JSON.stringify(params)
-            }).then(res => res.json()).then(resp => {
-                console.log(this.state);
                 Alert.alert(
                     '提示',
-                    '提交成功!',
+                    '图片压缩失败，请重新拍取照片',
                     [
-                        {text: '确认', onPress: () => {
-                                this.page = 1;
-                                this.setState({activityList: [], executeLoading: false, files: []}, () => {this.setState({modalVis: false})});
-                                this.fetchActivityData();
-                        }},
+                        {
+                            text: '确认', onPress: () => {
+                                let files = this.state.files;
+                                files.splice(files.length - 1, 1);
+                                this.setState({files: files})
+                            }
+                        },
                     ],
                 )
-            })
         })
-
     }
-    uploadFiles(formData) {
-        let url = api + 'api/zuul/identity/accessory/singleBatch';
+
+    excuteSubmit(){
+        let parActivityObj = this.state.currentRow;
+        let url = api + '/api/identity/parActivityObject/execute';
+        let params = {
+            activityId: parActivityObj.activityId,
+            organizationId: this.state.user.sysDistrict.districtId,
+            phoneOrTv: 'phone',
+            userId: this.state.user.id,
+            phoneImgList: this.state.filePaths
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'authorization': this.state.token
+            },
+            body: JSON.stringify(params)
+        }).then(res => res.json()).then(resp => {
+            Alert.alert(
+                '提示',
+                '提交成功!',
+                [
+                    {
+                        text: '确认', onPress: () => {
+                            this.page = 1;
+                            this.setState({activityList: [], executeLoading: false, files: [], filePaths: []}, () => {this.setState({modalVis: false})});
+                            this.fetchActivityData();
+                        }
+                    },
+                ],
+            )
+        })
+    }
+    uploadFile(formData) {
+        let url = api + 'api/zuul/identity/accessory/';
         return fetch(url, {
             method: 'POST',
             headers: {
@@ -554,20 +568,23 @@ export default class ActingActivity extends React.Component {
                 'authorization': this.state.token
             },
             body: formData
-        }).then(res => res.json()).then(resp => resp.content)
-            .catch(e => {
-                Alert.alert(
-                    '提示',
-                    '上传失败，请重新上传!',
-                    [
-                        {text: '确认', onPress: () => {
-                                this.setState({
-                                    executeLoading: false
-                                })
-                            }},
-                    ],
-                )
-            })
+        }).then(res => res.json()).then(resp => {
+            this.state.filePaths.push(resp.content.path)
+        }).catch(e => {
+            Alert.alert(
+                '提示',
+                '图片上传失败，请重新拍取照片',
+                [
+                    {
+                        text: '确认', onPress: () => {
+                            let files = this.state.files;
+                            files.splice(files.length - 1, 1);
+                            this.setState({files: files})
+                        }
+                    },
+                ],
+            )
+        })
     }
     handlePhonePath(imgUrl) {
         if (imgUrl.indexOf("http" )== -1) {
