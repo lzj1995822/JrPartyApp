@@ -135,6 +135,12 @@ export default class CameraScreen extends React.Component {
         }
     };
 
+    quit = async function() {
+        if (this.camera) {
+            DeviceEventEmitter.emit('taked',false);
+        }
+    };
+
     takeVideo = async function() {
         if (this.camera) {
             try {
@@ -262,6 +268,8 @@ export default class CameraScreen extends React.Component {
     renderCamera() {
         const { canDetectFaces, canDetectText, canDetectBarcode } = this.state;
 
+        let height = Dimensions.get('window').height;
+        let width = Dimensions.get('window').width;
         const drawFocusRingPosition = {
             top: this.state.autoFocusPoint.drawRectPosition.y - 32,
             left: this.state.autoFocusPoint.drawRectPosition.x - 32,
@@ -299,13 +307,26 @@ export default class CameraScreen extends React.Component {
                 onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : null}
             >
                 <Flex align="center" style={{height: Dimensions.get('window').height, backgroundColor: 'transparent', flexDirection: 'column'}}>
-                    <View style={{height: Dimensions.get('window').height - 120}}/>
-                    <TouchableOpacity
-                        style={[styles.flipButton, styles.picButton]}
-                        onPress={this.takePicture.bind(this)}
-                    >
-                        <AntDesign name='camera' size={20}/>
-                    </TouchableOpacity>
+                    <View style={{height: height - 120}}/>
+                    <Flex justify="around">
+                        <View style={{width: width/3,alignItems: 'center'}}>
+                            <TouchableOpacity
+                                onPress={this.quit.bind(this)}>
+                                <AntDesign name='down' color={'white'} size={30}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{width: width/4,alignItems: 'center'}}>
+                            <TouchableOpacity
+                                style={[styles.flipButton, styles.picButton]}
+                                onPress={this.takePicture.bind(this)}>
+                                <AntDesign name='camera' size={20}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{width: width/3,alignItems: 'center'}}>
+                        </View>
+
+                    </Flex>
+
                 </Flex>
             </RNCamera>
         );

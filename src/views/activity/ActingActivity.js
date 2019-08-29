@@ -132,10 +132,14 @@ export default class ActingActivity extends React.Component {
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
-            let temp = this.state.files;
-            temp.push({url: a.uri, value: a});
-            this.setState({files: temp,camVis: false});
-            this.uploadOne(a);
+            if (a) {
+                let temp = this.state.files;
+                temp.push({url: a.uri, value: a});
+                this.setState({files: temp,camVis: false});
+                this.uploadOne(a);
+            } else {
+                this.setState({camVis: false})
+            }
         });
         this.fetchActivityData();
         if (Platform.OS === 'android') {
