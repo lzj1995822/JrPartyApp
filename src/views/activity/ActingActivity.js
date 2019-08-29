@@ -560,7 +560,8 @@ export default class ActingActivity extends React.Component {
         })
     }
     uploadFile(formData) {
-        let url = api + 'api/zuul/identity/accessory/';
+        let imageApi = store.getState().user.value.uploadIP ? store.getState().user.value.uploadIP :'http://122.97.218.162:18087';
+        let url = imageApi + '/upload';
         return fetch(url, {
             method: 'POST',
             headers: {
