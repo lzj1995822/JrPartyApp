@@ -570,11 +570,11 @@ export default class ActingActivity extends React.Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'multipart/form-data',
-                'authorization': this.state.token
+                'Authorization': this.state.token
             },
             body: formData
-        }).then(res => res.json()).then(resp => {
-            this.state.filePaths.push(resp.content.path)
+        }).then(res => res.text()).then(path => {
+            this.state.filePaths.push(path);
         }).catch(e => {
             Alert.alert(
                 '提示',
