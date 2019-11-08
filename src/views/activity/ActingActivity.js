@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-     BackHandler, Platform, RefreshControl
+     BackHandler, Platform, RefreshControl, KeyboardAvoidingView
 } from "react-native";
 import {Card, Button, WhiteSpace,ActivityIndicator} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
@@ -18,6 +18,7 @@ import ImagePicker from "@ant-design/react-native/es/image-picker/index";
 import { RNCamera } from 'react-native-camera';
 import CameraScreen from "../../components/CameraScreen";
 import ImageResizer from "react-native-image-resizer";
+import OfficeFeedback from './OfficeFeedback';
 import {api} from "../../api";
 import NavigationUtils from "../navigation/NavigationUtils";
 const THEME_COLOR = color.THEME_COLOR;
@@ -65,13 +66,16 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 16,
         color: '#3a3a3a',
-        width: 100,
         textAlignVertical: 'top'
     },
     itemValue: {
         color: '#265498',
         width: 50,
         textAlign: 'right'
+    },
+    listValue: {
+        color: '#9b9b9b',
+        textAlignVertical: 'top',
     }
 });
 export default class ActingActivity extends React.Component {
@@ -129,6 +133,7 @@ export default class ActingActivity extends React.Component {
         this.backForAndroid.bind(this);
         this.execute.bind(this);
         this.uploadOne.bind(this);
+        this.renderCountrySideAct.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
@@ -184,18 +189,20 @@ export default class ActingActivity extends React.Component {
         })
     }
     showModal(item) {
+        let user = this.state.user;
+        if (user.roleCode === 'TOWN_REVIEWER') {
+            this.fetchDetailProgress(item);
+        } else if (user.roleCode === 'COUNTRY_SIDE_ACTOR') {
+            // 如果农村基层用户
+            if (user.sysDistrict.districtType === 'Party') {
+                this.setState({phonePic: []});
+                this.fetchPhonePic(item);
+            }
+        }
         this.setState({
             modalVis: true,
             currentRow: item
         });
-        if (this.state.user.roleCode === 'TOWN_REVIEWER') {
-            this.fetchDetailProgress(item);
-        } else if (this.state.user.roleCode === 'COUNTRY_SIDE_ACTOR') {
-            this.setState({
-                phonePic: []
-            });
-            this.fetchPhonePic(item);
-        }
     }
     renderItem = (item, index) => {
         let logo = item.taskType === 'Party' ? require('../../static/img/party-logo.png') : require('../../static/img/learning-logo.png');
@@ -425,71 +432,78 @@ export default class ActingActivity extends React.Component {
                 </Flex>
                ]
         } else {
-             let records = this.state.phonePic.map((item) => {
-                 let images = item.imageUrl.map(subItem => {
-                     return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
-                 });
-                 return (
-                     <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
-                        <ScrollView horizontal={true}>
-                            <Flex style={{overflowX: 'scroll'}}>
-                                {images}
-                            </Flex>
-                        </ScrollView>
-                    </Accordion.Panel>
-                )
-            });
-            let enable = new Date(this.state.currentRow.month).getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
-            let executeComponent = [
-                    <View style={{width: '100%'}}>
-                        <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
-                            {records}
-                        </Accordion>
-                    </View>,
-                     <Flex direction='column' justify='between' align='start' style={styles.formItem}>
-                         <Text style={[styles.itemLabel, {marginBottom: 20, color: '#b3ad27'}]}>执行照片</Text>
-                         <ImagePicker
-                             onChange={(files, type, index) => {
-                                 console.log(type, 'type')
-                                 if (type === 'remove') {
-                                     let filePaths = this.state.filePaths;
-                                     filePaths.splice(index, 1);
-                                     this.setState({filePaths: filePaths})
-                                 }
-                                 this.setState({files: files});}}
-                             onAddImageClick={() => {this.setState({camVis: true})}}
-                             files={this.state.files}
-                         />
-                         <Text style={{fontSize: 12,color: "#cdcdcd"}}>友情提示: 请确保已拍取照片再进行提交操作!</Text>
-                     </Flex>,
-                     <WhiteSpace size="lg"/>,
-                     <Button
-                         style={{flex: 1,width: '100%'}}
-                         onPress={() => {this.execute() }}
-                         loading={this.state.executeLoading}
-                         disabled={this.state.executeLoading}
-                         type="primary"
-                     ><Text>提交</Text></Button>,
-                     <WhiteSpace size="lg"/>,
-                     <Modal animationType={"slide"}
-                            transparent={false}
-                            visible={this.state.camVis}
-                            onRequestClose={() => {this.setState({camVis: false})}}>
-                         <CameraScreen/>
-                     </Modal>
-                 ];
-            if (enable) {
-                return executeComponent;
+            // 如果是机关的执行者就渲染机关的手机执行页面
+            // 如果是农村的执行者就渲染农村的手机执行页面
+            if (this.state.user.sysDistrict.districtType === 'Office') {
+                return <OfficeFeedback objectId={this.state.currentRow.id} readOnly={this.state.currentRow.status === '1'}></OfficeFeedback>;
             }
-            return  (
-                <View style={{width: '100%'}}>
-                    <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
-                        {records}
-                    </Accordion>
-                </View>
-            )
-
+            return this.renderCountrySideAct();
         }
+    }
+    renderCountrySideAct() {
+        let records = this.state.phonePic.map((item) => {
+            let images = item.imageUrl.map(subItem => {
+                return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
+            });
+            return (
+                <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
+                    <ScrollView horizontal={true}>
+                        <Flex style={{overflowX: 'scroll'}}>
+                            {images}
+                        </Flex>
+                    </ScrollView>
+                </Accordion.Panel>
+            )
+        });
+        let enable = new Date(this.state.currentRow.month).getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
+        let executeComponent = [
+            <View style={{width: '100%'}}>
+                <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
+                    {records}
+                </Accordion>
+            </View>,
+            <Flex direction='column' justify='between' align='start' style={styles.formItem}>
+                <Text style={[styles.itemLabel, {marginBottom: 20, color: '#b3ad27'}]}>执行照片</Text>
+                <ImagePicker
+                    onChange={(files, type, index) => {
+                        if (type === 'remove') {
+                            console.log(this.state.files,"'ss")
+                            let filePaths = this.state.filePaths;
+                            filePaths.splice(index, 1);
+                            this.setState({filePaths: filePaths})
+                        }
+                        this.setState({files: files});}}
+                    onAddImageClick={() => {this.setState({camVis: true})}}
+                    files={this.state.files}
+                />
+                <Text style={{fontSize: 12,color: "#cdcdcd"}}>友情提示: 请确保已拍取照片再进行提交操作!</Text>
+            </Flex>,
+            <WhiteSpace size="lg"/>,
+            <Button
+                style={{flex: 1,width: '100%'}}
+                onPress={() => {this.execute() }}
+                loading={this.state.executeLoading}
+                disabled={this.state.executeLoading}
+                type="primary"
+            ><Text>提交</Text></Button>,
+            <WhiteSpace size="lg"/>,
+            <Modal animationType={"slide"}
+                   transparent={false}
+                   visible={this.state.camVis}
+                   onRequestClose={() => {this.setState({camVis: false})}}>
+                <CameraScreen/>
+            </Modal>
+        ];
+        if (enable) {
+            return executeComponent;
+        }
+        return  (
+            <View style={{width: '100%'}}>
+                <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
+                    {records}
+                </Accordion>
+            </View>
+        )
     }
     execute() {
         let images = this.state.files;
@@ -623,6 +637,7 @@ export default class ActingActivity extends React.Component {
             return true;
         })
     }
+
     renderModal() {
         let statusBar = {
             backgroundColor: THEME_COLOR,
@@ -646,35 +661,41 @@ export default class ActingActivity extends React.Component {
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                 >
+                <KeyboardAvoidingView behavior="position" keyboardVerticalOffset = {60} >
                 <WingBlank size="sm">
                  <Flex direction='column' justify='around'>
                     <Flex justify='between' style={styles.formItem}>
                         <Text style={styles.itemLabel}>活动名称</Text>
-                        <Text>{this.state.currentRow.title}</Text>
+                        <Text style={styles.listValue}>{this.state.currentRow.title}</Text>
                     </Flex>
                     <Flex justify='between' style={styles.formItem}>
                         <Text style={styles.itemLabel}>任务类型</Text>
-                        <Text>{this.state.currentRow.type}</Text>
+                        <Text style={styles.listValue}>{this.state.currentRow.type}</Text>
                     </Flex>
                     <Flex justify='between' style={styles.formItem}>
                         <Text style={styles.itemLabel}>截止日期</Text>
-                        <Text>{this.state.currentRow.month}</Text>
+                        <Text style={styles.listValue}>{this.state.currentRow.month}</Text>
                     </Flex>
                     <Flex justify='between' style={styles.formItem}>
                         <Text style={styles.itemLabel}>提醒时间</Text>
-                        <Text>{this.state.currentRow.alarmTime || '暂无'}</Text>
+                        <Text style={styles.listValue}>{this.state.currentRow.alarmTime || '暂无'}</Text>
                     </Flex>
                     <Flex justify='between' style={styles.formItem}>
                         <Text style={styles.itemLabel}>任务分值</Text>
-                        <Text>{this.state.currentRow.score}分</Text>
+                        <Text style={styles.listValue}>{this.state.currentRow.score}分</Text>
                     </Flex>
-                    <Flex justify='between' align='start' style={styles.formItem}>
+                    <Flex justify='between' direction='column' align='start' style={styles.formItem}>
                         <Text style={styles.itemLabel}>工作要求</Text>
-                        <Text style={{lineHeight: 20, width: 150, textAlign: 'right'}} numberOfLines={3}>{this.state.currentRow.context}</Text>
+                        <Text style={[styles.listValue,{marginTop: 6}]} numberOfLines={3}>{this.state.currentRow.context || '暂无'}</Text>
                     </Flex>
+                     <Flex justify='between' direction='column' align='start' style={styles.formItem}>
+                         <Text style={styles.itemLabel}>反馈要求</Text>
+                         <Text style={[styles.listValue,{marginTop: 6}]} numberOfLines={3}>{this.state.currentRow.templateItem || '暂无'}</Text>
+                     </Flex>
                      {this.renderProgress()}
                 </Flex>
                 </WingBlank>
+                </KeyboardAvoidingView>
                 </ScrollView>
             </Modal>
         )
@@ -697,19 +718,28 @@ export default class ActingActivity extends React.Component {
                 color = '#c22120';
                 label = '未完成'
             }
+            let button;
+            if (item.status != 2 && new Date(item.month).getTime() >= new Date().getTime()) {
+                button = <Flex>
+                    <AntDesign name={'playcircleo'} size={18}  style={{color: '#268aff'}}/>
+                    <Text style={{color: '#268aff'}}> 执行</Text>
+                </Flex>;
+            } else {
+                button = <Flex>
+                    <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
+                    <Text style={{color: '#268aff'}}> 详情</Text>
+                </Flex>
+            }
+            if (item.status == '1' && item.objectType == '2') {
+                button = <Flex>
+                    <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
+                    <Text style={{color: '#268aff'}}> 详情</Text>
+                </Flex>
+            }
             return (
                 <Flex justify='between'>
                     <Text style={{backgroundColor: color, fontSize: 14, height: 28, padding: 4, borderRadius: 3, borderColor: color, color: '#fff'}}>{label}</Text>
-                    { item.status != 2 && new Date(item.month).getTime() >= new Date().getTime() ?
-                    <Flex>
-                        <AntDesign name={'playcircleo'} size={18}  style={{color: '#268aff'}}/>
-                        <Text style={{color: '#268aff'}}> 执行</Text>
-                    </Flex> :
-                        <Flex>
-                            <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
-                            <Text style={{color: '#268aff'}}> 详情</Text>
-                        </Flex>
-                    }
+                    { button }
                 </Flex>
             )
 

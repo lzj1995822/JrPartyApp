@@ -12,8 +12,6 @@ import {
 import { RNCamera } from 'react-native-camera';
 import Flex from "@ant-design/react-native/es/flex/Flex";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import {store} from '../redux/store';
-import image from "../redux/image/Image";
 
 const flashModeOrder = {
     off: 'on',
