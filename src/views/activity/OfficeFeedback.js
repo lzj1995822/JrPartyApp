@@ -206,7 +206,9 @@ export default class OfficeFeedback extends React.Component{
                 '提交成功',
                 [
                     {
-                        text: '确认', onPress: () => {}
+                        text: '确认', onPress: () => {
+                            this.props.onExecuteFinish();
+                        }
                     },
                 ],
             )

@@ -435,7 +435,13 @@ export default class ActingActivity extends React.Component {
             // 如果是机关的执行者就渲染机关的手机执行页面
             // 如果是农村的执行者就渲染农村的手机执行页面
             if (this.state.user.sysDistrict.districtType === 'Office') {
-                return <OfficeFeedback objectId={this.state.currentRow.id} readOnly={this.state.currentRow.status === '1'}></OfficeFeedback>;
+                return <OfficeFeedback objectId={this.state.currentRow.id}
+                                       readOnly={this.state.currentRow.status === '1'}
+                                       onExecuteFinish={() => {
+                                           this.page = 1;
+                                           this.setState({activityList: [], executeLoading: false, files: [], filePaths: []}, () => {this.setState({modalVis: false})});
+                                           this.fetchActivityData();
+                                       }}></OfficeFeedback>;
             }
             return this.renderCountrySideAct();
         }
