@@ -118,7 +118,7 @@ export default class OfficeFeedback extends React.Component{
                             item.value = images.map(item => item.url).join(',')
                             this.updateFeedback(item);
                         } else {
-                            Alert.alert('提示', '待审核状态下不可编辑',[{text: '确认', onPress: () => {}}])
+                            Alert.alert('提示', '当前状态下不可编辑',[{text: '确认', onPress: () => {}}])
                         }
                     }}
                     onAddImageClick={() => {this.setState({camVis: true, camIndex: index})}}
@@ -149,11 +149,10 @@ export default class OfficeFeedback extends React.Component{
             }
 
         });
-
-        officeAct.push(
-            <Text style={{paddingLeft: 10,paddingTop:6, width: '100%', textAlign: 'left', color: '#409eff'}}>友情提示：该页面的数据实时保存!</Text>
-        )
         if (!this.props.readOnly) {
+            officeAct.push(
+                <Text style={{paddingLeft: 10,paddingTop:6, width: '100%', textAlign: 'left', color: '#409eff'}}>友情提示：该页面的数据实时保存!</Text>
+            )
             officeAct.push(
                 <WhiteSpace size="lg"/>,
                 <Button

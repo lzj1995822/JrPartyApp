@@ -102,7 +102,8 @@ export default class ActingActivity extends React.Component {
             totalPage: 0,
             modalVis: false,
             currentRow: {
-                title: ''
+                title: '',
+                activityOfficeProgresses: {}
             },
             user: store.getState().user.value,
             token: store.getState().token.value,
@@ -228,10 +229,10 @@ export default class ActingActivity extends React.Component {
                         </Shadow>
                 </View>
         )
-    };
+    }
     onLoadMore() {
         this.page++;
-        this.fetchActivityData()
+        this.fetchActivityData();
     }
     renderFooter() {
         let msg = '';
@@ -288,10 +289,10 @@ export default class ActingActivity extends React.Component {
             // this.state.currentPage=0;
             this.fetchActivityData();
         }
-    };
+    }
     // 获取镇所属村的活动完成情况
     fetchDetailProgress(item) {
-        let url = api + '/api/identity/parActivityObject/list';
+        let url = api + '/api/identity/parActivityObject/list?sort=status,desc&sort=organizationId,asc';
         let params = {
             activityId: item.id,
             attachTo: this.state.user.sysDistrict.districtId
@@ -313,7 +314,18 @@ export default class ActingActivity extends React.Component {
     }
     renderProgress() {
         if (this.state.user.roleCode === 'TOWN_REVIEWER') {
-            let percentKey = this.TownCodeKey[this.state.user.sysDistrict.districtId];
+            let value = 0;
+            let user = this.state.user;
+            let sysDistrict = user.sysDistrict;
+            if (sysDistrict.districtType === 'Office') {
+                console.log(this.state.currentRow, 'sr')
+                value = this.state.currentRow.activityOfficeProgresses[sysDistrict.districtId];
+            } else if (sysDistrict.districtType === 'Party') {
+                let percentKey = this.TownCodeKey[sysDistrict.districtId];
+                value = this.state.currentRow[percentKey];
+            } else {
+                console.log("组织类型错误")
+            }
             let temp = this.state.detailProgress.map(item => {
                 let color;
                 let label;
@@ -336,10 +348,10 @@ export default class ActingActivity extends React.Component {
             });
             return [
                 <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>本镇总进度</Text>
+                    <Text style={styles.itemLabel}>本组织总进度</Text>
                     <Flex>
-                        <ProgressUI.Bar style={{width: 100}} progress={Number(this.state.currentRow[percentKey])} />
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow[percentKey] * 1000)/10 + '%'}</Text>
+                        <ProgressUI.Bar style={{width: 100}} progress={Number(value)} />
+                        <Text style={styles.itemValue}>{Math.round(value * 1000)/10 + '%'}</Text>
                     </Flex>
                 </Flex>,
                 temp
@@ -436,7 +448,7 @@ export default class ActingActivity extends React.Component {
             // 如果是农村的执行者就渲染农村的手机执行页面
             if (this.state.user.sysDistrict.districtType === 'Office') {
                 return <OfficeFeedback objectId={this.state.currentRow.id}
-                                       readOnly={this.state.currentRow.status === '1'}
+                                       readOnly={this.state.currentRow.status !== '0'}
                                        onExecuteFinish={() => {
                                            this.page = 1;
                                            this.setState({activityList: [], executeLoading: false, files: [], filePaths: []}, () => {this.setState({modalVis: false})});
@@ -708,10 +720,12 @@ export default class ActingActivity extends React.Component {
     }
     renderItemFooter(item) {
         let percentKey = 'totalPercent';
-        if (this.state.user.roleCode === 'TOWN_REVIEWER') {
+        let user = this.state.user;
+        let sysDistrict = user.sysDistrict
+        if (user.roleCode === 'TOWN_REVIEWER') {
             percentKey = this.TownCodeKey[this.state.user.sysDistrict.districtId];
         }
-        if (this.state.user.roleCode === 'COUNTRY_SIDE_ACTOR') {
+        if (user.roleCode === 'COUNTRY_SIDE_ACTOR') {
             let color;
             let label;
             if (item.status == 2) {
@@ -750,12 +764,20 @@ export default class ActingActivity extends React.Component {
             )
 
         } else {
+            let value = Number(item[percentKey]);
+            if (sysDistrict.districtType === 'Office') {
+                value = item.activityOfficeProgresses[sysDistrict.districtId]
+            }
+            let percent = 0;
+            if (value) {
+                percent = Math.round(value * 1000)/10;
+            }
             return (
                 <Flex>
                     <View style={{ marginRight: 10, height: 3, flex: 1 }}>
-                        <Progress percent={Math.round(Number(item[percentKey]) * 1000)/10} />
+                        <Progress percent={percent} />
                     </View>
-                    <Text style={{width: 45}}>{Math.round(Number(item[percentKey]) * 1000)/10}%</Text>
+                    <Text style={{width: 45}}>{percent}%</Text>
                 </Flex>
             )
         }

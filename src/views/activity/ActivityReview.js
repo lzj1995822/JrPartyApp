@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
-     BackHandler, Platform, TextInput, RefreshControl
+    BackHandler, Platform, TextInput, RefreshControl, KeyboardAvoidingView
 } from "react-native";
 import {Card, Button, WhiteSpace,ActivityIndicator} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
@@ -10,20 +10,13 @@ import Flex from "@ant-design/react-native/es/flex/Flex";
 import color from '../styles/color';
 import NavigationBar from "../navigation/NavigationBar";
 import { store } from '../../redux/store';
-import * as ProgressUI from 'react-native-progress';
 import {Card as Shadow} from 'react-native-shadow-cards';
 import { RNCamera } from 'react-native-camera';
-import ImageResizer from "react-native-image-resizer";
 import {api} from "../../api";
 import Octicons from "react-native-vector-icons/Octicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import Accordion from "@ant-design/react-native/es/accordion";
-import ImagePicker from "@ant-design/react-native/es/image-picker";
-import CameraScreen from "../../components/CameraScreen";
-import InputItem from "@ant-design/react-native/es/input-item";
-import TextAreaItem from "@ant-design/react-native/lib/textarea-item";
-import List from "@ant-design/react-native/es/list";
-import {Input} from "beeshell";
+import OfficeFeedback from './OfficeFeedback';
 import NavigationUtils from "../navigation/NavigationUtils";
 const THEME_COLOR = color.THEME_COLOR;
 
@@ -79,6 +72,11 @@ const styles = StyleSheet.create({
         color: '#265498',
         width: 50,
         textAlign: 'right'
+    },
+    listValue: {
+        color: '#9b9b9b',
+        textAlignVertical: 'top',
+        fontSize: 14
     }
 });
 export default class ActivityReview extends React.Component {
@@ -133,7 +131,8 @@ export default class ActivityReview extends React.Component {
         this.handlePhonePath.bind(this);
         this.backForAndroid.bind(this);
         this.fetchTVPic.bind(this);
-        this.review.bind(this)
+        this.review.bind(this);
+        this.renderCountrySideAct.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
@@ -307,6 +306,7 @@ export default class ActivityReview extends React.Component {
             status: String(ispass),
             type: "基本活动"
         };
+        console.log(params)
         fetch(url, {
             method: 'POST',
             headers: {
@@ -417,61 +417,70 @@ export default class ActivityReview extends React.Component {
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                 >
-                    <WingBlank size="sm">
-                        <Flex direction='column' justify='around'>
-                            <Flex justify='between' style={styles.formItem}>
-                                <Text style={styles.itemLabel}>活动名称</Text>
-                                <Text>{this.state.currentRow.title}</Text>
+                    <KeyboardAvoidingView behavior="position" keyboardVerticalOffset = {60} >
+                        <WingBlank size="sm">
+                            <Flex direction='column' justify='around'>
+                                <Flex justify='between' style={styles.formItem}>
+                                    <Text style={styles.itemLabel}>活动名称</Text>
+                                    <Text style={styles.listValue}>{this.state.currentRow.title}</Text>
+                                </Flex>
+                                <Flex justify='between' style={styles.formItem}>
+                                    <Text style={styles.itemLabel}>任务类型</Text>
+                                    <Text style={styles.listValue}>{this.state.currentRow.type}</Text>
+                                </Flex>
+                                <Flex justify='between' style={styles.formItem}>
+                                    <Text style={styles.itemLabel}>截止日期</Text>
+                                    <Text style={styles.listValue}>{this.state.currentRow.month}</Text>
+                                </Flex>
+                                <Flex justify='between' style={styles.formItem}>
+                                    <Text style={styles.itemLabel}>提醒时间</Text>
+                                    <Text style={styles.listValue}>{this.state.currentRow.alarmTime || '暂无'}</Text>
+                                </Flex>
+                                <Flex justify='between' style={styles.formItem}>
+                                    <Text style={styles.itemLabel}>任务分值</Text>
+                                    <Text style={styles.listValue}>{this.state.currentRow.score}分</Text>
+                                </Flex>
+                                <Flex justify='between' direction='column' align='start' style={styles.formItem}>
+                                    <Text style={styles.itemLabel}>工作要求</Text>
+                                    <Text style={[styles.listValue,{marginTop: 6}]} numberOfLines={3}>{this.state.currentRow.context || '暂无'}</Text>
+                                </Flex>
+                                <Flex justify='between' direction='column' align='start' style={styles.formItem}>
+                                    <Text style={styles.itemLabel}>反馈要求</Text>
+                                    <Text style={[styles.listValue,{marginTop: 6}]} numberOfLines={3}>{this.state.currentRow.templateItem || '暂无'}</Text>
+                                </Flex>
+                                {this.renderRecords()}
+                                <Flex justify='between' direction='column' align='start' style={styles.formItem}>
+                                    <Text style={[styles.itemLabel, {color: '#409eff'}]}>审核意见</Text>
+                                    <TextInput
+                                        placeholder="请输入审核意见"
+                                        multiline = {true}
+                                        numberOfLines={5}
+                                        style={[styles.listValue,{marginTop: 6, textAlignVertical: 'top'}]}
+                                        value={this.state.opinion}
+                                        onChangeText={value => {this.setState({opinion: value})}}
+                                    >
+                                    </TextInput>
+                                </Flex>
+                                <WhiteSpace size="lg"/>
+                                <Button
+                                    style={{flex: 1,width: '100%'}}
+                                    onPress={() => {this.review(2)}}
+                                    type="primary"
+                                ><Text>通过</Text></Button>
+                                <WhiteSpace size="lg"/>
+                                <Button
+                                    style={{flex: 1,width: '100%', marginBottom: 20 }}
+                                    onPress={() => {this.review(0)}}
+                                    type="warning"
+                                ><Text>驳回</Text></Button>
                             </Flex>
-                            <Flex justify='between' style={styles.formItem}>
-                                <Text style={styles.itemLabel}>任务类型</Text>
-                                <Text>{this.state.currentRow.type}</Text>
-                            </Flex>
-                            <Flex justify='between' style={styles.formItem}>
-                                <Text style={styles.itemLabel}>截止日期</Text>
-                                <Text>{this.state.currentRow.month}</Text>
-                            </Flex>
-                            <Flex justify='between' style={styles.formItem}>
-                                <Text style={styles.itemLabel}>提醒时间</Text>
-                                <Text>{this.state.currentRow.alarmTime || '暂无'}</Text>
-                            </Flex>
-                            <Flex justify='between' style={styles.formItem}>
-                                <Text style={styles.itemLabel}>任务分值</Text>
-                                <Text>{this.state.currentRow.score}分</Text>
-                            </Flex>
-                            <Flex justify='between' align='start' style={styles.formItem}>
-                                <Text style={styles.itemLabel}>工作要求</Text>
-                                <Text style={{lineHeight: 20, width: 150, textAlign: 'right'}} numberOfLines={3}>{this.state.currentRow.context}</Text>
-                            </Flex>
-                            {this.renderRecords()}
-                            <InputItem
-                                placeholder="请输入审核意见"
-                                clear
-                                style={{width: width}}
-                                value={this.state.opinion}
-                                onChange={value => {this.setState({opinion: value})}}
-                            >
-                                <Text style={styles.itemLabel}>审核意见</Text>
-                            </InputItem>
-                            <WhiteSpace size="lg"/>
-                            <Button
-                                style={{flex: 1,width: '100%'}}
-                                onPress={() => {this.review(2)}}
-                                type="primary"
-                            ><Text>通过</Text></Button>
-                            <WhiteSpace size="lg"/>
-                            <Button
-                                style={{flex: 1,width: '100%'}}
-                                onPress={() => {this.review(0)}}
-                                type="warning"
-                            ><Text>驳回</Text></Button>
-                        </Flex>
-                    </WingBlank>
+                        </WingBlank>
+                    </KeyboardAvoidingView>
                 </ScrollView>
             </Modal>
         )
     }
-    renderRecords() {
+    renderCountrySideAct() {
         let records = this.state.phonePic.map((item) => {
             let images = item.imageUrl.map(subItem => {
                 return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
@@ -491,14 +500,14 @@ export default class ActivityReview extends React.Component {
         })
         let tvPlane =
             <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`电视端执行记录${this.state.tvPic.length>=1 ? `(${this.state.tvPic[0].createTime.replace(/T/g, ' ')})` : ''}`}</Text>}>
-                    {
-                        tvPics.length >= 1 ?
-                            <ScrollView horizontal={true}>
-                                <Flex style={{overflowX: 'scroll'}}>{tvPics}</Flex>
-                            </ScrollView>
-                            :
+                {
+                    tvPics.length >= 1 ?
+                        <ScrollView horizontal={true}>
+                            <Flex style={{overflowX: 'scroll'}}>{tvPics}</Flex>
+                        </ScrollView>
+                        :
                         <Text style={{padding: 5,textAlign: 'center', color: '#6f6f6f', fontSize: 12}}>电视端暂未执行！</Text>
-                    }
+                }
             </Accordion.Panel>
         records.unshift(tvPlane);
         return (
@@ -508,6 +517,16 @@ export default class ActivityReview extends React.Component {
                 </Accordion>
             </View>
         )
+    }
+    renderRecords() {
+        if (this.state.user.sysDistrict.districtType === 'Office') {
+            return <OfficeFeedback objectId={this.state.currentRow.id}
+                                   readOnly={true}></OfficeFeedback>
+        } else if (this.state.user.sysDistrict.districtType === 'Party') {
+            return this.renderCountrySideAct();
+        } else {
+            return (<Text>用户组织类型异常</Text>)
+        }
     }
     keyExtractor(item, index) {
         return "index" + index + item;
