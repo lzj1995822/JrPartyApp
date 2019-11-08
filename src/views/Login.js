@@ -44,8 +44,8 @@ export default class Login extends React.Component {
         super(props);
         this.redux = store;
         this.state = {
-            name: '',
-            password: '',
+            name: '句容市委市级机关工委',
+            password: 'Jrdj96296',
             modalVisible: false,
             showMessage: '登录成功',
             token: '',
@@ -123,7 +123,6 @@ export default class Login extends React.Component {
     }
 
     render() {
-        console.log(this.state.loginLoading,"sds")
         const designWidth = 128
         const designHeight = 98
         let bl = designWidth / designHeight
@@ -141,8 +140,8 @@ export default class Login extends React.Component {
         let inputTop = height / 24
         let jrFontSize = parseInt(jrWidth/10)
         return [
-            <StatusBar/>,
-            <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent:'center'}}>
+            <StatusBar key={'login-status'}/>,
+            <View key={'main-login'} style={{width: '100%', height: '100%', alignItems: 'center', justifyContent:'center'}}>
                 <View style={{
                     textAlign: 'center',
                     alignItems: 'center',
@@ -199,6 +198,7 @@ export default class Login extends React.Component {
                 </View>
             </View>,
             <Modal
+            key={'loading-modal'}
             animationType="fade"
             transparent={true}
             visible={this.state.loginLoading}

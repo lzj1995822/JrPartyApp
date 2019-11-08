@@ -3,7 +3,7 @@ import {
     Dimensions, FlatList, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, DeviceEventEmitter, Alert,
     BackHandler, Platform, RefreshControl
 } from "react-native";
-import {Card,ActivityIndicator} from "@ant-design/react-native";
+import {Card, ActivityIndicator, WhiteSpace, Button} from "@ant-design/react-native";
 import WingBlank from "@ant-design/react-native/es/wing-blank/index";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Flex from "@ant-design/react-native/es/flex/Flex";
@@ -18,6 +18,10 @@ import { RNCamera } from 'react-native-camera';
 import ImageResizer from "react-native-image-resizer";
 import {api} from "../../api";
 import NavigationUtils from "../navigation/NavigationUtils";
+import OfficeFeedback from "./OfficeFeedback";
+import ImagePicker from "@ant-design/react-native/es/image-picker";
+import CameraScreen from "../../components/CameraScreen";
+import data from "../../data";
 const THEME_COLOR = color.THEME_COLOR;
 const { width, height} = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -68,7 +72,8 @@ export default class ActingActivity extends React.Component {
             totalPage: 0,
             modalVis: false,
             currentRow: {
-                title: ''
+                title: '',
+                activityOfficeProgresses: {}
             },
             user: store.getState().user.value,
             token: store.getState().token.value,
@@ -96,6 +101,8 @@ export default class ActingActivity extends React.Component {
         this.handlePhonePath.bind(this);
         this.uploadFiles.bind(this);
         this.backForAndroid.bind(this);
+        this.renderCountrySideAct.bind(this);
+        this.renderTown.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
@@ -266,9 +273,102 @@ export default class ActingActivity extends React.Component {
             return true;
         })
     }
+    // 渲染各镇进度
+    renderTown() {
+        return [
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>宝华镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baoHuaPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baoHuaPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>下蜀镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.xiaShuPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.xiaShuPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>茅山镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>茅山风景区</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanFengJingPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanFengJingPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>华阳街道</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.huaYangPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.huaYangPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>郭庄镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.guoZhuangPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.guoZhuangPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>边城镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.bianChengPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.bianChengPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>开发区</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.kaiFaPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.kaiFaPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>白兔镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baiTuPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baiTuPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>后白镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.houBaiPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.houBaiPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>天王镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.tianWangPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.tianWangPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>
+        ]
+    }
     renderProgress() {
         if (this.state.user.roleCode === 'TOWN_REVIEWER') {
-            let percentKey = this.TownCodeKey[this.state.user.sysDistrict.districtId];
+            let value = 0;
+            let user = this.state.user;
+            let sysDistrict = user.sysDistrict;
+            if (sysDistrict.districtType === 'Office') {
+                console.log(this.state.currentRow, 'sr')
+                value = this.state.currentRow.activityOfficeProgresses[sysDistrict.districtId];
+            } else if (sysDistrict.districtType === 'Party') {
+                let percentKey = this.TownCodeKey[sysDistrict.districtId];
+                value = this.state.currentRow[percentKey];
+            } else {
+                console.log("组织类型错误")
+            }
             let temp = this.state.detailProgress.map(item => {
                 let color;
                 let label;
@@ -291,118 +391,125 @@ export default class ActingActivity extends React.Component {
             });
             return [
                 <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>本镇总进度</Text>
+                    <Text style={styles.itemLabel}>本组织总进度</Text>
                     <Flex>
-                        <ProgressUI.Bar style={{width: 100}} progress={Number(this.state.currentRow[percentKey])} />
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow[percentKey] * 1000)/10 + '%'}</Text>
+                        <ProgressUI.Bar style={{width: 100}} progress={Number(value)} />
+                        <Text style={styles.itemValue}>{Math.round(value * 1000)/10 + '%'}</Text>
                     </Flex>
                 </Flex>,
                 temp
             ]
         } else if (this.state.user.roleCode == 'CITY_LEADER') {
-            return [
+            let common = [
                 <Flex justify='between' style={styles.formItem}>
                     <Text style={styles.itemLabel}>全市总进度</Text>
                     <Flex>
                         <ProgressUI.Bar style={{width: 100}} progress={Number(this.state.currentRow.totalPercent)} />
                         <Text style={styles.itemValue}>{Math.round(this.state.currentRow.totalPercent * 1000)/10 + '%'}</Text>
                     </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>宝华镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baoHuaPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baoHuaPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>下蜀镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.xiaShuPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.xiaShuPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>茅山镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>茅山风景区</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanFengJingPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanFengJingPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>华阳街道</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.huaYangPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.huaYangPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>郭庄镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.guoZhuangPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.guoZhuangPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>边城镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.bianChengPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.bianChengPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>开发区</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.kaiFaPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.kaiFaPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>白兔镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baiTuPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baiTuPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>后白镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.houBaiPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.houBaiPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
                 </Flex>
-            ]
-        } else {
-            let records = this.state.phonePic.map((item) => {
-                let images = item.imageUrl.map(subItem => {
-                    return (<Image resizeMode='contain' style={{width: 150, height: 200, margin: 6}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
-                });
-                return (
-                    <Accordion.Panel header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
-                        <ScrollView horizontal={true}>
-                            <Flex style={{overflowX: 'scroll'}}>
-                                {images}
+            ];
+            let currentRow = this.state.currentRow;
+            // 机关任务
+            if (currentRow.objectType === "2") {
+                let activityOfficeProgresses = currentRow.activityOfficeProgresses;
+                let keys = Object.keys(activityOfficeProgresses);
+                let offices = keys.map(item =>  {
+                    let name = data.reviewOrgCodeLabel[item];
+                    return (
+                        <Flex justify='between' style={styles.formItem}>
+                            <Text style={styles.itemLabel}>{name}</Text>
+                            <Flex>
+                                <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(activityOfficeProgresses[item])}/>
+                                <Text style={styles.itemValue}>{Math.round(activityOfficeProgresses[item] * 1000)/10 + '%'}</Text>
                             </Flex>
-                        </ScrollView>
-                    </Accordion.Panel>
-                )
-            });
-            return  (
-                <View style={{width: '100%'}}>
-                    <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
-                        {records}
-                    </Accordion>
-                </View>
-            )
-
+                        </Flex>
+                    )
+                })
+                common = common.concat(offices)
+            } else if (currentRow.objectType === "1") {
+                common = common.concat(this.renderTown())
+            }
+            return common
+        } else {
+            // 如果是机关的执行者就渲染机关的手机执行页面
+            // 如果是农村的执行者就渲染农村的手机执行页面
+            if (this.state.user.sysDistrict.districtType === 'Office') {
+                return <OfficeFeedback objectId={this.state.currentRow.id}
+                                       readOnly={this.state.currentRow.status !== '0'}
+                                       onExecuteFinish={() => {
+                                           this.page = 1;
+                                           this.setState({activityList: [], executeLoading: false, files: [], filePaths: []}, () => {this.setState({modalVis: false})});
+                                           this.fetchActivityData();
+                                       }}></OfficeFeedback>;
+            }
+            return this.renderCountrySideAct();
         }
+    }
+    renderCountrySideAct() {
+        let records = this.state.phonePic.map((item) => {
+            let images = item.imageUrl.map(subItem => {
+                return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
+            });
+            return (
+                <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
+                    <ScrollView horizontal={true}>
+                        <Flex style={{overflowX: 'scroll'}}>
+                            {images}
+                        </Flex>
+                    </ScrollView>
+                </Accordion.Panel>
+            )
+        });
+        let enable = new Date(this.state.currentRow.month).getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
+        let executeComponent = [
+            <View style={{width: '100%'}}>
+                <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
+                    {records}
+                </Accordion>
+            </View>,
+            <Flex direction='column' justify='between' align='start' style={styles.formItem}>
+                <Text style={[styles.itemLabel, {marginBottom: 20, color: '#b3ad27'}]}>执行照片</Text>
+                <ImagePicker
+                    onChange={(files, type, index) => {
+                        if (type === 'remove') {
+                            console.log(this.state.files,"'ss")
+                            let filePaths = this.state.filePaths;
+                            filePaths.splice(index, 1);
+                            this.setState({filePaths: filePaths})
+                        }
+                        this.setState({files: files});}}
+                    onAddImageClick={() => {this.setState({camVis: true})}}
+                    files={this.state.files}
+                />
+                <Text style={{fontSize: 12,color: "#cdcdcd"}}>友情提示: 请确保已拍取照片再进行提交操作!</Text>
+            </Flex>,
+            <WhiteSpace size="lg"/>,
+            <Button
+                style={{flex: 1,width: '100%'}}
+                onPress={() => {this.execute() }}
+                loading={this.state.executeLoading}
+                disabled={this.state.executeLoading}
+                type="primary"
+            ><Text>提交</Text></Button>,
+            <WhiteSpace size="lg"/>,
+            <Modal animationType={"slide"}
+                   transparent={false}
+                   visible={this.state.camVis}
+                   onRequestClose={() => {this.setState({camVis: false})}}>
+                <CameraScreen/>
+            </Modal>
+        ];
+        if (enable) {
+            return executeComponent;
+        }
+        return  (
+            <View style={{width: '100%'}}>
+                <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
+                    {records}
+                </Accordion>
+            </View>
+        )
     }
     execute() {
         let images = this.state.files;
@@ -571,10 +678,12 @@ export default class ActingActivity extends React.Component {
     }
     renderItemFooter(item) {
         let percentKey = 'totalPercent';
-        if (this.state.user.roleCode === 'TOWN_REVIEWER') {
+        let user = this.state.user;
+        let sysDistrict = user.sysDistrict
+        if (user.roleCode === 'TOWN_REVIEWER') {
             percentKey = this.TownCodeKey[this.state.user.sysDistrict.districtId];
         }
-        if (this.state.user.roleCode === 'COUNTRY_SIDE_ACTOR') {
+        if (user.roleCode === 'COUNTRY_SIDE_ACTOR') {
             let color;
             let label;
             if (item.status == 2) {
@@ -587,23 +696,46 @@ export default class ActingActivity extends React.Component {
                 color = '#c22120';
                 label = '未完成'
             }
+            let button;
+            if (item.status != 2 && new Date(item.month).getTime() >= new Date().getTime()) {
+                button = <Flex>
+                    <AntDesign name={'playcircleo'} size={18}  style={{color: '#268aff'}}/>
+                    <Text style={{color: '#268aff'}}> 执行</Text>
+                </Flex>;
+            } else {
+                button = <Flex>
+                    <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
+                    <Text style={{color: '#268aff'}}> 详情</Text>
+                </Flex>
+            }
+            if (item.status == '1' && item.objectType == '2') {
+                button = <Flex>
+                    <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
+                    <Text style={{color: '#268aff'}}> 详情</Text>
+                </Flex>
+            }
             return (
                 <Flex justify='between'>
                     <Text style={{backgroundColor: color, fontSize: 14, height: 28, padding: 4, borderRadius: 3, borderColor: color, color: '#fff'}}>{label}</Text>
-                        <Flex>
-                            <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
-                            <Text style={{color: '#268aff'}}> 详情</Text>
-                        </Flex>
+                    { button }
                 </Flex>
             )
 
         } else {
+            let value = Number(item[percentKey]);
+            if (sysDistrict.districtType === 'Office') {
+                value = item.activityOfficeProgresses[sysDistrict.districtId]
+            }
+            let percent = 0;
+            if (value) {
+                percent = Math.round(value * 1000)/10;
+            }
             return (
                 <Flex>
                     <View style={{ marginRight: 10, height: 3, flex: 1 }}>
-                        <Progress percent={Math.round(Number(item[percentKey]) * 1000)/10} />
+                        <Progress percent={percent} />
                     </View>
-                    <Text style={{width: 45}}>{Math.round(Number(item[percentKey]) * 1000)/10}%</Text>
+                    <Text style={{width: 45}}>{percent}%</Text>
                 </Flex>
             )
         }

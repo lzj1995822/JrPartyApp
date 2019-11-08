@@ -20,6 +20,7 @@ import CameraScreen from "../../components/CameraScreen";
 import ImageResizer from "react-native-image-resizer";
 import OfficeFeedback from './OfficeFeedback';
 import {api} from "../../api";
+import data from "../../data";
 import NavigationUtils from "../navigation/NavigationUtils";
 const THEME_COLOR = color.THEME_COLOR;
 const { width, height} = Dimensions.get('window');
@@ -135,6 +136,7 @@ export default class ActingActivity extends React.Component {
         this.execute.bind(this);
         this.uploadOne.bind(this);
         this.renderCountrySideAct.bind(this);
+        this.renderTown.bind(this);
     }
     componentDidMount() {
         this.deEmitter = DeviceEventEmitter.addListener('taked', (a) => {
@@ -312,6 +314,88 @@ export default class ActingActivity extends React.Component {
             return true;
         })
     }
+    // 渲染各镇进度
+    renderTown() {
+        return [
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>宝华镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baoHuaPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baoHuaPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>下蜀镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.xiaShuPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.xiaShuPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>茅山镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>茅山风景区</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanFengJingPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanFengJingPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>华阳街道</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.huaYangPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.huaYangPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>郭庄镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.guoZhuangPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.guoZhuangPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>边城镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.bianChengPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.bianChengPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>开发区</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.kaiFaPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.kaiFaPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>白兔镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baiTuPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baiTuPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>后白镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.houBaiPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.houBaiPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>,
+            <Flex justify='between' style={styles.formItem}>
+                <Text style={styles.itemLabel}>天王镇</Text>
+                <Flex>
+                    <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.tianWangPercent)}/>
+                    <Text style={styles.itemValue}>{Math.round(this.state.currentRow.tianWangPercent * 1000)/10 + '%'}</Text>
+                </Flex>
+            </Flex>
+        ]
+    }
     renderProgress() {
         if (this.state.user.roleCode === 'TOWN_REVIEWER') {
             let value = 0;
@@ -357,92 +441,37 @@ export default class ActingActivity extends React.Component {
                 temp
             ]
         } else if (this.state.user.roleCode == 'CITY_LEADER') {
-            return [
-               <Flex justify='between' style={styles.formItem}>
+            let common = [
+                <Flex justify='between' style={styles.formItem}>
                     <Text style={styles.itemLabel}>全市总进度</Text>
                     <Flex>
                         <ProgressUI.Bar style={{width: 100}} progress={Number(this.state.currentRow.totalPercent)} />
                         <Text style={styles.itemValue}>{Math.round(this.state.currentRow.totalPercent * 1000)/10 + '%'}</Text>
                     </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>宝华镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baoHuaPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baoHuaPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>下蜀镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.xiaShuPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.xiaShuPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>茅山镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>茅山风景区</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.maoShanFengJingPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.maoShanFengJingPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>华阳街道</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.huaYangPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.huaYangPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>郭庄镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.guoZhuangPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.guoZhuangPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>边城镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.bianChengPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.bianChengPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>开发区</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.kaiFaPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.kaiFaPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                     <Text style={styles.itemLabel}>白兔镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.baiTuPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.baiTuPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>后白镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.houBaiPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.houBaiPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
-                </Flex>,
-                <Flex justify='between' style={styles.formItem}>
-                    <Text style={styles.itemLabel}>天王镇</Text>
-                    <Flex>
-                        <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(this.state.currentRow.tianWangPercent)}/>
-                        <Text style={styles.itemValue}>{Math.round(this.state.currentRow.tianWangPercent * 1000)/10 + '%'}</Text>
-                    </Flex>
                 </Flex>
-               ]
+            ];
+            let currentRow = this.state.currentRow;
+            // 机关任务
+            if (currentRow.objectType === "2") {
+                let activityOfficeProgresses = currentRow.activityOfficeProgresses;
+                let keys = Object.keys(activityOfficeProgresses);
+                let offices = keys.map(item =>  {
+                    let name = data.reviewOrgCodeLabel[item];
+                    return (
+                        <Flex justify='between' style={styles.formItem}>
+                            <Text style={styles.itemLabel}>{name}</Text>
+                            <Flex>
+                                <ProgressUI.Bar style={{width: 100}} showsText={true} progress={Number(activityOfficeProgresses[item])}/>
+                                <Text style={styles.itemValue}>{Math.round(activityOfficeProgresses[item] * 1000)/10 + '%'}</Text>
+                            </Flex>
+                        </Flex>
+                    )
+                })
+                common = common.concat(offices)
+            } else if (currentRow.objectType === "1") {
+                common = common.concat(this.renderTown())
+            }
+            return common
         } else {
             // 如果是机关的执行者就渲染机关的手机执行页面
             // 如果是农村的执行者就渲染农村的手机执行页面
