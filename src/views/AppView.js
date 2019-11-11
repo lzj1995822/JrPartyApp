@@ -61,12 +61,12 @@ const stack = createStackNavigator({
             headerTitle: '阵地展示',
         })
     },
-    ProgressSummary:{
-        screen: ProgressSummary,
-        navigationOptions: ({ navigation }) => ({
-            headerTitle: '进度汇总',
-        })
-    },
+    // ProgressSummary:{
+    //     screen: ProgressSummary,
+    //     navigationOptions: ({ navigation }) => ({
+    //         headerTitle: '进度汇总',
+    //     })
+    // },
     Information: {
         screen: Information,
         navigationOptions: ({ navigation }) => ({

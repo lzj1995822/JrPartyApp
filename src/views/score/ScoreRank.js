@@ -61,41 +61,33 @@ export default class ScoreRank extends React.Component {
             uerImg:store.getState().user.value.image? {uri:store.getState().user.value.image }:require("../../static/img/dq.png"),
             orgName:store.getState().user.value.organizationName
         }
-        this.handleRefresh = this.handleRefresh.bind(this);
-        this.handleLoadMore = this.handleLoadMore.bind(this);
-        this.renderEndComp = this.renderEndComp.bind(this);
-        this.renderHeadComp = this.renderHeadComp.bind(this);
+        this.handleRefresh.bind(this);
+        this.handleLoadMore.bind(this);
+        this.renderEndComp.bind(this);
+        this.renderHeadComp.bind(this);
         this.backForAndroid.bind(this)
-        // if(store.getState().user.value.image){
-        //     this.setState({uerImg:'uri:'+store.getState().user.value.image})
-        // }else {
-        //     this.setState({uerImg: 'require('+'"../../static/drawable-xxxhdpi/头像-01.png"'+')'})
-        // }
-        // this.setState({orgName:store.getState().user.value.organizationName})
-        this.handleRefresh ();
     }
-    componentDidMount(): void {
+    componentDidMount() {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => {
                 return this.backForAndroid(NavigationUtils.navigation)});
         }
+        // 初始化数据
+        this.handleRefresh();
     }
+
     backForAndroid(navigator) {
         navigator.navigate('Main');
         return true;
     }
-    scoreData(){
 
-    }
+    // 处理刷新
     handleRefresh () {
-
-
         this.state.pageNow = 0
-        this.state.refreshing = true
+        this.setState({refreshing: true, flatData: []})
         this.state.pageSize = Math.ceil(height/50)-2
-        this.state.flatData = []
-
-        let url01 = api + '/api/identity/exaScore/scoreCunPercentAll?page='+0+'&size='+1000+'&sort=desc&year='+2019+''
+        let year = new Date().getFullYear();
+        let url01 = `${api}/api/identity/exaScore/scoreCunPercentAll?page=0&size=1000&sort=desc&year=${year}`;
         let tokenNew =  store.getState().token.value
         fetch(url01, {
             method: 'POST',
@@ -108,15 +100,14 @@ export default class ScoreRank extends React.Component {
         }).then((response) => response.json()).then((resJson) => {
             resJson.content.forEach((item,index)=>{
                 if(item.cun == this.state.orgName){
-                    this.setState({myDataExam:item.exam})
-                    this.setState({myDataIndex:index+1})
+                    this.setState({myDataExam:item.exam,myDataIndex:index+1})
                 }
             })
         })
 
-        let pa = this.state.pageNow
-        let size = this.state.pageSize
-        let url = api + '/api/identity/exaScore/scoreCunPercentAll?page='+pa+'&size='+size+'&sort=desc&year='+2019+''
+        let pa = this.state.pageNow;
+        let size = this.state.pageSize;
+        let url = `${api}/api/identity/exaScore/scoreCunPercentAll?page=${pa}&size=${size}&sort=desc&year=${year}`;
         fetch(url, {
             method: 'POST',
             headers: {
@@ -131,14 +122,12 @@ export default class ScoreRank extends React.Component {
             }else {
                 this.state.totalPage =  this.state.pageNow+1
             }
-            this.setState({
-                refreshing: false,
-            });
             let scoreDate = resJson.content.map((item,index)=>{
                 return {cun:item.cun,exam:item.exam,index:index}
             })
             this.setState({
-                flatData: scoreDate,
+                refreshing: false,
+                flatData: scoreDate
             });
         }).catch((error) => {
             console.error(error)
@@ -147,14 +136,12 @@ export default class ScoreRank extends React.Component {
 
     handleLoadMore(){
         if (!this.state.onEndReachedCalledDuringMomentum) {
-            this.state.onEndReachedCalledDuringMomentum = true;
-            let pp = this.state.pageNow
-            pp = pp+1
-            this.state.pageNow = pp
+            this.setState({onEndReachedCalledDuringMomentum: true});
             this.setState({
-                pageNow: pp,
+                pageNow: ++this.state.pageNow,
                 refreshing: true,
                 loading: false,
+                showFoot: 2
             })
             let pa = this.state.pageNow
             let size = this.state.pageSize
@@ -169,10 +156,10 @@ export default class ScoreRank extends React.Component {
                 },
                 body: JSON.stringify({})
             }).then((response) => response.json()).then((resJson) => {
-                if(this.state.pageNow+1<this.state.totalPage){
-                    this.state.showFoot = 1
-                }else {
-                    this.state.showFoot = 2
+                if (++this.state.pageNow > this.state.totalPage) {
+                    this.setState({showFoot: 1})
+                } else {
+                    this.setState({showFoot: 0})
                 }
                 let scoreDate = resJson.content.map((item, index) => {
                     return {cun: item.cun, exam: item.exam, index: index + (pa * this.state.pageSize)}
@@ -184,9 +171,6 @@ export default class ScoreRank extends React.Component {
                     loading: false,
                     refreshing: false,
                 });
-                if( this.state.showFoot === 1){
-                    this.state.showFoot === 0
-                }
             }).catch((error) => {
                 console.error(error)
             });
@@ -283,7 +267,7 @@ export default class ScoreRank extends React.Component {
             marginBottom: 5,
             width:'100%',
             backgroundColor: '#F5F5F4'}}>
-                <Flex style={{width: '100%'}} justify='around'>
+                <Flex justify='around'>
                     <Flex style={{flex: 0.33}} justify='center' align='center'>
                         <Image source={require('../../static/drawable-xxxhdpi/rank.png')} style={{height:25,width:25}}/>
                         <Text style={{ fontSize: 18,
@@ -338,8 +322,7 @@ export default class ScoreRank extends React.Component {
             );
         }
     }
-    keyExtractor(item, index){
-
+    keyExtractor(item, index) {
         return item.cun+item.exam
     }
 
@@ -349,13 +332,14 @@ export default class ScoreRank extends React.Component {
             <View>
                 <FlatList
                     data={this.state.flatData}
+                    style={{minHeight: height}}
                     horizontal={false}
                     // ItemSeparatorComponent={this.renderSeparator}
-                    ListHeaderComponent={this.renderHeadComp}
-                    ListFooterComponent={this.renderEndComp}
+                    ListHeaderComponent={() => this.renderHeadComp() }
+                    ListFooterComponent={() => this.renderEndComp()}
                     refreshing={this.state.refreshing}
-                    onRefresh={this.handleRefresh}
-                    onEndReached={this.handleLoadMore}
+                    onRefresh={() => this.handleRefresh()}
+                    onEndReached={() => this.handleLoadMore()}
                     renderItem={({item}) => this.renderItem(item)}
                     keyExtractor={this.keyExtractor}
                     onEndReachedThreshold={0.1}

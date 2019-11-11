@@ -484,6 +484,7 @@ export default class Mine extends React.Component {
                     automaticallyAdjustContentInsets={false}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
+                    style={{minHeight: height}}
                 >
                     <View >
                         <ImageBackground
@@ -528,40 +529,32 @@ export default class Mine extends React.Component {
                         {/*按钮集合展示区*/}
                         <List style={{marginTop:20}}>
                             <Item key={'btnss'}>
-                                <Flex justify="between" align="center" style={styleScope.btnList}>
+                                <Flex justify="around" align="center" style={styleScope.btnList}>
                                     <TouchableOpacity onPress={() => this.props.navigation.navigate("Activity")}>
-                                        <View style={{textAlign: 'center', marginRight: 2}}>
+                                        <View style={{textAlign: 'center'}}>
                                             <Image source={require('../../static/drawable-xxxhdpi/activity.png')}
                                                    style={styleScope.listImage}/>
                                             <Text style={styleScope.btnLabel}>活动管理</Text>
                                         </View>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
-                                        console.log(this.props.navigation);
                                         this.props.navigation.navigate("PositionShow")
                                     }}>
-                                        <View style={{textAlign: 'center', marginLeft:1, marginRight: 1}}>
+                                        <View style={{textAlign: 'center'}}>
                                             <Image source={require('../../static/drawable-xxxhdpi/positionShow.png')}
                                                    style={styleScope.listImage}/>
                                             <Text style={styleScope.btnLabel}>阵地展示</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => this.props.navigation.navigate("ProgressSummary")}>
-                                        <View style={{textAlign: 'center', marginLeft:2, marginRight: 2}}>
-                                            <Image source={require('../../static/drawable-xxxhdpi/progressSummary.png')}
-                                                   style={styleScope.listImage}/>
-                                            <Text style={styleScope.btnLabel}>进度汇总</Text>
-                                        </View>
-                                    </TouchableOpacity>
                                     <TouchableOpacity onPress={() => this.props.navigation.navigate("Information")}>
-                                        <View style={{textAlign: 'center', marginLeft:2, marginRight: 2}}>
+                                        <View style={{textAlign: 'center'}}>
                                             <Image source={require('../../static/drawable-xxxhdpi/information.png')}
                                                    style={styleScope.listImage}/>
                                             <Text style={styleScope.btnLabel}>通知公告</Text>
                                         </View>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => this.props.navigation.navigate("ScoreRank")}>
-                                        <View style={{textAlign: 'center', marginLeft:2}}>
+                                        <View style={{textAlign: 'center'}}>
                                             <Image source={require('../../static/drawable-xxxhdpi/scoreRank.png')}
                                                    style={styleScope.listImage}/>
                                             <Text style={styleScope.btnLabel}>积分排名</Text>
@@ -570,7 +563,7 @@ export default class Mine extends React.Component {
                                 </Flex>
                             </Item>
                         </List>
-                        <List renderHeader={null} style={{marginTop:20,}}>
+                        <List renderHeader={null} style={{marginTop: 20}}>
                             <Item  thumb={<Image source={require('../../static/drawable-xxxhdpi/pswReset.png')} style={{marginRight:4,marginLeft: 0,height:18,width:16}}/>}
                                    arrow="horizontal" onPress={()=>{this.setResetPswModal(true)}}>
                                 <Text style={{fontSize:14}}>密码重置</Text>
