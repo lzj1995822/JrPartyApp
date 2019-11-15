@@ -696,24 +696,12 @@ export default class ActingActivity extends React.Component {
                 color = '#c22120';
                 label = '未完成'
             }
-            let button;
-            if (item.status != 2 && new Date(item.month).getTime() >= new Date().getTime()) {
-                button = <Flex>
-                    <AntDesign name={'playcircleo'} size={18}  style={{color: '#268aff'}}/>
-                    <Text style={{color: '#268aff'}}> 执行</Text>
-                </Flex>;
-            } else {
-                button = <Flex>
+            let button = (
+                <Flex>
                     <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
                     <Text style={{color: '#268aff'}}> 详情</Text>
                 </Flex>
-            }
-            if (item.status == '1' && item.objectType == '2') {
-                button = <Flex>
-                    <AntDesign name={'filetext1'} size={18}  style={{color: '#268aff'}}/>
-                    <Text style={{color: '#268aff'}}> 详情</Text>
-                </Flex>
-            }
+                )
             return (
                 <Flex justify='between'>
                     <Text style={{backgroundColor: color, fontSize: 14, height: 28, padding: 4, borderRadius: 3, borderColor: color, color: '#fff'}}>{label}</Text>
