@@ -44,8 +44,8 @@ export default class Login extends React.Component {
         super(props);
         this.redux = store;
         this.state = {
-            name: '句容市委市级机关工委',
-            password: 'Jrdj96296',
+            name: '',
+            password: '',
             modalVisible: false,
             showMessage: '登录成功',
             token: '',
