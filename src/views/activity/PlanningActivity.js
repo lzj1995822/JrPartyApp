@@ -432,84 +432,8 @@ export default class ActingActivity extends React.Component {
             }
             return common
         } else {
-            // 如果是机关的执行者就渲染机关的手机执行页面
-            // 如果是农村的执行者就渲染农村的手机执行页面
-            if (this.state.user.sysDistrict.districtType === 'Office') {
-                return <OfficeFeedback objectId={this.state.currentRow.id}
-                                       readOnly={this.state.currentRow.status !== '0'}
-                                       onExecuteFinish={() => {
-                                           this.page = 1;
-                                           this.setState({activityList: [], executeLoading: false, files: [], filePaths: []}, () => {this.setState({modalVis: false})});
-                                           this.fetchActivityData();
-                                       }}></OfficeFeedback>;
-            }
-            return this.renderCountrySideAct();
+            return <Text/>;
         }
-    }
-    renderCountrySideAct() {
-        let records = this.state.phonePic.map((item) => {
-            let images = item.imageUrl.map(subItem => {
-                return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
-            });
-            return (
-                <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
-                    <ScrollView horizontal={true}>
-                        <Flex style={{overflowX: 'scroll'}}>
-                            {images}
-                        </Flex>
-                    </ScrollView>
-                </Accordion.Panel>
-            )
-        });
-        let enable = new Date(this.state.currentRow.month).getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
-        let executeComponent = [
-            <View style={{width: '100%'}}>
-                <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
-                    {records}
-                </Accordion>
-            </View>,
-            <Flex direction='column' justify='between' align='start' style={styles.formItem}>
-                <Text style={[styles.itemLabel, {marginBottom: 20, color: '#b3ad27'}]}>执行照片</Text>
-                <ImagePicker
-                    onChange={(files, type, index) => {
-                        if (type === 'remove') {
-                            console.log(this.state.files,"'ss")
-                            let filePaths = this.state.filePaths;
-                            filePaths.splice(index, 1);
-                            this.setState({filePaths: filePaths})
-                        }
-                        this.setState({files: files});}}
-                    onAddImageClick={() => {this.setState({camVis: true})}}
-                    files={this.state.files}
-                />
-                <Text style={{fontSize: 12,color: "#cdcdcd"}}>友情提示: 请确保已拍取照片再进行提交操作!</Text>
-            </Flex>,
-            <WhiteSpace size="lg"/>,
-            <Button
-                style={{flex: 1,width: '100%'}}
-                onPress={() => {this.execute() }}
-                loading={this.state.executeLoading}
-                disabled={this.state.executeLoading}
-                type="primary"
-            ><Text>提交</Text></Button>,
-            <WhiteSpace size="lg"/>,
-            <Modal animationType={"slide"}
-                   transparent={false}
-                   visible={this.state.camVis}
-                   onRequestClose={() => {this.setState({camVis: false})}}>
-                <CameraScreen/>
-            </Modal>
-        ];
-        if (enable) {
-            return executeComponent;
-        }
-        return  (
-            <View style={{width: '100%'}}>
-                <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
-                    {records}
-                </Accordion>
-            </View>
-        )
     }
     execute() {
         let images = this.state.files;
