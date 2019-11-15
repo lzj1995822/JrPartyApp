@@ -181,7 +181,6 @@ export default class OfficeFeedback extends React.Component{
     fetchTemplateItemAndValue(objectId) {
         let path = 'identity/feedbackItemValue/list';
         $http(path, 'POST', { objectId: objectId }).then( result => {
-            console.log(result, "res")
             this.setState({
                 feedbackItems: result
             });

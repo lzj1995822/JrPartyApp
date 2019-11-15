@@ -2,11 +2,11 @@ import { store } from './redux/store';
 import { Alert } from 'react-native';
 import imageCondense from './views/utils/ImageCondense';
 
-// export const api = 'http://122.97.218.162:21018/';
+export const api = 'http://122.97.218.162:21018/';
+const commonApiUrl = 'http://122.97.218.162:21018/api/';
+// const commonApiUrl = 'http://172.16.1.92:8762/api/';
+// export const api = 'http://172.16.1.92:8762/';
 
-// const commonApiUrl = 'http://122.97.218.162:21018/api/';
-const commonApiUrl = 'http://172.16.1.92:8762/api/';
-export const api = 'http://172.16.1.92:8762/';
 const HTTP_STATUS_CODE = {
     SUCCESS: 200,
     UNAUTHORIZATION: 401,
@@ -31,7 +31,7 @@ export const $http = (url, method, params) => {
         }
         config.body= JSON.stringify(params)
     }
-    console.log(url,method,"ss")
+
     return fetch(url, config).then((res) => {
         return res.json();
     }).then((resp) => {
@@ -42,7 +42,6 @@ export const $http = (url, method, params) => {
         return resp.content;
     }).catch( error => {
         Alert.alert('提示', '请求失败!', [{text: '确认', onPress: () => {}}])
-        console.log(error, "请求失败")
     })
 }
 
