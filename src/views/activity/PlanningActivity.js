@@ -101,7 +101,6 @@ export default class ActingActivity extends React.Component {
         this.handlePhonePath.bind(this);
         this.uploadFiles.bind(this);
         this.backForAndroid.bind(this);
-        this.renderCountrySideAct.bind(this);
         this.renderTown.bind(this);
     }
     componentDidMount() {
