@@ -402,7 +402,6 @@ export default class ActingActivity extends React.Component {
             let user = this.state.user;
             let sysDistrict = user.sysDistrict;
             if (sysDistrict.districtType === 'Office') {
-                console.log(this.state.currentRow, 'sr')
                 value = this.state.currentRow.activityOfficeProgresses[sysDistrict.districtId];
             } else if (sysDistrict.districtType === 'Party') {
                 let percentKey = this.TownCodeKey[sysDistrict.districtId];
@@ -490,7 +489,7 @@ export default class ActingActivity extends React.Component {
     renderCountrySideAct() {
         let records = this.state.phonePic.map((item) => {
             let images = item.imageUrl.map(subItem => {
-                return (<Image resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
+                return (<Image key={subItem.id} resizeMode='cover' style={{width: 120, height: 80, margin: 6, borderColor: '#e1e1e1', borderWidth: 1}} source={{uri: this.handlePhonePath(subItem.imageUrl)}}/>)
             });
             return (
                 <Accordion.Panel key={'accordion' + item.id } header={<Text style={{fontSize: 14,flex: 1,paddingTop:8, paddingBottom: 8}}>{`执行记录 (${item.time.replace(/T/g, ' ')})`}</Text>}>
