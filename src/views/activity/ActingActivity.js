@@ -117,7 +117,8 @@ export default class ActingActivity extends React.Component {
             executeLoading: false,
             // 下拉刷新
             isRefresh: false,
-            filePaths: []
+            filePaths: [],
+            btnDes: '提交'
         };
         this.fetchActivityData.bind(this);
         this.onLoadMore.bind(this);
@@ -501,7 +502,7 @@ export default class ActingActivity extends React.Component {
                 </Accordion.Panel>
             )
         });
-        let enable = new Date(this.state.currentRow.month).getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
+        let enable = new Date(this.state.currentRow.month + ' 23:59:59').getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
         let executeComponent = [
             <View style={{width: '100%'}}>
                 <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
@@ -513,12 +514,12 @@ export default class ActingActivity extends React.Component {
                 <ImagePicker
                     onChange={(files, type, index) => {
                         if (type === 'remove') {
-                            console.log(this.state.files,"'ss")
                             let filePaths = this.state.filePaths;
                             filePaths.splice(index, 1);
                             this.setState({filePaths: filePaths})
                         }
                         this.setState({files: files});}}
+                    selectable={!this.state.executeLoading}
                     onAddImageClick={() => {this.setState({camVis: true})}}
                     files={this.state.files}
                 />
@@ -531,7 +532,7 @@ export default class ActingActivity extends React.Component {
                 loading={this.state.executeLoading}
                 disabled={this.state.executeLoading}
                 type="primary"
-            ><Text>提交</Text></Button>,
+            ><Text>{this.state.btnDes}</Text></Button>,
             <WhiteSpace size="lg"/>,
             <Modal animationType={"slide"}
                    transparent={false}
@@ -566,13 +567,17 @@ export default class ActingActivity extends React.Component {
         }
     }
     uploadOne(file) {
-        let ratio = file.width/750;
-        ImageResizer.createResizedImage(file.uri, 750, file.height/ratio, 'JPEG', 70)
-            .then(res => {
-                let formData = new FormData();
-                formData.append('file', {uri: res.uri, type: 'multipart/form-data', name: res.name})
-                this.uploadFile(formData);
-            }).catch(e => {
+        console.log("12123")
+        this.setState({executeLoading: true, btnDes: '图片上传中...'}, () => {
+            let ratio = file.width/750;
+            ImageResizer.createResizedImage(file.uri, 750, file.height/ratio, 'JPEG', 70)
+                .then(res => {
+                    setTimeout(() => {
+                        let formData = new FormData();
+                        formData.append('file', {uri: res.uri, type: 'multipart/form-data', name: res.name})
+                        this.uploadFile(formData);
+                    }, 1000)
+                }).catch(e => {
                 Alert.alert(
                     '提示',
                     '图片压缩失败，请重新拍取照片',
@@ -586,6 +591,7 @@ export default class ActingActivity extends React.Component {
                         },
                     ],
                 )
+            })
         })
     }
 
@@ -634,7 +640,24 @@ export default class ActingActivity extends React.Component {
             },
             body: formData
         }).then(res => res.text()).then(path => {
-            this.state.filePaths.push(path);
+            if (path === 'false') {
+                Alert.alert(
+                    '提示',
+                    '图片上传失败，请重新拍取照片',
+                    [
+                        {
+                            text: '确认', onPress: () => {
+                                let files = this.state.files;
+                                files.splice(files.length - 1, 1);
+                                this.setState({files: files, executeLoading: false, btnDes: '提交'})
+                            }
+                        },
+                    ],
+                );
+            } else {
+                this.state.filePaths.push(path);
+                this.setState({executeLoading: false, btnDes: '提交'});
+            }
         }).catch(e => {
             Alert.alert(
                 '提示',
@@ -644,7 +667,7 @@ export default class ActingActivity extends React.Component {
                         text: '确认', onPress: () => {
                             let files = this.state.files;
                             files.splice(files.length - 1, 1);
-                            this.setState({files: files})
+                            this.setState({files: files, executeLoading: false, btnDes: '提交'})
                         }
                     },
                 ],
@@ -767,7 +790,7 @@ export default class ActingActivity extends React.Component {
                 label = '未完成'
             }
             let button;
-            if (item.status != 2 && new Date(item.month).getTime() >= new Date().getTime()) {
+            if (item.status != 2 && new Date(item.month + ' 23:59:59').getTime() >= new Date().getTime()) {
                 button = <Flex>
                     <AntDesign name={'playcircleo'} size={18}  style={{color: '#268aff'}}/>
                     <Text style={{color: '#268aff'}}> 执行</Text>
