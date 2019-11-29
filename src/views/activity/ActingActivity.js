@@ -104,7 +104,8 @@ export default class ActingActivity extends React.Component {
             modalVis: false,
             currentRow: {
                 title: '',
-                activityOfficeProgresses: {}
+                activityOfficeProgresses: {},
+                month: ''
             },
             user: store.getState().user.value,
             token: store.getState().token.value,
@@ -118,7 +119,7 @@ export default class ActingActivity extends React.Component {
             // 下拉刷新
             isRefresh: false,
             filePaths: [],
-            btnDes: '提交'
+            btnDes: '提交',
         };
         this.fetchActivityData.bind(this);
         this.onLoadMore.bind(this);
@@ -502,7 +503,7 @@ export default class ActingActivity extends React.Component {
                 </Accordion.Panel>
             )
         });
-        let enable = new Date(this.state.currentRow.month + ' 23:59:59').getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
+        let enable = new Date(this.state.currentRow.month.replace(/-/gm, "/") + ' 23:59:59').getTime() >= new Date().getTime() && this.state.currentRow.status != 2  ;
         let executeComponent = [
             <View style={{width: '100%'}}>
                 <Accordion onChange={this.onChange} activeSections={this.state.activeSections} >
@@ -790,7 +791,7 @@ export default class ActingActivity extends React.Component {
                 label = '未完成'
             }
             let button;
-            if (item.status != 2 && new Date(item.month + ' 23:59:59').getTime() >= new Date().getTime()) {
+            if (item.status != 2 && new Date(item.month.replace(/-/gm, "/") + ' 23:59:59').getTime() >= new Date().getTime()) {
                 button = <Flex>
                     <AntDesign name={'playcircleo'} size={18}  style={{color: '#268aff'}}/>
                     <Text style={{color: '#268aff'}}> 执行</Text>
